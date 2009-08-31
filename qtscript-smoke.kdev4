@@ -1,0 +1,4 @@
+[Project]
+Name=qtscript-smoke
+Manager=KDevCMakeManager
+VersionControl=kdevgit
