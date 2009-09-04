@@ -1,6 +1,7 @@
 #include "qtscript-smoke.h"
 
 #include "SampleClass.h"
+#include "QtScriptSmokeBinding.h"
 
 #include "smoke/qt_smoke.h"
 
@@ -12,6 +13,7 @@
 QtScriptSmoke::QtScriptSmoke()
 {
     init_qt_Smoke();
+    new QtScriptSmokeBinding( qt_Smoke );
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }
 
