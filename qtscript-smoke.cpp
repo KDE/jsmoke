@@ -13,7 +13,6 @@
 QtScriptSmoke::QtScriptSmoke()
 {
     init_qt_Smoke();
-    new QtScriptSmokeBinding( qt_Smoke );
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }
 

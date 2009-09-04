@@ -20,7 +20,7 @@
 #ifndef QTSCRIPTSMOKEBINDING_H
 #define QTSCRIPTSMOKEBINDING_H
 
-#include <smoke.h>
+#include <smoke/qt_smoke.h>
 
 
 class QtScriptSmokeBinding : public SmokeBinding
@@ -31,5 +31,7 @@ class QtScriptSmokeBinding : public SmokeBinding
         virtual bool callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract = false);
         virtual void deleted(Smoke::Index classId, void* obj);
 };
+
+static QtScriptSmokeBinding g_binding( qt_Smoke );
 
 #endif // QTSCRIPTSMOKEBINDING_H

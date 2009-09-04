@@ -1,7 +1,9 @@
 #include "SampleClass.h"
-#include "SampleImpl.h"
 
-#include "smoke/qt_smoke.h"
+#include "SampleImpl.h"
+#include "QtScriptSmokeBinding.h"
+
+#include <smoke/qt_smoke.h>
 
 #include <QtDebug>
 #include <QScriptContext>
@@ -79,6 +81,13 @@ SampleClass::extension( QScriptClass::Extension extension, const QVariant& argum
         Smoke::StackItem stack[1];
         (*klass.classFn)(meth.method, 0, stack);
         void *widget = stack[0].s_voidp;
+        
+        Smoke::StackItem initializeInstanceStack[2];
+        initializeInstanceStack[1].s_voidp = &g_binding;
+        //0 is a special method to initaliaze an instance
+        (*klass.classFn)(0, widget, initializeInstanceStack);
+        
+        
         QScriptValue proto = engine()->newObject( m_protoClass );
         
         AttributedObject* attrObj = new AttributedObject();
