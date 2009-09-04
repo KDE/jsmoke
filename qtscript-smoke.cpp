@@ -1,21 +1,57 @@
 #include "qtscript-smoke.h"
 
-#include <QTimer>
-#include <iostream>
+#include "SampleClass.h"
 
-qtscript-smoke::qtscript-smoke()
+#include "smoke/qt_smoke.h"
+
+#include <QScriptEngine>
+#include <QStringList>
+#include <QtDebug>
+#include <QTimer>
+
+QtScriptSmoke::QtScriptSmoke()
 {
-    QTimer* timer = new QTimer(this);
-    connect( timer, SIGNAL(timeout()), SLOT(output()) );
-    timer->start( 1000 );
+    init_qt_Smoke();
+    QTimer::singleShot( 0, this, SLOT( output() ) );
 }
 
-qtscript-smoke::~qtscript-smoke()
+QtScriptSmoke::~QtScriptSmoke()
 {}
 
-void qtscript-smoke::output()
+/*QScriptValue attributedObjectToScriptValue( QScriptEngine *engine, const AttributedObject& obj)
 {
-    std::cout << "Hello World!" << std::endl;
+    QScriptValue ret = engine->newObject();
+    ret.setData( engine->toScriptValue<AttributedObject*>( &obj ) );
+    return ret;
+}
+
+void scriptValueToAttributedObject( const QScriptValue &val, AttributedObject& obj)
+{
+    obj = qscriptvalue_cast<AttributedObject*>( &val.data() );
+}*/
+
+void QtScriptSmoke::output()
+{
+    QScriptEngine* engine = new QScriptEngine( this );
+  //  qScriptRegisterMetaType( engine, attributedObjectToScriptValue, scriptValueToAttributedObject );
+    QScriptClass* sample = new SampleClass( engine );
+    QScriptValue scriptSample = engine->newObject( sample );
+    engine->globalObject().setProperty( "SampleClass", scriptSample );
+    QString code;
+    //code += "try {";
+    //code += "SampleClass.stuff();";
+    //code += "SampleClass.apple = \"delicious\";";
+    //code += "SampleClass();";
+    code += "hello = new SampleClass();";
+    code += "hello.show();";
+
+    //code += "} catch(error) { print error; }";
+    engine->evaluate( code, "samplecode.js" );
+    qDebug() << engine->isEvaluating();
+    qDebug() << engine->isEvaluating();
+    qDebug() << engine->hasUncaughtException();
+    qDebug() << engine->uncaughtExceptionBacktrace();
+
 }
 
 #include "qtscript-smoke.moc"
