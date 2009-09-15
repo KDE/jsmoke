@@ -17,5 +17,19 @@
 
 */
 
-#include "SmokeController.h"
+#ifndef SAMPLEIMPL_H
+#define SAMPLEIMPL_H
 
+#include <QScriptClass>
+
+//!When the user constructs an object, they get a scriptvalue of one of these.
+class ImplementationClass : public QScriptClass
+{
+    public:
+        ImplementationClass( QScriptEngine* );
+        ~ImplementationClass();        
+        QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
+        QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
+        QString name() const;
+};
+#endif // SAMPLEIMPL_H

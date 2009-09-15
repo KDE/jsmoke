@@ -1,10 +1,11 @@
 #include "qtscript-smoke.h"
 
-#include "SampleClass.h"
+#include "StaticClass.h"
 #include "QtScriptSmokeBinding.h"
 
 #include "smoke/qt_smoke.h"
 
+#include <QFile>
 #include <QScriptEngine>
 #include <QStringList>
 #include <QtDebug>
@@ -19,36 +20,19 @@ QtScriptSmoke::QtScriptSmoke()
 QtScriptSmoke::~QtScriptSmoke()
 {}
 
-/*QScriptValue attributedObjectToScriptValue( QScriptEngine *engine, const AttributedObject& obj)
-{
-    QScriptValue ret = engine->newObject();
-    ret.setData( engine->toScriptValue<AttributedObject*>( &obj ) );
-    return ret;
-}
-
-void scriptValueToAttributedObject( const QScriptValue &val, AttributedObject& obj)
-{
-    obj = qscriptvalue_cast<AttributedObject*>( &val.data() );
-}*/
-
 void QtScriptSmoke::output()
 {
     QScriptEngine* engine = new QScriptEngine( this );
-  //  qScriptRegisterMetaType( engine, attributedObjectToScriptValue, scriptValueToAttributedObject );
-    QScriptClass* sample = new SampleClass( engine );
-    QScriptValue scriptSample = engine->newObject( sample );
-    engine->globalObject().setProperty( "SampleClass", scriptSample );
-    QString code;
-    //code += "try {";
-    //code += "SampleClass.stuff();";
-    //code += "SampleClass.apple = \"delicious\";";
-    //code += "SampleClass();";
-    code += "hello = new SampleClass();";
-    code += "hello.show();";
-
-    //code += "} catch(error) { print error; }";
-    engine->evaluate( code, "samplecode.js" );
-    qDebug() << engine->isEvaluating();
+    QScriptClass* qwidgetClass = new StaticClass( engine );
+    QScriptValue qwidgetClassValue = engine->newObject( qwidgetClass );
+    engine->globalObject().setProperty( "QWidget", qwidgetClassValue );
+    
+    qDebug() << "opening ../test.js";
+    QFile testFile("../test.js");
+    testFile.open( QFile::ReadOnly );
+    QByteArray code = testFile.readAll();
+    
+    engine->evaluate( code, "test.js" );
     qDebug() << engine->isEvaluating();
     qDebug() << engine->hasUncaughtException();
     qDebug() << engine->uncaughtExceptionBacktrace();

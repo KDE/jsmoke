@@ -31,17 +31,21 @@ QtScriptSmokeBinding::QtScriptSmokeBinding( Smoke* s)
 char* QtScriptSmokeBinding::className(Smoke::Index classId)
 {
     qDebug() << "QtScriptSmokeBinding::className" << classId;
+    //TODO: QtScript names should match the C++ names
     return "someName";
 }
 
+//!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
 bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract)
 {
-    qDebug() << "QtScriptSmokeBinding::callMethod" << method << obj << isAbstract;
+    //TODO: we're going to have to keep a hash<void*, QScriptValue> and then query
+    //the scriptvalue to see if the user has overridden a virtual method
     return false;
 }
 
 void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* obj)
 {
+    //TODO: memory management of any sort :D
     qDebug() << "QtScriptSmokeBinding::deleted" << classId << obj;
     return;
 }

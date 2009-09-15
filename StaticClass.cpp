@@ -1,34 +1,36 @@
-#include "SampleClass.h"
+#include "StaticClass.h"
 
-#include "SampleImpl.h"
+#include "ImplementationClass.h"
 #include "QtScriptSmokeBinding.h"
 
 #include <smoke/qt_smoke.h>
 
 #include <QtDebug>
 #include <QScriptContext>
+#include <QScriptContextInfo>
 #include <QScriptEngine>
 #include <QScriptValue>
 #include <QScriptString>
 #include <QVariant>
 
-SampleClass::SampleClass( QScriptEngine* engine )
+StaticClass::StaticClass( QScriptEngine* engine )
     : QScriptClass( engine )
-    , m_protoClass( new SampleImpl( engine ) )
+    , m_protoClass( new ImplementationClass( engine ) )
 { }
 
-SampleClass::~SampleClass()
+StaticClass::~StaticClass()
 {  }
 
 QScriptValue
-SampleClass::prototype() const
+StaticClass::prototype() const
 {
-    qDebug("this function shouldn't be called");
+    //this fn is called, but i'm pretty sure this function doesn't 
+    //do anything, due to the Callable extension
     return QScriptValue();
 }
 
 QScriptClass::QueryFlags
-SampleClass::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
+StaticClass::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
 {
     //qDebug() << object.toVariant();
     qDebug() << "queryProperty" << name << flags << id;
@@ -49,7 +51,7 @@ QScriptValue stuff(QScriptContext *context, QScriptEngine* engine)
 }
 
 QScriptValue
-SampleClass::property ( const QScriptValue & object, const QScriptString & name, uint id )
+StaticClass::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
     qDebug() << "property" << name << id;
     if( name == engine()->toStringHandle("stuff") )
@@ -64,18 +66,33 @@ SampleClass::property ( const QScriptValue & object, const QScriptString & name,
 }
 
 QVariant
-SampleClass::extension( QScriptClass::Extension extension, const QVariant& argument )
+StaticClass::extension( QScriptClass::Extension extension, const QVariant& argument )
 {
     if( extension == Callable )
     {
         //QScriptContext* context = qvariant_cast<QScriptContext*>( argument );
         qDebug() << "now we run the QWidget constructor";
         QScriptContext* context = argument.value<QScriptContext*>();
-        qDebug() << "constructor?" << context->isCalledAsConstructor();
-        Smoke::ModuleIndex classId = qt_Smoke->findClass("QWidget");
+        qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
+        //TODO: obviously we'll want to make more objects then QWidget 
+        //the current plan is to have a "include" global function that creates
+        //a new global QScriptValue from a StaticClass for the class specified
+        //some ninja way to allow all class QScriptValue's to use the same StaticClass 
+        //would be nice, it only requires that this function know the name of the classes
+        //its supposed to create
+        
+        //I tried the following ninjutsu, but the functionName is blank
+        //QScriptContextInfo cInfo( context );
+        //QByteArray classNameByteArray = cInfo.functionName().toLatin1();
+        //const char* className = classNameByteArray.constData();
+        //qDebug() << "we find the classname to be" << className
+        
+        const char* className = "QWidget";
+        Smoke::ModuleIndex classId = qt_Smoke->findClass(className);
         Smoke::Class klass = classId.smoke->classes[ classId.index ];
         
-        Smoke::ModuleIndex methId = qt_Smoke->findMethod("QWidget", "QWidget");
+        //TODO constructor arguments
+        Smoke::ModuleIndex methId = qt_Smoke->findMethod(className, className);
         Smoke::Method meth = methId.smoke->methods[methId.smoke->methodMaps[methId.index].method];
         
         Smoke::StackItem stack[1];
@@ -91,7 +108,7 @@ SampleClass::extension( QScriptClass::Extension extension, const QVariant& argum
         QScriptValue proto = engine()->newObject( m_protoClass );
         
         AttributedObject* attrObj = new AttributedObject();
-        attrObj->className = "QWidget";
+        attrObj->className = className;
         attrObj->object = widget;
         proto.setData( engine()->newVariant( QVariant::fromValue<AttributedObject*>( attrObj ) ) );
         
@@ -101,7 +118,7 @@ SampleClass::extension( QScriptClass::Extension extension, const QVariant& argum
 }
 
 bool
-SampleClass::supportsExtension( QScriptClass::Extension extension ) const
+StaticClass::supportsExtension( QScriptClass::Extension extension ) const
 {
         if( extension == Callable )
             return true;
