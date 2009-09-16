@@ -41,7 +41,7 @@ ImplementationClass::~ImplementationClass()
 QScriptClass::QueryFlags
 ImplementationClass::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
-    qDebug() << "[SampleImpl] queryProperty" << name << flags << id;
+    qDebug() << "[ImplementationClass] queryProperty" << name << flags << id;
     return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
 
 }
@@ -50,7 +50,7 @@ QScriptValue runSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
     AttributedObject* attrObj = context->thisObject().data().toVariant().value<AttributedObject*>();
-    qDebug() << "runSmokeMethod" << nameFn << attrObj;
+    qDebug() << "[ImplementationClass] runSmokeMethod" << nameFn << attrObj;
     Smoke::ModuleIndex classId = qt_Smoke->findClass( attrObj->className );
     Smoke::Class klass = classId.smoke->classes[classId.index];
     
@@ -109,6 +109,11 @@ QScriptValue runSmokeMethod(QScriptContext* context, QScriptEngine* engine)
             //FIXME memory management
             args[argsPos].s_voidp = new QString(val.toString());
             qDebug() << "string arg" << val.toString();
+        }
+        else if( val.isVariant() && val.toVariant().canConvert<AttributedObject*>() )
+        {
+            void* obj = val.toVariant().value<AttributedObject*>()->object;
+            args[argsPos].s_voidp = obj;
         }
         else 
         {
