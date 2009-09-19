@@ -32,10 +32,12 @@
 #include <QScriptValue>
 #include <QScriptString>
 #include <QVariant>
+#include "SmokeQtScriptUtils.h"
 
-StaticClass::StaticClass( QScriptEngine* engine )
+StaticClass::StaticClass( QScriptEngine* engine, const QByteArray& className, ImplementationClass* implClass )
     : QScriptClass( engine )
-    , m_protoClass( new ImplementationClass( engine ) )
+    , m_className( className )
+    , m_implClass( implClass )
 { }
 
 StaticClass::~StaticClass()
@@ -70,6 +72,7 @@ QScriptValue stuff(QScriptContext *context, QScriptEngine* engine)
     return ret;
 }
 
+//TODO we need to handle static functions here
 QScriptValue
 StaticClass::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
@@ -90,46 +93,42 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
 {
     if( extension == Callable )
     {
-        //QScriptContext* context = qvariant_cast<QScriptContext*>( argument );
-        qDebug() << "now we run the QWidget constructor";
-        QScriptContext* context = argument.value<QScriptContext*>();
-        qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
-        //TODO: obviously we'll want to make more objects then QWidget 
-        //the current plan is to have a "include" global function that creates
-        //a new global QScriptValue from a StaticClass for the class specified
-        //some ninja way to allow all class QScriptValue's to use the same StaticClass 
-        //would be nice, it only requires that this function know the name of the classes
-        //its supposed to create
-        
         //I tried the following ninjutsu, but the functionName is blank
         //QScriptContextInfo cInfo( context );
         //QByteArray classNameByteArray = cInfo.functionName().toLatin1();
         //const char* className = classNameByteArray.constData();
         //qDebug() << "we find the classname to be" << className
+
+        QScriptContext* context = argument.value<QScriptContext*>();
+        qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
+       
         
-        const char* className = "QWidget";
+        const char* className = m_className;
         Smoke::ModuleIndex classId = qt_Smoke->findClass(className);
+        qDebug() << classId.index;
         Smoke::Class klass = classId.smoke->classes[ classId.index ];
         
-        //TODO constructor arguments
-        Smoke::ModuleIndex methId = qt_Smoke->findMethod(className, className);
+        QByteArray mungedArgs = SmokeQtScript::mungedArgs( context );
+        Smoke::ModuleIndex methId = qt_Smoke->findMethod(className, className + mungedArgs);
         Smoke::Method meth = methId.smoke->methods[methId.smoke->methodMaps[methId.index].method];
-        
-        Smoke::StackItem stack[1];
+         qDebug() << "found method " <<  qt_Smoke->methodNames[meth.name] << meth.args << (className + mungedArgs);
+         qDebug() << classId.index << methId.index;
+        Smoke::StackItem stack[context->argumentCount() + 1];
+        SmokeQtScript::scriptArgumentsToSmoke( context, stack );
         (*klass.classFn)(meth.method, 0, stack);
-        void *widget = stack[0].s_voidp;
+        void *object = stack[0].s_voidp;
         
         Smoke::StackItem initializeInstanceStack[2];
         initializeInstanceStack[1].s_voidp = &g_binding;
         //0 is a special method to initaliaze an instance
-        (*klass.classFn)(0, widget, initializeInstanceStack);
+        (*klass.classFn)(0, object, initializeInstanceStack);
         
         
-        QScriptValue proto = engine()->newObject( m_protoClass );
+        QScriptValue proto = engine()->newObject( m_implClass );
         
         AttributedObject* attrObj = new AttributedObject();
         attrObj->className = className;
-        attrObj->object = widget;
+        attrObj->object = object;
         proto.setData( engine()->newVariant( QVariant::fromValue<AttributedObject*>( attrObj ) ) );
         
         context->setThisObject(proto);

@@ -40,7 +40,7 @@ class ImplementationClass;
 class StaticClass : public QScriptClass
 {
     public:
-        StaticClass( QScriptEngine* );
+        StaticClass( QScriptEngine*, const QByteArray& className, ImplementationClass* implClass );
         ~StaticClass();
         QScriptValue prototype() const;
         QueryFlags queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id );
@@ -48,7 +48,8 @@ class StaticClass : public QScriptClass
         QVariant extension( QScriptClass::Extension extension, const QVariant& argument );
         bool supportsExtension( QScriptClass::Extension extension ) const;
     private:
-        ImplementationClass* m_protoClass;
+        QByteArray m_className;
+        ImplementationClass* m_implClass;
 };
 
 #include <QScriptContext>
