@@ -20,6 +20,7 @@
 
 #include "qtscript-smoke.h"
 
+#include "ImplementationClass.h"
 #include "StaticClass.h"
 #include "QtScriptSmokeBinding.h"
 
@@ -31,6 +32,8 @@
 #include <QtDebug>
 #include <QTimer>
 
+ImplementationClass* QtScriptSmoke::s_implClass = 0;
+
 QtScriptSmoke::QtScriptSmoke()
 {
     init_qt_Smoke();
@@ -40,12 +43,34 @@ QtScriptSmoke::QtScriptSmoke()
 QtScriptSmoke::~QtScriptSmoke()
 {}
 
-void QtScriptSmoke::output()
+QScriptValue 
+QtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine) //STATIC
+{
+    if( context->argumentCount() == 1 && context->argument(0).isString() )
+    {
+        QByteArray className( context->argument(0).toString().toLatin1() );
+        if( qt_Smoke->findClass(className).index != 0 )
+        {
+            QScriptClass* sclass = new StaticClass( engine, className, s_implClass );
+            QScriptValue classValue = engine->newObject( sclass );
+            engine->globalObject().setProperty(context->argument(0).toString(), classValue );
+        }
+        else
+            context->throwError(QScriptContext::RangeError, className + " is not a supported class." );
+    }
+    else
+       context->throwError(QScriptContext::TypeError, "Only one string argument for include.");
+
+    return QScriptValue();
+}
+
+void
+QtScriptSmoke::output()
 {
     QScriptEngine* engine = new QScriptEngine( this );
-    QScriptClass* qwidgetClass = new StaticClass( engine );
-    QScriptValue qwidgetClassValue = engine->newObject( qwidgetClass );
-    engine->globalObject().setProperty( "QWidget", qwidgetClassValue );
+    s_implClass = new ImplementationClass( engine );
+    QScriptValue includeFn = engine->newFunction( QtScriptSmoke::includeQtClass, 1 );
+    engine->globalObject().setProperty( "include", includeFn );
     
     qDebug() << "opening ../test.js";
     QFile testFile("../test.js");

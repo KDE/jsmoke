@@ -18,27 +18,13 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef qtscript_smoke_H
-#define qtscript_smoke_H
+#include <smoke.h>
 
-#include <QObject>
-
-class ImplementationClass;
+class QByteArray;
 class QScriptContext;
-class QScriptEngine;
-class QScriptValue;
 
-class QtScriptSmoke : public QObject
+namespace SmokeQtScript
 {
-    Q_OBJECT
-    public:
-        QtScriptSmoke();
-        virtual ~QtScriptSmoke();
-    private slots:
-        void output();
-    private:
-        static QScriptValue includeQtClass(QScriptContext *context, QScriptEngine* engine);
-        static ImplementationClass* s_implClass;
-};
-
-#endif // qtscript-smoke_H
+    QByteArray mungedArgs( QScriptContext* context );
+    void scriptArgumentsToSmoke( QScriptContext* context, Smoke::Stack args );
+}

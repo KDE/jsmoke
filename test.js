@@ -1,5 +1,13 @@
-hello = new QWidget();
-hello.show();
+include("QLabel");
+include("QDialog");
+include("QHBoxLayout");
+include("QWidget");
 
-hello.setMaximumWidth( 500 );
-hello.setWindowTitle( "QtScript Smoke Test: it kind of works" );
+layout = new QHBoxLayout();
+layout.addWidget( new QLabel("hello") );
+layout.addWidget( new QLabel("world") );
+dialog = new QWidget();
+dialog.setLayout( layout );
+dialog.setMaximumWidth( 400 );
+dialog.setMinimumWidth( 300 );
+dialog.show();

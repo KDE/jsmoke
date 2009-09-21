@@ -20,6 +20,7 @@
 
 #include "ImplementationClass.h"
 
+#include "SmokeQtScriptUtils.h"
 #include "StaticClass.h"
 
 #include <smoke/qt_smoke.h>
@@ -41,7 +42,9 @@ ImplementationClass::~ImplementationClass()
 QScriptClass::QueryFlags
 ImplementationClass::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
-    qDebug() << "[SampleImpl] queryProperty" << name << flags << id;
+    qDebug() << "[ImplementationClass] queryProperty" << name << flags << id;
+    if( name.toString() == "toString" )
+        return 0;
     return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
 
 }
@@ -140,79 +143,24 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     Smoke::ModuleIndex classId = attrObj->classId;
     Smoke::Class & klass = classId.smoke->classes[classId.index];
     
-
     qDebug() << "[ImplementationClass] property called with argumentCount of:" << context->argumentCount();
     QVector<Smoke::ModuleIndex> methodIds;
-    {
-       /* http://lists.kde.org/?l=kde-bindings&m=105167029023219&w=2
-        * The handler will first determine the Qt class hierarchy of the object (using 
-        * Smoke's idClass() and looking in the class hierarchy array) then build the 
-        * munged prototype of the requested method, following those rules:
-        * - take the requested method name
-        * - append $ for each simple native type argument (string, numeral, etc...) 
-        * - append  # for each Qt object passed as argument
-        * - append ? for things like an array, or a hash, or an undefined value  
-        *
-        * Note that there may be more than one munged method name if there are any
-        * null arguments, as null could be either a '$', '?' or '#' munged arg type
-        */
-        QVector<QByteArray> mungedMethods;
-        mungedMethods.append(nameFn.toLatin1());
+    QVector<QByteArray> mungedMethods = SmokeQtScript::mungedMethods( nameFn.toLatin1(), context );
         
-        for( int i = 0; i < context->argumentCount(); i++ )
-        {
-            QScriptValue val = context->argument( i );
-            if( val.isNumber() || val.isBool() || val.isString() )
-            {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, mungedMethods) {
-                    temp.append(mungedMethod + '$');
-                }
-                mungedMethods = temp;
-            }
-            else if( val.isArray() || val.isUndefined() )
-            {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, mungedMethods) {
-                    temp.append(mungedMethod + '?');
-                }
-                mungedMethods = temp;
-            }
-            else if( val.isNull() )
-            {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, mungedMethods) {
-                    temp.append(mungedMethod + '$');
-                    temp.append(mungedMethod + '?');
-                    temp.append(mungedMethod + '#');
-                }
-                mungedMethods = temp;
-            }
-            else
-            {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, mungedMethods) {
-                    temp.append(mungedMethod + '#');
-                }
-                mungedMethods = temp;
-            }
-        }
-        
-        foreach (QByteArray mungedMethod, mungedMethods) {
-            Smoke::ModuleIndex methodId = smoke->findMethod(klass.className, mungedMethod);
-            if (methodId.index == 0) {
-                // We actually need to look in the QGlobalSpace of each open smoke module,
-                // not just the one the current class is in. But we don't keep a list of
-                // open smoke modules yet.
-                Smoke::ModuleIndex globalClassId = smoke->idClass("QGlobalSpace");
-                Smoke::ModuleIndex globalMethodId = smoke->idMethodName(mungedMethod);
-                if (globalClassId.index != 0 && globalMethodId.index != 0) {
-                    methodId = smoke->idMethod(globalClassId.index, globalMethodId.index);
-                    methodIds.append(methodId);
-                }
-            } else {
+    foreach (QByteArray mungedMethod, mungedMethods) {
+        Smoke::ModuleIndex methodId = smoke->findMethod(klass.className, mungedMethod);
+        if (methodId.index == 0) {
+            // We actually need to look in the QGlobalSpace of each open smoke module,
+            // not just the one the current class is in. But we don't keep a list of
+            // open smoke modules yet.
+            Smoke::ModuleIndex globalClassId = smoke->idClass("QGlobalSpace");
+            Smoke::ModuleIndex globalMethodId = smoke->idMethodName(mungedMethod);
+            if (globalClassId.index != 0 && globalMethodId.index != 0) {
+                methodId = smoke->idMethod(globalClassId.index, globalMethodId.index);
                 methodIds.append(methodId);
             }
+        } else {
+            methodIds.append(methodId);
         }
     }
     
@@ -256,36 +204,10 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     }
     
     Smoke::StackItem args[context->argumentCount() + 1];
-    for( int i = 0; i < context->argumentCount(); i++ )
-    {
-        QScriptValue val = context->argument( i );
-        int argsPos = i + 1; //args[0] has the return value
-        if( val.isBool() )
-        {
-            args[argsPos].s_bool = val.toBool();
-            qDebug() << "bool arg" << args[i].s_bool;
-
-        }
-        else if( val.isNumber() )
-        { //FIXME how do I know what kind of number? might have to look up function def
-            args[argsPos].s_int = val.toInt32();
-            qDebug() << "num arg" <<  args[i].s_int;
-
-        }
-        else if( val.isString() )
-        {
-            //FIXME memory management
-            args[argsPos].s_voidp = new QString(val.toString());
-            qDebug() << "string arg" << val.toString();
-        }
-        else 
-        {
-                qDebug() << "I don't know what this is." << val.toString();
-        }
-    }
-    
+    SmokeQtScript::scriptArgumentsToSmoke( context, args );
     (*klass.classFn)(meth.method, attrObj->value, args);
     //TODO: return value
+   return QScriptValue();
 }
 
 QScriptValue
@@ -295,23 +217,6 @@ ImplementationClass::property(const QScriptValue& object, const QScriptString& n
     QScriptValue fn = engine()->newFunction( callSmokeMethod );
     fn.setData( QScriptValue( name ) );
     return fn;
-    //decided to handle this in the function itself
-    /*
-    QByteArray className = object.data().toVariant().value<AttributedObject*>()->className;
-    QScriptContext* context = engine()->currentContext();
-    if( qt_Smoke->findMethod( (className + args).data(), nameStr.toLatin1() ).index != 0 )
-    {
-        qDebug() << "[ImplementationClass] calling method" << name;
-        QScriptValue fn = engine()->newFunction( callSmokeMethod );
-        fn.setData( QScriptValue( name ) );
-        return fn;
-    }
-    else
-    {
-        qDebug() << "[ImplementationClass] could not find method" << name << args;
-        return engine()->newObject();
-    }
-    */
 }
 
 QString
