@@ -20,11 +20,13 @@
 
 #include <smoke.h>
 
-class QByteArray;
+#include <QtCore/QVector>
+#include <QtCore/QByteArray>
+
 class QScriptContext;
 
 namespace SmokeQtScript
 {
-    QByteArray mungedArgs( QScriptContext* context );
+    QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
     void scriptArgumentsToSmoke( QScriptContext* context, Smoke::Stack args );
 }

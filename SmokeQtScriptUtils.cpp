@@ -37,23 +37,49 @@
 * - append  # for each Qt object passed as argument
 * - append ? for things like an array, or a hash, or an undefined value     
 */
-QByteArray 
-SmokeQtScript::mungedArgs( QScriptContext* context )
+QVector<QByteArray> 
+SmokeQtScript::mungedMethods( const QByteArray& nameFn, QScriptContext* context )
 {
-        QByteArray ret;
+        QVector<QByteArray> ret;
+        ret.append( nameFn );
+        
         for( int i = 0; i < context->argumentCount(); i++ )
         {
             QScriptValue val = context->argument( i );
             if( val.isNumber() || val.isBool() || val.isString() )
             {
-                ret += '$';
+                QVector<QByteArray> temp;
+                foreach (QByteArray mungedMethod, ret) {
+                    temp.append(mungedMethod + '$');
+                }
+                ret = temp;
             }
             else if( val.isArray() || val.isUndefined() )
             {
-                ret += '?';
+                QVector<QByteArray> temp;
+                foreach (QByteArray mungedMethod, ret) {
+                    temp.append(mungedMethod + '?');
+                }
+                ret = temp;
+            }
+            else if( val.isNull() )
+            {
+                QVector<QByteArray> temp;
+                foreach (QByteArray mungedMethod, ret) {
+                    temp.append(mungedMethod + '$');
+                    temp.append(mungedMethod + '?');
+                    temp.append(mungedMethod + '#');
+                }
+                ret = temp;
             }
             else
-                ret += '#';
+            {
+                QVector<QByteArray> temp;
+                foreach (QByteArray mungedMethod, ret) {
+                    temp.append(mungedMethod + '#');
+                }
+                ret = temp;
+            }
         }
         return ret;
 }
@@ -83,9 +109,10 @@ SmokeQtScript::scriptArgumentsToSmoke( QScriptContext* context, Smoke::Stack arg
             args[argsPos].s_voidp = new QString(val.toString());
             qDebug() << "string arg" << val.toString();
         }
-        else if( val.data().isVariant() && val.data().toVariant().canConvert<AttributedObject*>() )
+        else if( QtScript::SmokeInstance::isSmokeObject(val) )
         {
-            void* obj = val.data().toVariant().value<AttributedObject*>()->object;
+            QtScript::SmokeInstance * instance = QtScript::SmokeInstance::get(val);
+            void* obj = instance->value;
             args[argsPos].s_class = obj;
             qDebug() << "attributedobject" << obj;
         }

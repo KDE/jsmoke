@@ -54,7 +54,8 @@ void SmokeInstance::finalize(QScriptEngine *engine)
 
 bool SmokeInstance::isSmokeObject(const QScriptValue &object)
 {
-    return object.data().isVariant() && object.data().toVariant().canConvert<QtScript::SmokeInstance*>();
+    return  object.data().isVariant() 
+            && object.data().toVariant().canConvert<QtScript::SmokeInstance*>();
 }
 
 SmokeInstance * SmokeInstance::get(const QScriptValue &object) 

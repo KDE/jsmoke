@@ -45,6 +45,7 @@ public:
     virtual void finalize(QScriptEngine *engine);
     virtual ~SmokeInstance() {}
 
+    static bool isSmokeObject(const QScriptValue &object);
     static SmokeInstance *get(const QScriptValue &object);
 
 public:
