@@ -33,6 +33,31 @@
 #include <QScriptString>
 #include <QVariant>
 
+namespace QtScript {
+    
+void SmokeInstance::finalize(QScriptEngine *engine) 
+{
+    switch (ownership) {
+    case QScriptEngine::QtOwnership:
+        break;
+    case QScriptEngine::ScriptOwnership:
+//        if (value)
+//            engine->disposeQObject(value);
+        break;
+    case QScriptEngine::AutoOwnership:
+//        if (value && !value->parent())
+//            engine->disposeQObject(value);
+        break;
+    }
+}
+
+SmokeInstance * SmokeInstance::get(const QScriptValue &object) 
+{
+    return object.data().toVariant().value<QtScript::SmokeInstance*>();
+}
+
+}
+
 StaticClass::StaticClass( QScriptEngine* engine )
     : QScriptClass( engine )
     , m_protoClass( new ImplementationClass( engine ) )
@@ -127,10 +152,11 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
         
         QScriptValue proto = engine()->newObject( m_protoClass );
         
-        AttributedObject* attrObj = new AttributedObject();
-        attrObj->className = className;
-        attrObj->object = widget;
-        proto.setData( engine()->newVariant( QVariant::fromValue<AttributedObject*>( attrObj ) ) );
+        QtScript::SmokeInstance* attrObj = new QtScript::SmokeInstance();
+        attrObj->classId = classId;
+        attrObj->value = widget;
+        attrObj->ownership = QScriptEngine::ScriptOwnership;
+        proto.setData( engine()->newVariant( QVariant::fromValue<QtScript::SmokeInstance*>( attrObj ) ) );
         
         context->setThisObject(proto);
         return 15;

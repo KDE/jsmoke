@@ -22,16 +22,40 @@
 #define SAMPLECLASS_H
 
 #include <QScriptClass>
+#include <QScriptEngine>
 #include <smoke.h>
 
 //so that one instance of ImplementationClass can serve all objects
 //maybe this isn't worth it though
 struct AttributedObject
 {
-    QByteArray className;
-    void* object;
+     QByteArray className;
+     void* object;
 };
 Q_DECLARE_METATYPE( AttributedObject* )
+
+namespace QtScript {
+   
+// Here is a suggestion for an alternative class to AttributedObject, based on
+// ExtQObject::Instance in qscriptextqobject_p.h
+//
+class SmokeInstance {
+public:
+    SmokeInstance() : ownership(QScriptEngine::QtOwnership) { }
+    virtual void finalize(QScriptEngine *engine);
+    virtual ~SmokeInstance() {}
+
+    static SmokeInstance *get(const QScriptValue &object);
+
+public:
+    void * value;
+    QScriptEngine::ValueOwnership ownership;
+    Smoke::ModuleIndex classId;
+};
+
+}
+
+Q_DECLARE_METATYPE( QtScript::SmokeInstance* )
 
 class ImplementationClass;
 
