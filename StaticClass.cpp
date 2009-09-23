@@ -148,7 +148,7 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
         SmokeQtScript::scriptArgumentsToSmoke( context, stack );
         (*klass.classFn)(meth.method, 0, stack);
         void *object = stack[0].s_voidp;
-        
+        qDebug() << "instance created: " << object;
         Smoke::StackItem initializeInstanceStack[2];
         initializeInstanceStack[1].s_voidp = &g_binding;
         //0 is a special method to initaliaze an instance

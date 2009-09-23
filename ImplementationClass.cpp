@@ -138,11 +138,12 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
     QtScript::SmokeInstance * attrObj = QtScript::SmokeInstance::get(context->thisObject());
-    qDebug() << "callSmokeMethod" << nameFn << attrObj;
     Smoke * smoke = attrObj->classId.smoke;
     Smoke::ModuleIndex classId = attrObj->classId;
     Smoke::Class & klass = classId.smoke->classes[classId.index];
-    
+
+    qDebug() << "callSmokeMethod " << klass.className << "::" << nameFn << " instance: " << attrObj->value;
+
     qDebug() << "[ImplementationClass] property called with argumentCount of:" << context->argumentCount();
     QVector<Smoke::ModuleIndex> methodIds;
     QVector<QByteArray> mungedMethods = SmokeQtScript::mungedMethods( nameFn.toLatin1(), context );
@@ -192,6 +193,7 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     // carries on working
     if (candidates.count() == 1) {
         meth = candidates[0].smoke->methods[candidates[0].index];
+        qDebug() << "found a matching method meth: " << meth.method;
     } else {
         QVector<Smoke::ModuleIndex> matches = resolve(context, candidates);
         if (matches.count() == 0) {
@@ -205,7 +207,8 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     
     Smoke::StackItem args[context->argumentCount() + 1];
     SmokeQtScript::scriptArgumentsToSmoke( context, args );
-    (*klass.classFn)(meth.method, attrObj->value, args);
+    Smoke::ClassFn fn = smoke->classes[meth.classId].classFn;
+    (*fn)(meth.method, attrObj->value, args);
     //TODO: return value
    return QScriptValue();
 }
