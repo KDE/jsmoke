@@ -1,0 +1,6 @@
+2009-09-24  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a marshalling framework based on the PerlQt design. It doesn't work
+yet though.
+* Added a ChangeLog to the project, now it seems to be a bit more than a 
+prototype

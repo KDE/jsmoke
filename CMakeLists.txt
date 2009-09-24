@@ -9,7 +9,10 @@ set(qtscript-smoke_SRCS qtscript-smoke.cpp
     StaticClass.cpp
     ImplementationClass.cpp
     QtScriptSmokeBinding.cpp  
-    SmokeQtScriptUtils.cpp )
+    SmokeQtScriptUtils.cpp
+    methodcall.cpp
+    methodreturnvalue.cpp
+    handlers.cpp )
 qt4_automoc(${qtscript-smoke_SRCS})
 add_executable(qtscript-smoke ${qtscript-smoke_SRCS})
 target_link_libraries(qtscript-smoke ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTSCRIPT_LIBRARY} smokeqt )
