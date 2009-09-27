@@ -1,5 +1,7 @@
 /*
- *   Copyright 2008-2009 by Richard Dale <richard.j.dale@gmail.com>
+ *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
+
+ *   Based on the PerlQt marshalling code by Ashley Winters
 
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -17,28 +19,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "methodreturnvalue.h"
+#include "virtualmethodreturnvalue.h"
 
 namespace QtScript {
 
-MethodReturnValue::MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine) :
-    m_smoke(smoke), m_method(method), m_stack(stack), m_engine(engine)
+VirtualMethodReturnValue::VirtualMethodReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue) :
+    m_smoke(smoke), m_method(meth), m_stack(stack), m_returnValue(returnValue) 
 {
+    m_type.set(m_smoke, method().ret);
     Marshall::HandlerFn fn = getMarshallFn(type());
     (*fn)(this);
 }
 
 void
-MethodReturnValue::unsupported()
+VirtualMethodReturnValue::unsupported()
 {
-    qFatal("Cannot handle '%s' as return-type of %s::%s",
-           type().name(),
-           strcmp(m_smoke->className(method().classId), "QGlobalSpace") == 0 ? "" : m_smoke->className(method().classId),
-           m_smoke->methodNames[method().name] );
+    qFatal("Cannot handle '%s' as return-type of virtual method %s::%s",
+            type().name(),
+            m_smoke->className(method().classId),
+            m_smoke->methodNames[method().name] );
 }
 
 void
-MethodReturnValue::next() {}
+VirtualMethodReturnValue::next() {}
 
 }
 

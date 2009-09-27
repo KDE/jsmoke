@@ -20,6 +20,7 @@
 
 #include "qtscript-smoke.h"
 
+#include "marshall.h"
 #include "ImplementationClass.h"
 #include "StaticClass.h"
 #include "QtScriptSmokeBinding.h"
@@ -37,6 +38,8 @@ ImplementationClass* QtScriptSmoke::s_implClass = 0;
 QtScriptSmoke::QtScriptSmoke()
 {
     init_qt_Smoke();
+    QtScript::installHandlers(QtScript::Handlers);
+
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }
 

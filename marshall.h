@@ -24,7 +24,7 @@
 
 
 #include <qglobal.h>
-#include <QScriptValue>
+#include <QScriptEngine>
 
 #include <smoke.h>
 
@@ -105,6 +105,7 @@ public:
     virtual SmokeType type() = 0;
     virtual Action action() = 0;
     virtual Smoke::StackItem &item() = 0;
+    virtual QScriptEngine * engine() = 0;
     virtual QScriptValue var() = 0;
     virtual void unsupported() = 0;
     virtual Smoke *smoke() = 0;
@@ -129,13 +130,20 @@ public:
     virtual ~Marshall() {}
 };    
 
-Marshall::HandlerFn getMarshallFn(const SmokeType &type);
 
 struct TypeHandler {
     const char *name;
     Marshall::HandlerFn fn;
 };
 
+extern TypeHandler Handlers[];
+
+extern Q_DECL_EXPORT void installHandlers(TypeHandler * handler);
+extern Q_DECL_EXPORT Marshall::HandlerFn getMarshallFn(const SmokeType &type);
+
 }
 
 #endif
+
+// kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;
+

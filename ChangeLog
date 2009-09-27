@@ -1,3 +1,9 @@
+2009-09-27  Richard Dale  <richard.j.dale@gmail.com>
+
+* Add virtual method call marshallers
+* Began some implementation of the marshalling code for QScript to the Smoke
+stack
+
 2009-09-24  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a marshalling framework based on the PerlQt design. It doesn't work

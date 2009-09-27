@@ -12,6 +12,8 @@ set(qtscript-smoke_SRCS qtscript-smoke.cpp
     SmokeQtScriptUtils.cpp
     methodcall.cpp
     methodreturnvalue.cpp
+    virtualmethodcall.cpp
+    virtualmethodreturnvalue.cpp
     handlers.cpp )
 qt4_automoc(${qtscript-smoke_SRCS})
 add_executable(qtscript-smoke ${qtscript-smoke_SRCS})

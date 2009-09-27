@@ -22,17 +22,25 @@
 
 namespace QtScript {
 
-MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptValue * target, QScriptContext * context, int items) :
-    m_current(-1), m_smoke(smoke), m_method(method), m_target(target), m_obj(0), m_context(context), m_items(items), m_called(false)
+MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine) :
+    m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), m_called(false)
 {
+    m_target = m_context->thisObject();
+    if (QtScript::SmokeInstance::isSmokeObject(m_target)) {
+        m_instance = QtScript::SmokeInstance::get(m_target);
+    } else {
+        m_instance = 0;
+    }
+    
     m_args = m_smoke->argumentList + m_smoke->methods[m_method].args;
     m_items = m_smoke->methods[m_method].numArgs;
-    m_numItems = items;
-    m_stack = new Smoke::StackItem[items + 1];
-    // m_returnValue = m_sp;
+    m_stack = new Smoke::StackItem[m_items + 1];
 }
 
-MethodCall::~MethodCall() { delete[] m_stack; }
+MethodCall::~MethodCall() 
+{ 
+    delete[] m_stack; 
+}
 
 void MethodCall::unsupported()
 {
@@ -58,12 +66,12 @@ void MethodCall::callMethod()
     Smoke::ClassFn fn = m_smoke->classes[method().classId].classFn;
     void *ptr = 0;
 
-    if (m_obj != 0 && m_obj->value != 0) {
+    if (m_instance != 0 && m_instance->value != 0) {
         const Smoke::Class &cl = m_smoke->classes[method().classId];
 
-        ptr = m_obj->classId.smoke->cast(   m_obj->value,
-                                            m_obj->classId.index,
-                                            m_obj->classId.smoke->idClass(cl.className, true).index );
+        ptr = m_instance->classId.smoke->cast(  m_instance->value,
+                                                m_instance->classId.index,
+                                                m_instance->classId.smoke->idClass(cl.className, true).index );
     }
     m_items = -1;
     
@@ -73,12 +81,12 @@ void MethodCall::callMethod()
         Smoke::StackItem stack[2];
         // stack[1].s_class = qscript_modules[m_smoke].binding;
         fn(0, m_stack[0].s_voidp, stack);
-        // m_obj = allocm_smokeqyotom_objbject(true, m_smoke, method().classId, m_stack[0].s_voidp);
-        // (*SetSmokeObject)(m_target, m_obj);
-        // mapPointer(m_target, m_obj, m_obj->classId, 0);
+        // m_instance = allocm_smokeqyotom_instancebject(true, m_smoke, method().classId, m_stack[0].s_voidp);
+        // (*SetSmokeObject)(m_target, m_instance);
+        // mapPointer(m_target, m_instance, m_instance->classId, 0);
     } else if (isDestructor()) {
     } else {
-        QtScript::MethodReturnValue r(m_smoke, m_method, m_stack);
+        QtScript::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine);
     }
 }
 
@@ -86,13 +94,17 @@ void MethodCall::next()
 {
     int previous = m_current;
     m_current++;
-    while(!m_called && m_current < m_items) {
+    
+    while (!m_called && m_current < m_items) {
         Marshall::HandlerFn fn = getMarshallFn(type());
         (*fn)(this);
         m_current++;
     }
+    
     callMethod();
     m_current = previous;
 }
 
 }
+
+// kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;
