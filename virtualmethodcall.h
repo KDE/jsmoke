@@ -38,7 +38,7 @@ public:
     inline Marshall::Action action() { return Marshall::ToQScriptValue; }
     inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
     inline QScriptEngine * engine() { return m_engine; }
-    inline QScriptValue var() { return m_sp[m_current + 1]; }
+    inline QScriptValue var() { return m_valueList[m_current + 1]; }
     inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
     inline Smoke *smoke() { return m_smoke; }
     inline bool cleanup() { return false; }   // is this right?
@@ -56,7 +56,7 @@ private:
     QScriptValue m_overridenMethod;
     int m_current;
     Smoke::Index * m_args;
-    QScriptValueList m_sp;
+    QScriptValueList m_valueList;
     bool m_called;
 };
 

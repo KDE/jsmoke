@@ -75,6 +75,33 @@ QtScriptSmoke::output()
     QScriptValue includeFn = engine->newFunction( QtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
     
+    /*
+     Try timing this code with 'time ./qtscript-smoke'. On my slow netbook I got 
+     this time with the loop:
+     
+        real    0m3.916s
+        user    0m0.340s
+        sys     0m0.084s
+
+     Without the loop I got:
+     
+        real    0m3.295s
+        user    0m0.332s
+        sys     0m0.072s
+
+     So as far a I can see, creating the classes on startup is pretty cheap.
+     
+     -- Richard
+     
+    for (int i = 0; i < qt_Smoke->numClasses; i++) {
+        // printf("className: %s\n", qt_Smoke->classes[i].className);
+        
+        QScriptClass* sclass = new StaticClass(engine, qt_Smoke->classes[i].className, s_implClass);
+        QScriptValue classValue = engine->newObject(sclass);
+        engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
+    }
+    */
+
     qDebug() << "opening ../test.js";
     QFile testFile("../test.js");
     testFile.open( QFile::ReadOnly );

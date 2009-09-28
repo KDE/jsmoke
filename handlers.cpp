@@ -26,8 +26,7 @@ namespace QtScript {
 void
 marshall_basetype(Marshall *m)
 {
-    switch(m->type().elem()) {
-        
+    switch(m->type().element()) {        
     case Smoke::t_bool:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
@@ -42,7 +41,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            // m->var().s_bool = m->item().s_bool;
+            m->var() = QScriptValue(m->engine(), m->item().s_bool);
             break;
         default:
             m->unsupported();
@@ -53,10 +52,18 @@ marshall_basetype(Marshall *m)
     case Smoke::t_char:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
-            // m->item().s_char = m->var().s_char;
+        {
+            QScriptValue value = m->var();
+
+            if (value.isNull()) {
+                m->item().s_char = 0;
+            } else {
+                m->item().s_char = (char) value.toInt32();
+            }
             break;
+        }
         case Marshall::ToQScriptValue:
-            // m->var().s_char = m->item().s_char;
+            m->var() = QScriptValue(m->engine(), m->item().s_char);
             break;
         default:
             m->unsupported();
@@ -67,10 +74,18 @@ marshall_basetype(Marshall *m)
     case Smoke::t_uchar:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
-            // m->item().s_uchar = m->var().s_uchar;
+        {
+            QScriptValue value = m->var();
+
+            if (value.isNull()) {
+                m->item().s_uchar = 0;
+            } else {
+                m->item().s_uchar = (uchar) value.toUInt32();
+            }
             break;
+        }
         case Marshall::ToQScriptValue:
-            // m->var().s_uchar = m->item().s_uchar;
+            m->var() = QScriptValue(m->engine(), m->item().s_uchar);
             break;
         default:
             m->unsupported();
@@ -81,10 +96,18 @@ marshall_basetype(Marshall *m)
     case Smoke::t_short:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
-            // m->item().s_short = m->var().s_short;
+        {
+            QScriptValue value = m->var();
+
+            if (value.isNull()) {
+                m->item().s_short = 0;
+            } else {
+                m->item().s_short = (short) value.toInt32();
+            }
             break;
+        }
         case Marshall::ToQScriptValue:
-            // m->var().s_short = m->item().s_short;
+            m->var() = QScriptValue(m->engine(), m->item().s_short);
             break;
         default:
             m->unsupported();
@@ -106,7 +129,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            // m->var().s_ushort = m->item().s_ushort;
+            m->var() = QScriptValue(m->engine(), m->item().s_ushort);
             break;
         default:
             m->unsupported();
@@ -128,7 +151,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            // m->var().s_int = m->item().s_int;
+            m->var() = QScriptValue(m->engine(), m->item().s_int);
             break;
         default:
             m->unsupported();
@@ -150,7 +173,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            // m->var().s_uint = m->item().s_uint;
+            m->var() = QScriptValue(m->engine(), m->item().s_uint);
             break;
         default:
             m->unsupported();
@@ -161,10 +184,18 @@ marshall_basetype(Marshall *m)
     case Smoke::t_long:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
-            // m->item().s_long = m->var().s_long;
+        {
+            QScriptValue value = m->var();
+
+            if (value.isNull()) {
+                m->item().s_long = 0;
+            } else {
+                m->item().s_long = (long) value.toInt32();
+            }
             break;
+        }
         case Marshall::ToQScriptValue:
-            // m->var().s_long = m->item().s_long;
+            m->var() = QScriptValue(m->engine(), (int) m->item().s_long);
             break;
         default:
             m->unsupported();
@@ -175,10 +206,18 @@ marshall_basetype(Marshall *m)
     case Smoke::t_ulong:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
-            // m->item().s_ulong = m->var().s_ulong;
+        {
+            QScriptValue value = m->var();
+
+            if (value.isNull()) {
+                m->item().s_ulong = 0;
+            } else {
+                m->item().s_ulong = (ulong) value.toUInt32();
+            }
             break;
+        }
         case Marshall::ToQScriptValue:
-            // m->var().s_ulong = m->item().s_ulong;
+            m->var() = QScriptValue(m->engine(), (uint) m->item().s_ulong);
             break;
         default:
             m->unsupported();
@@ -195,12 +234,12 @@ marshall_basetype(Marshall *m)
             if (value.isNull()) {
                 m->item().s_float = 0.0;
             } else {
-                m->item().s_float = (float) value.toInteger();
+                m->item().s_float = (float) value.toNumber();
             }
             break;
         }
         case Marshall::ToQScriptValue:
-            // m->var().s_float = m->item().s_float;
+            m->var() = QScriptValue(m->engine(), m->item().s_float);
             break;
         default:
             m->unsupported();
@@ -217,12 +256,12 @@ marshall_basetype(Marshall *m)
             if (value.isNull()) {
                 m->item().s_double = 0.0;
             } else {
-                m->item().s_double = value.toInteger();
+                m->item().s_double = value.toNumber();
             }
             break;
         }
         case Marshall::ToQScriptValue:
-            // m->var().s_double = m->item().s_double;
+            m->var() = QScriptValue(m->engine(), m->item().s_double);
             break;
         default:
             m->unsupported();
@@ -233,10 +272,18 @@ marshall_basetype(Marshall *m)
     case Smoke::t_enum:
         switch(m->action()) {
         case Marshall::FromQScriptValue:
-            // m->item().s_enum = m->var().s_enum;
+        {
+            QScriptValue value = m->var();
+
+            if (value.isNull()) {
+                m->item().s_enum = 0;
+            } else {
+                m->item().s_enum = value.toUInt32();
+            }
             break;
+        }
         case Marshall::ToQScriptValue:
-            // m->var().s_enum = m->item().s_enum;
+            m->var() = QScriptValue(m->engine(), (uint) m->item().s_enum);
             break;
         default:
             m->unsupported();
@@ -324,6 +371,12 @@ static void marshall_QString(Marshall *m) {
  
     case Marshall::ToQScriptValue:
     {
+        if (m->item().s_voidp == 0) {
+            m->var() = m->engine()->nullValue();
+            return;
+        }
+        
+        m->var() = QScriptValue(m->engine(), *(static_cast<QString*>(m->item().s_voidp)));
         break;
     }
     
@@ -351,11 +404,11 @@ void installHandlers(TypeHandler * handler) {
 }
 
 Marshall::HandlerFn getMarshallFn(const SmokeType &type) {
-    if (type.elem()) {
+    if (type.element() != 0) {
         return marshall_basetype;
     }
     
-    if (!type.name()) {
+    if (type.name() == 0) {
         return marshall_void;
     }
     

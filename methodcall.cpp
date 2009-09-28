@@ -19,6 +19,7 @@
 
 #include "methodcall.h"
 #include "methodreturnvalue.h"
+#include "QtScriptSmokeBinding.h"
 
 namespace QtScript {
 
@@ -78,9 +79,9 @@ void MethodCall::callMethod()
     (*fn)(method().method, ptr, m_stack);
     
     if (isConstructor()) {
-        Smoke::StackItem stack[2];
-        // stack[1].s_class = qscript_modules[m_smoke].binding;
-        fn(0, m_stack[0].s_voidp, stack);
+        Smoke::StackItem initializeInstanceStack[2];
+        initializeInstanceStack[1].s_voidp = &g_binding;
+        fn(0, m_stack[0].s_voidp, initializeInstanceStack);
         // m_instance = allocm_smokeqyotom_instancebject(true, m_smoke, method().classId, m_stack[0].s_voidp);
         // (*SetSmokeObject)(m_target, m_instance);
         // mapPointer(m_target, m_instance, m_instance->classId, 0);

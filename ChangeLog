@@ -1,3 +1,10 @@
+2009-09-28  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added some more marshallers, now complete all primitve types and strings.
+* Timed startup with creating 500 'StaticClass' classes, and found the time
+taken to be negligable. Left the code in qtscript-smoke.cpp commented out, so
+that Ian can try.
+
 2009-09-27  Richard Dale  <richard.j.dale@gmail.com>
 
 * Add virtual method call marshallers

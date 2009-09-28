@@ -61,6 +61,14 @@ Q_DECLARE_METATYPE( QtScript::SmokeInstance* )
 class ImplementationClass;
 
 //I'm open to a better name :)
+//
+// How about MetaType, MetaClass, MetaObject or Meta in namespace QtScript:: or QtScript::Smoke ?
+// A suggestion for another name for ImplementationClass is QtScript::Smoke::Object.
+// My preference is for QtScript::Smoke::MetaObject and QtScript::Smoke::Object, as using
+// 'Class' in the name, when JavaScript doesn't have classes doesn't seem quite right.
+//
+// -- Richard
+//
 //!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
 class StaticClass : public QScriptClass
 {

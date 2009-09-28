@@ -58,7 +58,7 @@ public:
     Smoke::Index typeId() const { return m_id; }
     const Smoke::Type &type() const { return *m_type; }
     unsigned short flags() const { return m_type->flags; }
-    unsigned short elem() const { return m_type->flags & Smoke::tf_elem; }
+    unsigned short element() const { return m_type->flags & Smoke::tf_elem; }
     const char *name() const { return m_type->name; }
     Smoke::Index classId() const { return m_type->classId; }
 
@@ -68,7 +68,7 @@ public:
     bool isRef() const { return ((flags() & Smoke::tf_ref) == Smoke::tf_ref); }
     bool isConst() const { return (flags() & Smoke::tf_const); }
     bool isClass() const {
-        return elem() == Smoke::t_class && classId() != 0;
+        return element() == Smoke::t_class && classId() != 0;
     }
 
     bool operator==(const SmokeType &b) const {

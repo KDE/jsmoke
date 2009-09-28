@@ -29,7 +29,7 @@ VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Sta
      m_overridenMethod(overridenMethod), m_current(-1), m_called(false) 
 {
     m_engine = m_obj.engine();
-    // m_sp.resize(method().numArgs + 1);
+    // m_valueList.resize(method().numArgs + 1);
     m_args = m_smoke->argumentList + method().args;
 }
 
@@ -51,21 +51,23 @@ VirtualMethodCall::callMethod() {
     }
     
     m_called = true;
-    m_overridenMethod.call(m_obj, m_sp);
-    VirtualMethodReturnValue result(m_smoke, m_method, m_stack, m_sp[0]);
+    QScriptValue value = m_overridenMethod.call(m_obj, m_valueList);
+    VirtualMethodReturnValue result(m_smoke, m_method, m_stack, value);
 }
 
 void
 VirtualMethodCall::next() {
-    int oldcur = m_current;
+    int previous = m_current;
     m_current++;
+    
     while(!m_called && m_current < method().numArgs) {
         Marshall::HandlerFn fn = getMarshallFn(type());
         (*fn)(this);
         m_current++;
     }
+ 
     callMethod();
-    m_current = oldcur;
+    m_current = previous;
 }
 
 }
