@@ -63,6 +63,11 @@ SmokeInstance * SmokeInstance::get(const QScriptValue &object)
     return object.data().toVariant().value<QtScript::SmokeInstance*>();
 }
 
+void SmokeInstance::set(QScriptValue &object, SmokeInstance * instance)
+{
+    object.setData(object.engine()->newVariant(QVariant::fromValue<QtScript::SmokeInstance*>(instance)));        
+}
+
 }
 
 StaticClass::StaticClass( QScriptEngine* engine, const QByteArray& className, ImplementationClass* implClass )

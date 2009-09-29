@@ -47,6 +47,7 @@ public:
 
     static bool isSmokeObject(const QScriptValue &object);
     static SmokeInstance *get(const QScriptValue &object);
+    static void set(QScriptValue &object, SmokeInstance * instance);
 
 public:
     void * value;

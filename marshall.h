@@ -24,7 +24,7 @@
 
 
 #include <qglobal.h>
-#include <QScriptEngine>
+#include <QtScript/QScriptEngine>
 
 #include <smoke.h>
 

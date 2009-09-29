@@ -1,3 +1,7 @@
+2009-09-29  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a global hash to map C++ pointers onto the corresponding QScriptValues
+
 2009-09-28  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added some more marshallers, now complete all primitve types and strings.

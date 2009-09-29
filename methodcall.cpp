@@ -1,5 +1,5 @@
 /*
- *   Copyright 2008-2009 by Richard Dale <richard.j.dale@gmail.com>
+ *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
 
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -20,6 +20,10 @@
 #include "methodcall.h"
 #include "methodreturnvalue.h"
 #include "QtScriptSmokeBinding.h"
+#include "qtscript-smoke.h"
+#include "global.h"
+
+#include <QtScript/QScriptEngine>
 
 namespace QtScript {
 
@@ -81,10 +85,18 @@ void MethodCall::callMethod()
     if (isConstructor()) {
         Smoke::StackItem initializeInstanceStack[2];
         initializeInstanceStack[1].s_voidp = &g_binding;
-        fn(0, m_stack[0].s_voidp, initializeInstanceStack);
-        // m_instance = allocm_smokeqyotom_instancebject(true, m_smoke, method().classId, m_stack[0].s_voidp);
-        // (*SetSmokeObject)(m_target, m_instance);
-        // mapPointer(m_target, m_instance, m_instance->classId, 0);
+        fn(0, m_stack[0].s_class, initializeInstanceStack);
+        
+        m_instance = new QtScript::SmokeInstance();
+        m_instance->classId.smoke = m_smoke;
+        m_instance->classId.index = method().classId;
+        m_instance->value = m_stack[0].s_class;
+        m_instance->ownership = QScriptEngine::ScriptOwnership;
+        
+        QScriptValue proto = engine()->newObject(QtScriptSmoke::s_implClass); 
+        QtScript::SmokeInstance::set(proto, m_instance);
+        m_context->setThisObject(proto);
+        QtScript::Global::mapPointer(new QScriptValue(proto), m_instance, m_instance->classId.index, 0);
     } else if (isDestructor()) {
     } else {
         QtScript::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine);

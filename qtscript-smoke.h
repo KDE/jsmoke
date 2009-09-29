@@ -22,8 +22,8 @@
 #define qtscript_smoke_H
 
 #include <QObject>
+#include "ImplementationClass.h"
 
-class ImplementationClass;
 class QScriptContext;
 class QScriptEngine;
 class QScriptValue;
@@ -34,11 +34,11 @@ class QtScriptSmoke : public QObject
     public:
         QtScriptSmoke();
         virtual ~QtScriptSmoke();
+        static ImplementationClass* s_implClass;
     private slots:
         void output();
     private:
         static QScriptValue includeQtClass(QScriptContext *context, QScriptEngine* engine);
-        static ImplementationClass* s_implClass;
 };
 
 #endif // qtscript-smoke_H
