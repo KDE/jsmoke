@@ -28,15 +28,15 @@ namespace QtScript {
     namespace Global {
             
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
-Q_GLOBAL_STATIC(QScriptValuesMap, g_qscriptValues)
+Q_GLOBAL_STATIC(QScriptValuesMap, qscriptValues)
 
 QScriptValue * 
 getScriptValue(void *ptr) 
 {
-    if (!g_qscriptValues() || !g_qscriptValues()->contains(ptr)) {
+    if (!qscriptValues() || !qscriptValues()->contains(ptr)) {
         return 0;
     } else {
-        return g_qscriptValues()->operator[](ptr);
+        return qscriptValues()->operator[](ptr);
     }
 }
 
@@ -47,9 +47,9 @@ unmapPointer(QtScript::SmokeInstance * instance, Smoke::Index classId, void *las
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
     if (ptr != lastptr) {
         lastptr = ptr;
-        if (g_qscriptValues() && g_qscriptValues()->contains(ptr)) {
-            QScriptValue * obj = g_qscriptValues()->operator[](ptr);        
-            g_qscriptValues()->remove(ptr);
+        if (qscriptValues() && qscriptValues()->contains(ptr)) {
+            QScriptValue * obj = qscriptValues()->operator[](ptr);        
+            qscriptValues()->remove(ptr);
         }
     }
 
@@ -72,7 +72,7 @@ mapPointer(QScriptValue * obj, QtScript::SmokeInstance * instance, Smoke::Index 
      
     if (ptr != lastptr) {
         lastptr = ptr;     
-        g_qscriptValues()->insert(ptr, obj);
+        qscriptValues()->insert(ptr, obj);
     }
     
     for (   Smoke::Index * parent = smoke->inheritanceList + smoke->classes[classId].parents; 

@@ -4,7 +4,8 @@
 to tell if the method has been overriden or not.
 * Added some debugging enum values to control debugging areas, and switch 
 debugging on
-
+* Unmap the pointer for a C++ instance which has been deleted
+ 
 2009-09-29  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a global hash to map C++ pointers onto the corresponding QScriptValues

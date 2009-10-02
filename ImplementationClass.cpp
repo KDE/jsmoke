@@ -210,16 +210,6 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     SmokeQtScript::scriptArgumentsToSmoke( context, args );
     Smoke::ClassFn fn = smoke->classes[meth.classId].classFn;
     (*fn)(meth.method, attrObj->value, args);
-    if (nameFn == "show") {
-        printf("Found a show method\n");
-        Smoke::ModuleIndex ix = candidates[0];
-        for (int count = 0; count < 10000000; count++) {
-//            ((QWidget*)attrObj->value)->show();
-            meth = smoke->methods[ix.index];
-            fn = smoke->classes[meth.classId].classFn;
-            (*fn)(meth.method, attrObj->value, args);
-        }    
-    }
     //TODO: return value
    return QScriptValue();
 }

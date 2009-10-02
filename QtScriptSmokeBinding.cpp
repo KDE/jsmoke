@@ -35,16 +35,18 @@ QtScriptSmokeBinding::QtScriptSmokeBinding( Smoke* s)
 
 char* QtScriptSmokeBinding::className(Smoke::Index classId)
 {
-    qDebug() << "QtScriptSmokeBinding::className" << classId;
-    return (char *) smoke->classes[classId].className;
+    qDebug() << "QtScriptSmokeBinding::className " << smoke->className(classId);
+    return (char *) smoke->className(classId);
 }
 
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
 bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
 {
-    //TODO: we're going to have to keep a hash<void*, QScriptValue> and then query
-    //the scriptvalue to see if the user has overridden a virtual method
     QScriptValue * obj = QtScript::Global::getScriptValue(ptr);
+    if (obj == 0) {
+        return false;
+    }
+    
     QtScript::SmokeInstance * instance = QtScript::SmokeInstance::get(*obj);
 
     if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
@@ -83,10 +85,21 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     return true;
 }
 
-void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* obj)
+void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* ptr)
 {
-    //TODO: memory management of any sort :D
-    qDebug() << "QtScriptSmokeBinding::deleted" << classId << obj;
+    QScriptValue * obj = QtScript::Global::getScriptValue(ptr);
+    QtScript::SmokeInstance * instance = QtScript::SmokeInstance::get(*obj);
+    
+    if (QtScript::Debug::DoDebug & QtScript::Debug::GC) {
+        qWarning("%p->~%s()", ptr, smoke->className(classId));
+    }
+    
+    if (instance == 0 || instance->value == 0) {
+        return;
+    }
+    
+    QtScript::Global::unmapPointer(instance, instance->classId.index, 0);
+    instance->value = 0;
     return;
 }
 
