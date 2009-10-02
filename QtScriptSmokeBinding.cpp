@@ -21,6 +21,10 @@
 #include "QtScriptSmokeBinding.h"
 
 #include <QtDebug>
+#include <QtScript/QScriptValue>
+
+#include "global.h"
+#include "virtualmethodcall.h"
 
 QtScriptSmokeBinding::QtScriptSmokeBinding( Smoke* s)
     : SmokeBinding( s )
@@ -32,16 +36,51 @@ QtScriptSmokeBinding::QtScriptSmokeBinding( Smoke* s)
 char* QtScriptSmokeBinding::className(Smoke::Index classId)
 {
     qDebug() << "QtScriptSmokeBinding::className" << classId;
-    //TODO: QtScript names should match the C++ names
-    return "someName";
+    return (char *) smoke->classes[classId].className;
 }
 
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
-bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract)
+bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
 {
     //TODO: we're going to have to keep a hash<void*, QScriptValue> and then query
     //the scriptvalue to see if the user has overridden a virtual method
+    QScriptValue * obj = QtScript::Global::getScriptValue(ptr);
+    QtScript::SmokeInstance * instance = QtScript::SmokeInstance::get(*obj);
+
+    if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
+        Smoke::Method & meth = smoke->methods[method];
+        QByteArray signature(smoke->methodNames[meth.name]);
+        signature += "(";
+            for (int i = 0; i < meth.numArgs; i++) {
+        if (i != 0) signature += ", ";
+            signature += smoke->types[smoke->argumentList[meth.args + i]].name;
+        }
+        signature += ")";
+        if (meth.flags & Smoke::mf_const) {
+            signature += " const";
+        }
+        qWarning(   "module: %s virtual %p->%s::%s called", 
+                    smoke->moduleName(),
+                    ptr,
+                    smoke->classes[smoke->methods[method].classId].className,
+                    (const char *) signature );
+    }
+
+    if (instance == 0) {
+        if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual)   // if not in global destruction
+            qWarning("Cannot find object for virtual method %p -> %p", ptr, &obj);
+        return false;
+    }
+    const char *methodName = smoke->methodNames[smoke->methods[method].name];
+    
+    // If the virtual method hasn't been overriden, just call the C++ one.
+    // So how can we tell whether or not the method has been overriden in QtScript?
     return false;
+
+    QScriptValue overridenMethod = obj->property(methodName);    
+    QtScript::VirtualMethodCall call(smoke, method, args, *obj, overridenMethod);
+    call.next();
+    return true;
 }
 
 void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* obj)

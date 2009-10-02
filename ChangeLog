@@ -1,3 +1,10 @@
+2009-10-02  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added code to call an overriden virtual method. Not working yet, not sure how
+to tell if the method has been overriden or not.
+* Added some debugging enum values to control debugging areas, and switch 
+debugging on
+
 2009-09-29  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a global hash to map C++ pointers onto the corresponding QScriptValues

@@ -24,6 +24,22 @@
 #include "StaticClass.h"
 
 namespace QtScript {
+    namespace Debug {
+        
+        extern Q_DECL_EXPORT int DoDebug;
+
+        enum QtDebugChannel {
+            None = 0x00,
+            Ambiguos = 0x01,
+            Property = 0x02,
+            Calls = 0x04,
+            GC = 0x08,
+            Virtual = 0x10,
+            Verbose = 0x20
+        };
+
+    }
+
     namespace Global {
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         extern Q_DECL_EXPORT void unmapPointer( QtScript::SmokeInstance * instance, 

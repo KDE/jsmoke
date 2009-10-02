@@ -21,6 +21,10 @@
 #include <QtCore/QHash>
 
 namespace QtScript {
+    namespace Debug {
+        int DoDebug = 0;
+    }
+    
     namespace Global {
             
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
