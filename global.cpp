@@ -26,7 +26,9 @@ namespace QtScript {
     }
     
     namespace Global {
-            
+
+QtScriptSmokeBinding binding;
+
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
 Q_GLOBAL_STATIC(QScriptValuesMap, qscriptValues)
 

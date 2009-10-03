@@ -22,6 +22,7 @@
 
 #include <QtScript/QScriptValue>
 #include "StaticClass.h"
+#include "QtScriptSmokeBinding.h"
 
 namespace QtScript {
     namespace Debug {
@@ -41,6 +42,7 @@ namespace QtScript {
     }
 
     namespace Global {
+        extern QtScriptSmokeBinding binding;
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         extern Q_DECL_EXPORT void unmapPointer( QtScript::SmokeInstance * instance, 
                                                 Smoke::Index classId, 

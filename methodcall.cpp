@@ -80,11 +80,13 @@ void MethodCall::callMethod()
     }
     m_items = -1;
     
+    printf("About to call method\n");
     (*fn)(method().method, ptr, m_stack);
     
     if (isConstructor()) {
+        printf("Calling a constructor for classId : %d\n", method().classId);
         Smoke::StackItem initializeInstanceStack[2];
-        initializeInstanceStack[1].s_voidp = &g_binding;
+        initializeInstanceStack[1].s_voidp = &QtScript::Global::binding;
         fn(0, m_stack[0].s_class, initializeInstanceStack);
         
         m_instance = new QtScript::SmokeInstance();
@@ -99,7 +101,8 @@ void MethodCall::callMethod()
         QtScript::Global::mapPointer(new QScriptValue(proto), m_instance, m_instance->classId.index, 0);
     } else if (isDestructor()) {
     } else {
-        QtScript::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine);
+        m_returnValue = m_engine->newObject();
+        QtScript::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
     }
 }
 

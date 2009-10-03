@@ -24,6 +24,7 @@
 #include "ImplementationClass.h"
 #include "StaticClass.h"
 #include "QtScriptSmokeBinding.h"
+#include "global.h"
 
 #include "smoke/qt_smoke.h"
 
@@ -38,6 +39,7 @@ ImplementationClass* QtScriptSmoke::s_implClass = 0;
 QtScriptSmoke::QtScriptSmoke()
 {
     init_qt_Smoke();
+    QtScript::Global::binding = QtScriptSmokeBinding(qt_Smoke);
     QtScript::installHandlers(QtScript::Handlers);
 
     QTimer::singleShot( 0, this, SLOT( output() ) );

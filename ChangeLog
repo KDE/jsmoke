@@ -1,3 +1,12 @@
+2009-10-03  Richard Dale  <richard.j.dale@gmail.com>
+
+* Method calls are now working via QtScript::MethodCall and the Smoke 
+marshalling framework is working. So the basics are looking pretty good, just
+the overloaded method resolution code needs finishing
+* The virtual method overriding code is quite close to working, and we just 
+need a way to determine if a method has been overloaded in QtScript, which is
+probably obvious, but needs investigating.
+
 2009-10-02  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added code to call an overriden virtual method. Not working yet, not sure how

@@ -29,8 +29,11 @@ VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Sta
      m_overridenMethod(overridenMethod), m_current(-1), m_called(false) 
 {
     m_engine = m_obj.engine();
-    // m_valueList.resize(method().numArgs + 1);
     m_args = m_smoke->argumentList + method().args;
+    
+    for (int count = 0; count < method().numArgs; count++) {
+        m_valueList << m_engine->newObject();
+    }
 }
 
 VirtualMethodCall::~VirtualMethodCall() {

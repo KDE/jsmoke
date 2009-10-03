@@ -27,12 +27,11 @@
 class QtScriptSmokeBinding : public SmokeBinding
 {
     public:
-        QtScriptSmokeBinding( Smoke* s );
+        QtScriptSmokeBinding() : SmokeBinding(0) {}
+        QtScriptSmokeBinding(Smoke* s);
         virtual char* className(Smoke::Index classId);
         virtual bool callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract = false);
         virtual void deleted(Smoke::Index classId, void* obj);
 };
-
-static QtScriptSmokeBinding g_binding( qt_Smoke );
 
 #endif // QTSCRIPTSMOKEBINDING_H

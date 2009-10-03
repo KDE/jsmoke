@@ -28,5 +28,4 @@ class QScriptContext;
 namespace SmokeQtScript
 {
     QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
-    void scriptArgumentsToSmoke( QScriptContext* context, Smoke::Stack args );
 }

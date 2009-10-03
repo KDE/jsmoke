@@ -40,9 +40,10 @@ public:
     inline QScriptEngine * engine() { return m_engine; }
     inline QScriptValue var() {
         if (m_current < 0) {
-            return *m_returnValue;
+            return m_returnValue;
         }
-        return m_context->argument(m_current + 1);
+        printf("About to return an arg at %d\n", m_current);
+        return m_context->argument(m_current);
     }
     inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
     inline Smoke *smoke() { return m_smoke; }
@@ -68,7 +69,7 @@ private:
     QScriptValue m_target;
     SmokeInstance * m_instance;
     int m_items;
-    QScriptValue * m_returnValue;
+    QScriptValue m_returnValue;
     bool m_called;
 };
 

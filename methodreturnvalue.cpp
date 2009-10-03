@@ -21,8 +21,8 @@
 
 namespace QtScript {
 
-MethodReturnValue::MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine) :
-    m_smoke(smoke), m_method(method), m_stack(stack), m_engine(engine)
+MethodReturnValue::MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue) :
+    m_smoke(smoke), m_method(method), m_stack(stack), m_engine(engine), m_returnValue(returnValue)
 {
     Marshall::HandlerFn fn = getMarshallFn(type());
     (*fn)(this);

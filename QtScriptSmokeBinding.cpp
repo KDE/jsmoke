@@ -26,16 +26,13 @@
 #include "global.h"
 #include "virtualmethodcall.h"
 
-QtScriptSmokeBinding::QtScriptSmokeBinding( Smoke* s)
-    : SmokeBinding( s )
-{
-    
-}
-
+QtScriptSmokeBinding::QtScriptSmokeBinding(Smoke* s)
+    : SmokeBinding(s) { }
 
 char* QtScriptSmokeBinding::className(Smoke::Index classId)
 {
     qDebug() << "QtScriptSmokeBinding::className " << smoke->className(classId);
+    // What about '::' scope operators in className paths in JavaScript?
     return (char *) smoke->className(classId);
 }
 
@@ -53,14 +50,21 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
         Smoke::Method & meth = smoke->methods[method];
         QByteArray signature(smoke->methodNames[meth.name]);
         signature += "(";
-            for (int i = 0; i < meth.numArgs; i++) {
-        if (i != 0) signature += ", ";
+        
+        for (int i = 0; i < meth.numArgs; i++) {
+            if (i != 0) {
+                signature += ", ";
+            }
+            
             signature += smoke->types[smoke->argumentList[meth.args + i]].name;
         }
+        
         signature += ")";
-        if (meth.flags & Smoke::mf_const) {
+        
+        if ((meth.flags & Smoke::mf_const) != 0) {
             signature += " const";
         }
+        
         qWarning(   "module: %s virtual %p->%s::%s called", 
                     smoke->moduleName(),
                     ptr,
@@ -69,10 +73,13 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     }
 
     if (instance == 0) {
-        if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual)   // if not in global destruction
+        if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
             qWarning("Cannot find object for virtual method %p -> %p", ptr, &obj);
+        }
+        
         return false;
     }
+    
     const char *methodName = smoke->methodNames[smoke->methods[method].name];
     
     // If the virtual method hasn't been overriden, just call the C++ one.
@@ -80,8 +87,8 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     return false;
 
     QScriptValue overridenMethod = obj->property(methodName);    
-    QtScript::VirtualMethodCall call(smoke, method, args, *obj, overridenMethod);
-    call.next();
+    QtScript::VirtualMethodCall methodCall(smoke, method, args, *obj, overridenMethod);
+    methodCall.next();
     return true;
 }
 

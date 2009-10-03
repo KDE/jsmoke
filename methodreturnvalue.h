@@ -30,7 +30,7 @@ namespace QtScript {
 class Q_DECL_EXPORT MethodReturnValue : public Marshall {
     
 public:
-    MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine);
+    MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue);
 
     inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
     inline SmokeType type() { return SmokeType(m_smoke, method().ret); }
@@ -47,9 +47,9 @@ public:
 private:
     Smoke *m_smoke;
     Smoke::Index m_method;
+    Smoke::Stack m_stack;
     QScriptEngine * m_engine;
     QScriptValue * m_returnValue;
-    Smoke::Stack m_stack;
 };
 
 }

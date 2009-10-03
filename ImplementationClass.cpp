@@ -22,6 +22,7 @@
 
 #include "SmokeQtScriptUtils.h"
 #include "StaticClass.h"
+#include "methodcall.h"
 
 #include <smoke/qt_smoke.h>
 
@@ -189,12 +190,12 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     }
 
     // Really every call should go through resulve() even if there is only one
-    // candidate, to check that the arguments match. However, special case the single
+    // candidate, to check that the arguments match. However, assume the single
     // candidate case while resolve() is being finished, so that the test example 
     // carries on working
     if (candidates.count() == 1) {
-        meth = candidates[0].smoke->methods[candidates[0].index];
-        qDebug() << "found a matching method meth: " << meth.method;
+        // meth = candidates[0].smoke->methods[candidates[0].index];
+        qDebug() << "found a matching method meth: " << candidates[0].index;
     } else {
         QVector<Smoke::ModuleIndex> matches = resolve(context, candidates);
         if (matches.count() == 0) {
@@ -202,16 +203,13 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
         } else if (matches.count() > 1) {
             // Error
         } else {
-            meth = matches[0].smoke->methods[matches[0].index];
+            // Good, found a single match in matches[0]
         }
     }
     
-    Smoke::StackItem args[context->argumentCount() + 1];
-    SmokeQtScript::scriptArgumentsToSmoke( context, args );
-    Smoke::ClassFn fn = smoke->classes[meth.classId].classFn;
-    (*fn)(meth.method, attrObj->value, args);
-    //TODO: return value
-   return QScriptValue();
+    QtScript::MethodCall methodCall(smoke, candidates[0].index, context, engine);
+    methodCall.next();
+    return methodCall.var();
 }
 
 QScriptValue

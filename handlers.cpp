@@ -331,7 +331,8 @@ marshall_basetype(Marshall *m)
             m->unsupported();
             break;
         }
-    
+        break;
+        
     default:
         m->unsupported();
         break;
@@ -354,7 +355,7 @@ static void marshall_QString(Marshall *m) {
         } else {
             s = new QString(m->var().toString());
         }
-
+        printf("Marshalled a QString: %s\n", s->toLatin1().constData());
         m->item().s_voidp = s;
         m->next();
     

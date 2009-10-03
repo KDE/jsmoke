@@ -22,6 +22,7 @@
 
 #include "ImplementationClass.h"
 #include "QtScriptSmokeBinding.h"
+#include "methodcall.h"
 
 #include <smoke/qt_smoke.h>
 
@@ -141,34 +142,17 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
         
         const char* className = m_className;
         Smoke::ModuleIndex classId = qt_Smoke->findClass(className);
-        qDebug() << classId.index;
+        qDebug() << "classId: " << classId.index;
         Smoke::Class klass = classId.smoke->classes[ classId.index ];
         
         QVector<QByteArray> mungedMethods = SmokeQtScript::mungedMethods( className, context );
         Smoke::ModuleIndex methId = qt_Smoke->findMethod(className, mungedMethods[0]);
         Smoke::Method meth = methId.smoke->methods[methId.smoke->methodMaps[methId.index].method];
-         qDebug() << "found method " <<  qt_Smoke->methodNames[meth.name] << meth.args << mungedMethods[0];
-         qDebug() << classId.index << methId.index;
-        Smoke::StackItem stack[context->argumentCount() + 1];
-        SmokeQtScript::scriptArgumentsToSmoke( context, stack );
-        (*klass.classFn)(meth.method, 0, stack);
-        void *object = stack[0].s_voidp;
-        qDebug() << "instance created: " << object;
-        Smoke::StackItem initializeInstanceStack[2];
-        initializeInstanceStack[1].s_voidp = &g_binding;
-        //0 is a special method to initaliaze an instance
-        (*klass.classFn)(0, object, initializeInstanceStack);
-        
-        
-        QScriptValue proto = engine()->newObject( m_implClass );
-        
-        QtScript::SmokeInstance* attrObj = new QtScript::SmokeInstance();
-        attrObj->classId = classId;
-        attrObj->value = object;
-        attrObj->ownership = QScriptEngine::ScriptOwnership;
-        proto.setData( engine()->newVariant( QVariant::fromValue<QtScript::SmokeInstance*>( attrObj ) ) );
-        
-        context->setThisObject(proto);
+        qDebug() << "found method " <<  qt_Smoke->methodNames[meth.name] << meth.args << mungedMethods[0] << meth.classId;
+        qDebug() << "classId index" << classId.index << "index" << methId.index;
+         
+        QtScript::MethodCall methodCall(qt_Smoke, methId.smoke->methodMaps[methId.index].method, context, context->engine());
+        methodCall.next();
         return 15;
     }
 }
