@@ -38,20 +38,15 @@ public:
     inline Marshall::Action action() { return Marshall::FromQScriptValue; }
     inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
     inline QScriptEngine * engine() { return m_engine; }
-    inline QScriptValue var() {
+    inline QScriptValue * var() {
         if (m_current < 0) {
-            return m_returnValue;
+            return &m_returnValue;
         }
-        printf("About to return an arg at %d\n", m_current);
-        return m_context->argument(m_current);
+        
+        return &(m_valueList[m_current]);
     }
-    inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
     inline Smoke *smoke() { return m_smoke; }
     inline bool cleanup() { return true; }
-
-    inline bool isConstructor() { return method().flags & Smoke::mf_ctor; }
-    inline bool isDestructor() { return method().flags & Smoke::mf_dtor; }
-    inline bool isStatic() { return method().flags & Smoke::mf_static; }
 
     void unsupported();
 
@@ -68,9 +63,10 @@ private:
     QScriptEngine * m_engine;
     QScriptValue m_target;
     SmokeInstance * m_instance;
-    int m_items;
     QScriptValue m_returnValue;
+    QScriptValueList m_valueList;
     bool m_called;
+    Smoke::Method & m_methodRef;
 };
 
 }

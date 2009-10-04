@@ -26,6 +26,7 @@ MethodReturnValue::MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::S
 {
     Marshall::HandlerFn fn = getMarshallFn(type());
     (*fn)(this);
+    printf("returnValue: isSmokeObject: %s\n", SmokeInstance::isSmokeObject(*m_returnValue) ? "true" : "false");
 }
 
 void

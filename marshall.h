@@ -106,7 +106,7 @@ public:
     virtual Action action() = 0;
     virtual Smoke::StackItem &item() = 0;
     virtual QScriptEngine * engine() = 0;
-    virtual QScriptValue var() = 0;
+    virtual QScriptValue * var() = 0;
     virtual void unsupported() = 0;
     virtual Smoke *smoke() = 0;
     /**

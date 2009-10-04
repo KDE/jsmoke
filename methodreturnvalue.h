@@ -37,7 +37,7 @@ public:
     inline Marshall::Action action() { return Marshall::ToQScriptValue; }
     inline Smoke::StackItem &item() { return m_stack[0]; }
     inline QScriptEngine * engine() { return m_engine; }
-    inline QScriptValue var() { return *m_returnValue; }
+    inline QScriptValue * var() { return m_returnValue; }
     inline Smoke *smoke() { return m_smoke; }
     inline bool cleanup() { return false; }
 

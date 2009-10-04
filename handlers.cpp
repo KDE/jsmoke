@@ -20,6 +20,8 @@
  */
 
 #include "marshall.h"
+#include "global.h"
+#include "qtscript-smoke.h"
 
 namespace QtScript {
 	
@@ -31,7 +33,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (!value.isBool()) {
                 m->item().s_bool = false;
@@ -41,7 +43,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_bool);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_bool);
             break;
         default:
             m->unsupported();
@@ -53,7 +55,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_char = 0;
@@ -63,7 +65,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_char);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_char);
             break;
         default:
             m->unsupported();
@@ -75,7 +77,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_uchar = 0;
@@ -85,7 +87,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_uchar);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_uchar);
             break;
         default:
             m->unsupported();
@@ -97,7 +99,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_short = 0;
@@ -107,7 +109,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_short);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_short);
             break;
         default:
             m->unsupported();
@@ -119,7 +121,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_ushort = 0;
@@ -129,7 +131,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_ushort);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_ushort);
             break;
         default:
             m->unsupported();
@@ -141,7 +143,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_int = 0;
@@ -151,7 +153,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_int);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_int);
             break;
         default:
             m->unsupported();
@@ -163,7 +165,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_uint = 0;
@@ -173,7 +175,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_uint);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_uint);
             break;
         default:
             m->unsupported();
@@ -185,7 +187,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_long = 0;
@@ -195,7 +197,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), (int) m->item().s_long);
+            *(m->var()) = QScriptValue(m->engine(), (int) m->item().s_long);
             break;
         default:
             m->unsupported();
@@ -207,7 +209,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_ulong = 0;
@@ -217,7 +219,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), (uint) m->item().s_ulong);
+            *(m->var()) = QScriptValue(m->engine(), (uint) m->item().s_ulong);
             break;
         default:
             m->unsupported();
@@ -229,7 +231,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_float = 0.0;
@@ -239,7 +241,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_float);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_float);
             break;
         default:
             m->unsupported();
@@ -251,7 +253,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_double = 0.0;
@@ -261,7 +263,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), m->item().s_double);
+            *(m->var()) = QScriptValue(m->engine(), m->item().s_double);
             break;
         default:
             m->unsupported();
@@ -273,7 +275,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_enum = 0;
@@ -283,7 +285,7 @@ marshall_basetype(Marshall *m)
             break;
         }
         case Marshall::ToQScriptValue:
-            m->var() = QScriptValue(m->engine(), (uint) m->item().s_enum);
+            *(m->var()) = QScriptValue(m->engine(), (uint) m->item().s_enum);
             break;
         default:
             m->unsupported();
@@ -295,7 +297,7 @@ marshall_basetype(Marshall *m)
         switch(m->action()) {
         case Marshall::FromQScriptValue:
         {
-            QScriptValue value = m->var();
+            QScriptValue value = *(m->var());
 
             if (value.isNull()) {
                 m->item().s_class = 0;
@@ -324,6 +326,27 @@ marshall_basetype(Marshall *m)
         
         case Marshall::ToQScriptValue:
         {
+            if (m->item().s_voidp == 0) {
+                *(m->var()) = m->engine()->nullValue();
+                return;
+            }
+            
+            void * ptr = m->item().s_voidp;
+            QScriptValue * value = QtScript::Global::getScriptValue(ptr);
+            if (value != 0) {
+                *(m->var()) = *value;
+                return ;
+            }
+            
+            QtScript::SmokeInstance * instance = new QtScript::SmokeInstance();
+            instance->classId.smoke = m->smoke();
+            instance->classId.index = m->type().classId();
+            instance->value = ptr;
+            instance->ownership = QScriptEngine::QtOwnership;
+            
+            QScriptValue obj = m->engine()->newObject(QtScriptSmoke::s_implClass); 
+            QtScript::SmokeInstance::set(obj, instance);
+            *(m->var()) = obj;
             break;
         }
         
@@ -350,16 +373,16 @@ static void marshall_QString(Marshall *m) {
     {
         QString * s = 0;
         
-        if (m->var().isNull()) {
+        if (m->var()->isNull()) {
             s = new QString();
         } else {
-            s = new QString(m->var().toString());
+            s = new QString(m->var()->toString());
         }
-        printf("Marshalled a QString: %s\n", s->toLatin1().constData());
+
         m->item().s_voidp = s;
         m->next();
     
-        if (!m->type().isConst() && m->var().isNull() && s != 0 && !s->isNull()) {
+        if (!m->type().isConst() && m->var()->isNull() && s != 0 && !s->isNull()) {
             // Copy the string back to the QScriptValue instance
         }
 
@@ -373,11 +396,11 @@ static void marshall_QString(Marshall *m) {
     case Marshall::ToQScriptValue:
     {
         if (m->item().s_voidp == 0) {
-            m->var() = m->engine()->nullValue();
+            *(m->var()) = m->engine()->nullValue();
             return;
         }
         
-        m->var() = QScriptValue(m->engine(), *(static_cast<QString*>(m->item().s_voidp)));
+        *(m->var()) = QScriptValue(m->engine(), *(static_cast<QString*>(m->item().s_voidp)));
         break;
     }
     

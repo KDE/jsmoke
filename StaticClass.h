@@ -18,8 +18,8 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SAMPLECLASS_H
-#define SAMPLECLASS_H
+#ifndef STATIC_CLASS_H
+#define STATIC_CLASS_H
 
 #include <QScriptClass>
 #include <QScriptEngine>

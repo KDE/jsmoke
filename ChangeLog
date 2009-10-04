@@ -1,3 +1,10 @@
+2009-10-04  Richard Dale  <richard.j.dale@gmail.com>
+
+* The marshalling of C++ instances to QScriptValues is now working. It is
+possible to obtain a QSize instance via dialog.size() in the example script
+and then call width() on the returned QSize.
+* The Marshall::var() method now returns a 'QScriptValue *' rather than a value.
+
 2009-10-03  Richard Dale  <richard.j.dale@gmail.com>
 
 * Method calls are now working via QtScript::MethodCall and the Smoke 

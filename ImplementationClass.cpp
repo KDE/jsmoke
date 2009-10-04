@@ -209,7 +209,8 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     
     QtScript::MethodCall methodCall(smoke, candidates[0].index, context, engine);
     methodCall.next();
-    return methodCall.var();
+    printf("methodCall.var(): isSmokeObject: %s\n", QtScript::SmokeInstance::isSmokeObject(*(methodCall.var())) ? "true" : "false");
+    return *(methodCall.var());
 }
 
 QScriptValue

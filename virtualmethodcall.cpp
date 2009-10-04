@@ -26,7 +26,7 @@ namespace QtScript {
 
 VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod) :
     m_smoke(smoke), m_method(meth), m_stack(stack), m_obj(obj),
-     m_overridenMethod(overridenMethod), m_current(-1), m_called(false) 
+    m_overridenMethod(overridenMethod), m_current(-1), m_called(false) 
 {
     m_engine = m_obj.engine();
     m_args = m_smoke->argumentList + method().args;
