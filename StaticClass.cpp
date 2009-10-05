@@ -36,9 +36,9 @@
 #include <QVariant>
 #include "SmokeQtScriptUtils.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
     
-void SmokeInstance::finalize(QScriptEngine *engine) 
+void Instance::finalize(QScriptEngine *engine) 
 {
     switch (ownership) {
     case QScriptEngine::QtOwnership:
@@ -54,20 +54,20 @@ void SmokeInstance::finalize(QScriptEngine *engine)
     }
 }
 
-bool SmokeInstance::isSmokeObject(const QScriptValue &object)
+bool Instance::isSmokeObject(const QScriptValue &object)
 {
     return  object.data().isVariant() 
-            && object.data().toVariant().canConvert<QtScript::SmokeInstance*>();
+            && object.data().toVariant().canConvert<QtScriptSmoke::Instance*>();
 }
 
-SmokeInstance * SmokeInstance::get(const QScriptValue &object) 
+Instance * Instance::get(const QScriptValue &object) 
 {
-    return object.data().toVariant().value<QtScript::SmokeInstance*>();
+    return object.data().toVariant().value<QtScriptSmoke::Instance*>();
 }
 
-void SmokeInstance::set(QScriptValue &object, SmokeInstance * instance)
+void Instance::set(QScriptValue &object, Instance * instance)
 {
-    object.setData(object.engine()->newVariant(QVariant::fromValue<QtScript::SmokeInstance*>(instance)));        
+    object.setData(object.engine()->newVariant(QVariant::fromValue<QtScriptSmoke::Instance*>(instance)));        
 }
 
 }
@@ -151,14 +151,7 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
         Smoke::Method meth = methId.smoke->methods[methId.smoke->methodMaps[methId.index].method];
         qDebug() << "found method " <<  qt_Smoke->methodNames[meth.name] << meth.args << mungedMethods[0] << meth.classId;
         qDebug() << "classId index" << classId.index << "index" << methId.index;
-        
-        QScriptValue act = context->activationObject();
-        QScriptValueIterator it(act);
-        while (it.hasNext()) {
-            it.next();
-            qDebug() << it.name() << ": " << it.value().toString();
-        }
-        
+                
         QtScript::MethodCall methodCall(qt_Smoke, methId.smoke->methodMaps[methId.index].method, context, context->engine());
         methodCall.next();
         return 15;

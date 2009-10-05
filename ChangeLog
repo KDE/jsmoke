@@ -3,6 +3,8 @@
 * Fixed off by one error in the virtual method override argument marshalling
 * Unconditionally return false from QtScriptSmokeBinding::callMethod() until we
 fix subclassing and the test for whether a virtual method has been overriden
+* Use 'QtScriptSmoke' as a namespace as it's the name of the project, and 
+rename the QtScriptSmoke class as RunQtScriptSmoke.
 
 2009-10-04  Richard Dale  <richard.j.dale@gmail.com>
 

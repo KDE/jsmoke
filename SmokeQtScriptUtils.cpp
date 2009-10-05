@@ -48,21 +48,17 @@ SmokeQtScript::mungedMethods( const QByteArray& nameFn, QScriptContext* context 
             QScriptValue val = context->argument( i );
             if( val.isNumber() || val.isBool() || val.isString() )
             {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, ret) {
-                    temp.append(mungedMethod + '$');
+                for (int i = 0; i < ret.count(); i++) {
+                    ret[i] += '$';
                 }
-                ret = temp;
             }
-            else if( val.isArray() || val.isUndefined() )
+            else if( val.isArray() )
             {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, ret) {
-                    temp.append(mungedMethod + '?');
+                for (int i = 0; i < ret.count(); i++) {
+                    ret[i] += '?';
                 }
-                ret = temp;
             }
-            else if( val.isNull() )
+            else if( val.isNull() || val.isUndefined() )
             {
                 QVector<QByteArray> temp;
                 foreach (QByteArray mungedMethod, ret) {
@@ -74,11 +70,9 @@ SmokeQtScript::mungedMethods( const QByteArray& nameFn, QScriptContext* context 
             }
             else
             {
-                QVector<QByteArray> temp;
-                foreach (QByteArray mungedMethod, ret) {
-                    temp.append(mungedMethod + '#');
+                for (int i = 0; i < ret.count(); i++) {
+                    ret[i] += '#';
                 }
-                ret = temp;
             }
         }
         return ret;

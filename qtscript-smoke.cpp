@@ -34,9 +34,9 @@
 #include <QtDebug>
 #include <QTimer>
 
-ImplementationClass* QtScriptSmoke::s_implClass = 0;
+ImplementationClass* RunQtScriptSmoke::s_implClass = 0;
 
-QtScriptSmoke::QtScriptSmoke()
+RunQtScriptSmoke::RunQtScriptSmoke()
 {
     init_qt_Smoke();
     QtScript::Global::binding = QtScriptSmokeBinding(qt_Smoke);
@@ -45,11 +45,11 @@ QtScriptSmoke::QtScriptSmoke()
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }
 
-QtScriptSmoke::~QtScriptSmoke()
+RunQtScriptSmoke::~RunQtScriptSmoke()
 {}
 
 QScriptValue 
-QtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine) //STATIC
+RunQtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine) //STATIC
 {
     if( context->argumentCount() == 1 && context->argument(0).isString() )
     {
@@ -70,11 +70,11 @@ QtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine) //
 }
 
 void
-QtScriptSmoke::output()
+RunQtScriptSmoke::output()
 {
     QScriptEngine* engine = new QScriptEngine( this );
     s_implClass = new ImplementationClass( engine );
-    QScriptValue includeFn = engine->newFunction( QtScriptSmoke::includeQtClass, 1 );
+    QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
     
     /*

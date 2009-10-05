@@ -32,7 +32,7 @@ MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * conte
     m_methodRef(smoke->methods[method])
 {
     m_target = m_context->thisObject();
-    m_instance = QtScript::SmokeInstance::get(m_target); 
+    m_instance = QtScriptSmoke::Instance::get(m_target); 
     m_args = m_smoke->argumentList + m_methodRef.args;
     m_stack = new Smoke::StackItem[m_methodRef.numArgs + 1];
     
@@ -95,14 +95,14 @@ void MethodCall::callMethod()
         initializeInstanceStack[1].s_voidp = &QtScript::Global::binding;
         fn(0, m_stack[0].s_class, initializeInstanceStack);
         
-        m_instance = new QtScript::SmokeInstance();
+        m_instance = new QtScriptSmoke::Instance();
         m_instance->classId.smoke = m_smoke;
         m_instance->classId.index = m_methodRef.classId;
         m_instance->value = m_stack[0].s_class;
         m_instance->ownership = QScriptEngine::ScriptOwnership;
         
-        QScriptValue proto = m_engine->newObject(QtScriptSmoke::s_implClass); 
-        QtScript::SmokeInstance::set(proto, m_instance);
+        QScriptValue proto = m_engine->newObject(RunQtScriptSmoke::s_implClass); 
+        QtScriptSmoke::Instance::set(proto, m_instance);
         m_context->setThisObject(proto);
         QtScript::Global::mapPointer(new QScriptValue(proto), m_instance, m_instance->classId.index, 0);
     } else {

@@ -28,12 +28,12 @@ class QScriptContext;
 class QScriptEngine;
 class QScriptValue;
 
-class QtScriptSmoke : public QObject
+class RunQtScriptSmoke : public QObject
 {
     Q_OBJECT
     public:
-        QtScriptSmoke();
-        virtual ~QtScriptSmoke();
+        RunQtScriptSmoke();
+        virtual ~RunQtScriptSmoke();
         static ImplementationClass* s_implClass;
     private slots:
         void output();

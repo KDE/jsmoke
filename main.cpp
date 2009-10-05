@@ -25,6 +25,6 @@
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    QtScriptSmoke foo;
+    RunQtScriptSmoke foo;
     return app.exec();
 }

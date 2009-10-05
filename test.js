@@ -2,6 +2,7 @@ include("QLabel");
 include("QDialog");
 include("QHBoxLayout");
 include("QWidget");
+include("QVariant");
 
 layout = new QHBoxLayout();
 layout.addWidget( new QLabel("hello") );

@@ -32,6 +32,7 @@
 #include <QScriptValue>
 #include <QStringList>
 #include <QWidget>
+#include <QtCore/QPair>
 
 ImplementationClass::ImplementationClass( QScriptEngine* engine )
     : QScriptClass( engine )
@@ -54,8 +55,10 @@ ImplementationClass::queryProperty(const QScriptValue& object, const QScriptStri
 // The code to match method arguments here, is based on callQtMethod() 
 // in script/qscriptextqobject.cpp
 //
-QVector<Smoke::ModuleIndex> resolve(QScriptContext* context, const QVector<Smoke::ModuleIndex>& candidates)
+QVector<QPair<Smoke::ModuleIndex, int> > resolve(QScriptContext* context, const QVector<Smoke::ModuleIndex>& candidates)
 {
+    QVector<QPair<Smoke::ModuleIndex, int> > result;
+    
     foreach (Smoke::ModuleIndex method, candidates) {
         Smoke::Method & methodRef = method.smoke->methods[method.index];
         
@@ -73,7 +76,7 @@ QVector<Smoke::ModuleIndex> resolve(QScriptContext* context, const QVector<Smoke
                 QByteArray argType(method.smoke->types[method.smoke->argumentList[methodRef.args+i]].name);
                 argType.replace("const ", "").replace("&", "").replace("*", "");
                 
-                if(actual.isNumber()) {
+                if (actual.isNumber()) {
                     switch (argFlags & Smoke::tf_elem) {
                     case Smoke::t_double:
                         // perfect
@@ -130,23 +133,34 @@ QVector<Smoke::ModuleIndex> resolve(QScriptContext* context, const QVector<Smoke
                 } else if (actual.isQObject()) {
                 } else if (actual.isNull()) {
                 } else if (actual.isObject()) {
+                } else {
+                    matchDistance += 10;
                 }
+            }
+            
+            if (result.count() > 0 && matchDistance <= result[0].second) {
+                result.prepend(QPair<Smoke::ModuleIndex, int>(method, matchDistance));
+            } else {
+                result.append(QPair<Smoke::ModuleIndex, int>(method, matchDistance));
             }
         }
     }
+    
+    return result;
 }
 
 QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
-    QtScript::SmokeInstance * attrObj = QtScript::SmokeInstance::get(context->thisObject());
-    Smoke * smoke = attrObj->classId.smoke;
-    Smoke::ModuleIndex classId = attrObj->classId;
+    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(context->thisObject());
+    Smoke * smoke = instance->classId.smoke;
+    Smoke::ModuleIndex classId = instance->classId;
     Smoke::Class & klass = classId.smoke->classes[classId.index];
 
-    qDebug() << "callSmokeMethod " << klass.className << "::" << nameFn << " instance: " << attrObj->value;
+    qDebug() << "callSmokeMethod " << klass.className << "::" << nameFn << " instance: " << instance->value;
 
     qDebug() << "[ImplementationClass] property called with argumentCount of:" << context->argumentCount();
+
     QVector<Smoke::ModuleIndex> methodIds;
     QVector<QByteArray> mungedMethods = SmokeQtScript::mungedMethods( nameFn.toLatin1(), context );
         
@@ -165,6 +179,10 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
         } else {
             methodIds.append(methodId);
         }
+    }
+    
+    if (methodIds.count() == 0) {
+        return QScriptValue();
     }
     
     Smoke::Method meth;
@@ -189,15 +207,19 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
         }        
     }
 
-    // Really every call should go through resulve() even if there is only one
+    // Really every call should go through resolve() even if there is only one
     // candidate, to check that the arguments match. However, assume the single
     // candidate case while resolve() is being finished, so that the test example 
     // carries on working
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = resolve(context, candidates);
+    for (int i = 0; i < matches.count(); i++) {
+        printf("index: %d matchDistance: %d\n", matches[i].first.index, matches[i].second);
+    }
+    
     if (candidates.count() == 1) {
         // meth = candidates[0].smoke->methods[candidates[0].index];
         qDebug() << "found a matching method meth: " << candidates[0].index;
     } else {
-        QVector<Smoke::ModuleIndex> matches = resolve(context, candidates);
         if (matches.count() == 0) {
             // Error
         } else if (matches.count() > 1) {

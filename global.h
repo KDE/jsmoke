@@ -44,11 +44,11 @@ namespace QtScript {
     namespace Global {
         extern QtScriptSmokeBinding binding;
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
-        extern Q_DECL_EXPORT void unmapPointer( QtScript::SmokeInstance * instance, 
+        extern Q_DECL_EXPORT void unmapPointer( QtScriptSmoke::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
         extern Q_DECL_EXPORT void mapPointer(   QScriptValue * obj, 
-                                                QtScript::SmokeInstance * instance, 
+                                                QtScriptSmoke::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
     }

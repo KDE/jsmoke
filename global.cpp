@@ -43,7 +43,7 @@ getScriptValue(void *ptr)
 }
 
 void 
-unmapPointer(QtScript::SmokeInstance * instance, Smoke::Index classId, void *lastptr) 
+unmapPointer(QtScriptSmoke::Instance * instance, Smoke::Index classId, void *lastptr) 
 {
     Smoke * smoke = instance->classId.smoke;
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
@@ -67,7 +67,7 @@ unmapPointer(QtScript::SmokeInstance * instance, Smoke::Index classId, void *las
 // Recurse to store it also as casted to its parent classes.
 
 void 
-mapPointer(QScriptValue * obj, QtScript::SmokeInstance * instance, Smoke::Index classId, void *lastptr) 
+mapPointer(QScriptValue * obj, QtScriptSmoke::Instance * instance, Smoke::Index classId, void *lastptr) 
 {
     Smoke * smoke = instance->classId.smoke;
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);

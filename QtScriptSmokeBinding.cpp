@@ -44,7 +44,7 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
         return false;
     }
     
-    QtScript::SmokeInstance * instance = QtScript::SmokeInstance::get(*obj);
+    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
 
     if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
         Smoke::Method & meth = smoke->methods[method];
@@ -104,7 +104,7 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
 void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* ptr)
 {
     QScriptValue * obj = QtScript::Global::getScriptValue(ptr);
-    QtScript::SmokeInstance * instance = QtScript::SmokeInstance::get(*obj);
+    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
     
     if (QtScript::Debug::DoDebug & QtScript::Debug::GC) {
         qWarning("%p->~%s()", ptr, smoke->className(classId));

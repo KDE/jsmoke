@@ -34,20 +34,20 @@ struct AttributedObject
 };
 Q_DECLARE_METATYPE( AttributedObject* )
 
-namespace QtScript {
+namespace QtScriptSmoke {
    
 // Here is a suggestion for an alternative class to AttributedObject, based on
 // ExtQObject::Instance in qscriptextqobject_p.h
 //
-class SmokeInstance {
+class Instance {
 public:
-    SmokeInstance() : ownership(QScriptEngine::QtOwnership) { }
+    Instance() : ownership(QScriptEngine::QtOwnership) { }
     virtual void finalize(QScriptEngine *engine);
-    virtual ~SmokeInstance() {}
+    virtual ~Instance() {}
 
     static bool isSmokeObject(const QScriptValue &object);
-    static SmokeInstance *get(const QScriptValue &object);
-    static void set(QScriptValue &object, SmokeInstance * instance);
+    static Instance *get(const QScriptValue &object);
+    static void set(QScriptValue &object, Instance * instance);
 
 public:
     void * value;
@@ -57,7 +57,7 @@ public:
 
 }
 
-Q_DECLARE_METATYPE( QtScript::SmokeInstance* )
+Q_DECLARE_METATYPE( QtScriptSmoke::Instance* )
 
 class ImplementationClass;
 
