@@ -28,7 +28,7 @@
 
 #include <smoke.h>
 
-#include "StaticClass.h"
+#include "metaobject.h"
 
 namespace QtScriptSmoke {
     

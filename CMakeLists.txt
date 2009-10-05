@@ -7,8 +7,8 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 set(qtscript-smoke_SRCS qtscript-smoke.cpp 
     main.cpp 
     global.cpp 
-    StaticClass.cpp
-    ImplementationClass.cpp
+    metaobject.cpp
+    object.cpp
     QtScriptSmokeBinding.cpp  
     SmokeQtScriptUtils.cpp
     methodcall.cpp

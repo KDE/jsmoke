@@ -21,8 +21,8 @@
 #include "qtscript-smoke.h"
 
 #include "marshall.h"
-#include "ImplementationClass.h"
-#include "StaticClass.h"
+#include "object.h"
+#include "metaobject.h"
 #include "QtScriptSmokeBinding.h"
 #include "global.h"
 

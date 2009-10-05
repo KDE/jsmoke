@@ -10,6 +10,8 @@ with methods in the Smoke lib matching the name and argument types.
 * Change the QtScript:: namespace to QtScriptSmoke:: and put everything in that
 * Rename StaticClass as QtScriptSmoke::MetaObject and ImplementationClass as 
 QtScriptSmoke::Object
+* Rename the StaticClass.h and .cpp files as metaobject.h and .cpp, and the 
+ImplementationClass.h and .cpp as object.h and .cpp
 
 2009-10-04  Richard Dale  <richard.j.dale@gmail.com>
 

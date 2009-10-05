@@ -27,13 +27,10 @@
 
 #include <smoke.h>
 
-#include "ImplementationClass.h"
+#include "object.h"
 
 namespace QtScriptSmoke {
    
-// Here is a suggestion for an alternative class to AttributedObject, based on
-// ExtQObject::Instance in qscriptextqobject_p.h
-//
 class Instance {
 public:
     Instance() : ownership(QScriptEngine::QtOwnership) { }
@@ -50,15 +47,6 @@ public:
     Smoke::ModuleIndex classId;
 };
 
-//I'm open to a better name :)
-//
-// How about MetaType, MetaClass, MetaObject or Meta in namespace QtScript:: or QtScript::Smoke ?
-// A suggestion for another name for ImplementationClass is QtScript::Smoke::Object.
-// My preference is for QtScript::Smoke::MetaObject and QtScript::Smoke::Object, as using
-// 'Class' in the name, when JavaScript doesn't have classes doesn't seem quite right.
-//
-// -- Richard
-//
 //!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
 class MetaObject : public QScriptClass
 {

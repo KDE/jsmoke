@@ -21,7 +21,7 @@
 #define QTSCRIPT_GLOBAL_H
 
 #include <QtScript/QScriptValue>
-#include "StaticClass.h"
+#include "metaobject.h"
 #include "QtScriptSmokeBinding.h"
 
 namespace QtScriptSmoke {

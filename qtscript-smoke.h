@@ -22,7 +22,7 @@
 #define qtscript_smoke_H
 
 #include <QObject>
-#include "ImplementationClass.h"
+#include "object.h"
 
 class QScriptContext;
 class QScriptEngine;
