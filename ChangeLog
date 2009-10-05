@@ -5,6 +5,8 @@
 fix subclassing and the test for whether a virtual method has been overriden
 * Use 'QtScriptSmoke' as a namespace as it's the name of the project, and 
 rename the QtScriptSmoke class as RunQtScriptSmoke.
+* Added QtScriptSmoke::resolveMethod() to resolve the QtScript function call
+with methods in the Smoke lib matching the name and argument types.
 
 2009-10-04  Richard Dale  <richard.j.dale@gmail.com>
 

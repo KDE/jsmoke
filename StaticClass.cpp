@@ -144,15 +144,18 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
         const char* className = m_className;
         Smoke::ModuleIndex classId = qt_Smoke->findClass(className);
         qDebug() << "classId: " << classId.index;
-        Smoke::Class klass = classId.smoke->classes[ classId.index ];
         
-        QVector<QByteArray> mungedMethods = SmokeQtScript::mungedMethods( className, context );
-        Smoke::ModuleIndex methId = qt_Smoke->findMethod(className, mungedMethods[0]);
-        Smoke::Method meth = methId.smoke->methods[methId.smoke->methodMaps[methId.index].method];
-        qDebug() << "found method " <<  qt_Smoke->methodNames[meth.name] << meth.args << mungedMethods[0] << meth.classId;
-        qDebug() << "classId index" << classId.index << "index" << methId.index;
-                
-        QtScript::MethodCall methodCall(qt_Smoke, methId.smoke->methodMaps[methId.index].method, context, context->engine());
+        QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, className, context);
+
+        if (matches.count() == 0) {
+            // Error
+        } else if (matches.count() > 1) {
+            // Error
+        } else {
+            // Good, found a single match in matches[0]
+        }
+        
+        QtScript::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
         return 15;
     }

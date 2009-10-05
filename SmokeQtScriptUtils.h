@@ -22,10 +22,12 @@
 
 #include <QtCore/QVector>
 #include <QtCore/QByteArray>
+#include <QtCore/QPair>
 
 class QScriptContext;
 
-namespace SmokeQtScript
+namespace QtScriptSmoke
 {
     QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
+    QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
 }
