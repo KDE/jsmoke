@@ -34,18 +34,20 @@
 #include <QWidget>
 #include <QtCore/QPair>
 
-ImplementationClass::ImplementationClass( QScriptEngine* engine )
+namespace QtScriptSmoke {
+    
+Object::Object( QScriptEngine* engine )
     : QScriptClass( engine )
 {   }
 
 
-ImplementationClass::~ImplementationClass()
+Object::~Object()
 { }
 
 QScriptClass::QueryFlags
-ImplementationClass::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
+Object::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
-    qDebug() << "[ImplementationClass] queryProperty" << name << flags << id;
+    qDebug() << "[Object] queryProperty" << name << flags << id;
     if( name.toString() == "toString" )
         return 0;
     return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
@@ -72,7 +74,7 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 }
 
 QScriptValue
-ImplementationClass::property(const QScriptValue& object, const QScriptString& name, uint id)
+Object::property(const QScriptValue& object, const QScriptString& name, uint id)
 {
     QString nameStr = name;
     QScriptValue fn = engine()->newFunction( callSmokeMethod );
@@ -81,8 +83,9 @@ ImplementationClass::property(const QScriptValue& object, const QScriptString& n
 }
 
 QString
-ImplementationClass::name() const
+Object::name() const
 {
-    return "ImplementationClass";
+    return "QtScriptSmoke::Object";
 }
 
+}

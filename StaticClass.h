@@ -23,7 +23,11 @@
 
 #include <QScriptClass>
 #include <QScriptEngine>
+#include <QScriptContext>
+
 #include <smoke.h>
+
+#include "ImplementationClass.h"
 
 namespace QtScriptSmoke {
    
@@ -46,12 +50,6 @@ public:
     Smoke::ModuleIndex classId;
 };
 
-}
-
-Q_DECLARE_METATYPE( QtScriptSmoke::Instance* )
-
-class ImplementationClass;
-
 //I'm open to a better name :)
 //
 // How about MetaType, MetaClass, MetaObject or Meta in namespace QtScript:: or QtScript::Smoke ?
@@ -62,11 +60,11 @@ class ImplementationClass;
 // -- Richard
 //
 //!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
-class StaticClass : public QScriptClass
+class MetaObject : public QScriptClass
 {
     public:
-        StaticClass( QScriptEngine*, const QByteArray& className, ImplementationClass* implClass );
-        ~StaticClass();
+        MetaObject( QScriptEngine*, const QByteArray& className, Object * implClass );
+        ~MetaObject();
         QScriptValue prototype() const;
         QueryFlags queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id );
         QScriptValue property ( const QScriptValue & object, const QScriptString & name, uint id );
@@ -74,10 +72,12 @@ class StaticClass : public QScriptClass
         bool supportsExtension( QScriptClass::Extension extension ) const;
     private:
         QByteArray m_className;
-        ImplementationClass* m_implClass;
+        Object* m_implClass;
 };
 
-#include <QScriptContext>
+}
+
 Q_DECLARE_METATYPE( QScriptContext* )
+Q_DECLARE_METATYPE( QtScriptSmoke::Instance* )
 
 #endif

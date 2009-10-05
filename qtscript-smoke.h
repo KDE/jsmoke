@@ -34,7 +34,7 @@ class RunQtScriptSmoke : public QObject
     public:
         RunQtScriptSmoke();
         virtual ~RunQtScriptSmoke();
-        static ImplementationClass* s_implClass;
+        static QtScriptSmoke::Object * s_implClass;
     private slots:
         void output();
     private:

@@ -70,19 +70,17 @@ void Instance::set(QScriptValue &object, Instance * instance)
     object.setData(object.engine()->newVariant(QVariant::fromValue<QtScriptSmoke::Instance*>(instance)));        
 }
 
-}
-
-StaticClass::StaticClass( QScriptEngine* engine, const QByteArray& className, ImplementationClass* implClass )
+MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * implClass )
     : QScriptClass( engine )
     , m_className( className )
     , m_implClass( implClass )
 { }
 
-StaticClass::~StaticClass()
+MetaObject::~MetaObject()
 {  }
 
 QScriptValue
-StaticClass::prototype() const
+MetaObject::prototype() const
 {
     //this fn is called, but i'm pretty sure this function doesn't 
     //do anything, due to the Callable extension
@@ -90,7 +88,7 @@ StaticClass::prototype() const
 }
 
 QScriptClass::QueryFlags
-StaticClass::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
+MetaObject::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
 {
     //qDebug() << object.toVariant();
     qDebug() << "queryProperty" << name << flags << id;
@@ -112,7 +110,7 @@ QScriptValue stuff(QScriptContext *context, QScriptEngine* engine)
 
 //TODO we need to handle static functions here
 QScriptValue
-StaticClass::property ( const QScriptValue & object, const QScriptString & name, uint id )
+MetaObject::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
     qDebug() << "property" << name << id;
     if( name == engine()->toStringHandle("stuff") )
@@ -127,7 +125,7 @@ StaticClass::property ( const QScriptValue & object, const QScriptString & name,
 }
 
 QVariant
-StaticClass::extension( QScriptClass::Extension extension, const QVariant& argument )
+MetaObject::extension( QScriptClass::Extension extension, const QVariant& argument )
 {
     if( extension == Callable )
     {
@@ -162,10 +160,10 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
 }
 
 bool
-StaticClass::supportsExtension( QScriptClass::Extension extension ) const
+MetaObject::supportsExtension( QScriptClass::Extension extension ) const
 {
         if( extension == Callable )
             return true;
 }
 
-
+}

@@ -23,14 +23,18 @@
 
 #include <QScriptClass>
 
+namespace QtScriptSmoke {
+    
 //!When the user constructs an object, they get a scriptvalue of one of these.
-class ImplementationClass : public QScriptClass
+class Object : public QScriptClass
 {
     public:
-        ImplementationClass( QScriptEngine* );
-        ~ImplementationClass();        
+        Object( QScriptEngine* );
+        ~Object();        
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
         QString name() const;
 };
+
+}
 #endif // SAMPLEIMPL_H
