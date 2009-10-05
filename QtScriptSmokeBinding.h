@@ -23,15 +23,18 @@
 
 #include <smoke/qt_smoke.h>
 
-
-class QtScriptSmokeBinding : public SmokeBinding
+namespace QtScriptSmoke {
+    
+class Binding : public SmokeBinding
 {
     public:
-        QtScriptSmokeBinding() : SmokeBinding(0) {}
-        QtScriptSmokeBinding(Smoke* s);
+        Binding() : SmokeBinding(0) {}
+        Binding(Smoke* s);
         virtual char* className(Smoke::Index classId);
         virtual bool callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract = false);
         virtual void deleted(Smoke::Index classId, void* obj);
 };
+
+}
 
 #endif // QTSCRIPTSMOKEBINDING_H

@@ -26,18 +26,20 @@
 #include "global.h"
 #include "virtualmethodcall.h"
 
-QtScriptSmokeBinding::QtScriptSmokeBinding(Smoke* s)
+namespace QtScriptSmoke {
+    
+Binding::Binding(Smoke* s)
     : SmokeBinding(s) { }
 
-char* QtScriptSmokeBinding::className(Smoke::Index classId)
+char* Binding::className(Smoke::Index classId)
 {
-    qDebug() << "QtScriptSmokeBinding::className " << smoke->className(classId);
+    qDebug() << "QtScriptSmoke::Binding::className " << smoke->className(classId);
     // What about '::' scope operators in className paths in JavaScript?
     return (char *) smoke->className(classId);
 }
 
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
-bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
+bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
 {
     QScriptValue * obj = QtScriptSmoke::Global::getScriptValue(ptr);
     if (obj == 0) {
@@ -101,7 +103,7 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     }
 }
 
-void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* ptr)
+void Binding::deleted(Smoke::Index classId, void* ptr)
 {
     QScriptValue * obj = QtScriptSmoke::Global::getScriptValue(ptr);
     QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
@@ -119,3 +121,4 @@ void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* ptr)
     return;
 }
 
+}

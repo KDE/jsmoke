@@ -25,15 +25,6 @@
 #include <QScriptEngine>
 #include <smoke.h>
 
-//so that one instance of ImplementationClass can serve all objects
-//maybe this isn't worth it though
-struct AttributedObject
-{
-     QByteArray className;
-     void* object;
-};
-Q_DECLARE_METATYPE( AttributedObject* )
-
 namespace QtScriptSmoke {
    
 // Here is a suggestion for an alternative class to AttributedObject, based on

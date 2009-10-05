@@ -42,7 +42,7 @@ namespace QtScriptSmoke {
     }
 
     namespace Global {
-        extern QtScriptSmokeBinding binding;
+        extern Binding binding;
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         extern Q_DECL_EXPORT void unmapPointer( QtScriptSmoke::Instance * instance, 
                                                 Smoke::Index classId, 
