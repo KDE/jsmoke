@@ -1,3 +1,9 @@
+2009-10-05  Richard Dale  <richard.j.dale@gmail.com>
+
+* Fixed off by one error in the virtual method override argument marshalling
+* Unconditionally return false from QtScriptSmokeBinding::callMethod() until we
+fix subclassing and the test for whether a virtual method has been overriden
+
 2009-10-04  Richard Dale  <richard.j.dale@gmail.com>
 
 * The marshalling of C++ instances to QScriptValues is now working. It is

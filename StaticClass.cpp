@@ -31,6 +31,7 @@
 #include <QScriptContextInfo>
 #include <QScriptEngine>
 #include <QScriptValue>
+#include <QScriptValueIterator>
 #include <QScriptString>
 #include <QVariant>
 #include "SmokeQtScriptUtils.h"
@@ -138,7 +139,7 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
 
         QScriptContext* context = argument.value<QScriptContext*>();
         qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
-       
+        qDebug() << "context as string" << context->toString();
         
         const char* className = m_className;
         Smoke::ModuleIndex classId = qt_Smoke->findClass(className);
@@ -150,7 +151,14 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
         Smoke::Method meth = methId.smoke->methods[methId.smoke->methodMaps[methId.index].method];
         qDebug() << "found method " <<  qt_Smoke->methodNames[meth.name] << meth.args << mungedMethods[0] << meth.classId;
         qDebug() << "classId index" << classId.index << "index" << methId.index;
-         
+        
+        QScriptValue act = context->activationObject();
+        QScriptValueIterator it(act);
+        while (it.hasNext()) {
+            it.next();
+            qDebug() << it.name() << ": " << it.value().toString();
+        }
+        
         QtScript::MethodCall methodCall(qt_Smoke, methId.smoke->methodMaps[methId.index].method, context, context->engine());
         methodCall.next();
         return 15;

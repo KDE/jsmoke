@@ -63,7 +63,7 @@ VirtualMethodCall::next() {
     int previous = m_current;
     m_current++;
     
-    while(!m_called && m_current < method().numArgs) {
+    while (!m_called && m_current < method().numArgs) {
         Marshall::HandlerFn fn = getMarshallFn(type());
         (*fn)(this);
         m_current++;

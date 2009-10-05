@@ -74,7 +74,7 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
 
     if (instance == 0) {
         if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
-            qWarning("Cannot find object for virtual method %p -> %p", ptr, &obj);
+            qWarning("Cannot find object for virtual method %p -> %p", ptr, obj);
         }
         
         return false;
@@ -83,6 +83,9 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     const char *methodName = smoke->methodNames[smoke->methods[method].name];
     // If the virtual method hasn't been overriden, just call the C++ one.
     // So how can we tell whether or not the method has been overriden in QtScript?
+    
+    return false;
+    
     if( obj->propertyFlags( methodName ) ==  0 ) {
          //no flags means the property doesn't exist, maybe
         QScriptValue overridenMethod = obj->property(methodName);    
