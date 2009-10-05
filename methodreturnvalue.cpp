@@ -19,7 +19,7 @@
 
 #include "methodreturnvalue.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
 
 MethodReturnValue::MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue) :
     m_smoke(smoke), m_method(method), m_stack(stack), m_engine(engine), m_returnValue(returnValue)

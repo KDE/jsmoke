@@ -66,7 +66,7 @@ QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single match in matches[0]
     }
     
-    QtScript::MethodCall methodCall(instance->classId.smoke, matches[0].first.index, context, engine);
+    QtScriptSmoke::MethodCall methodCall(instance->classId.smoke, matches[0].first.index, context, engine);
     methodCall.next();
     return *(methodCall.var());
 }

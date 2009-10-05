@@ -24,14 +24,14 @@
 #include "StaticClass.h"
 #include "QtScriptSmokeBinding.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
     namespace Debug {
         
         extern Q_DECL_EXPORT int DoDebug;
 
         enum QtDebugChannel {
             None = 0x00,
-            Ambiguos = 0x01,
+            Ambiguous = 0x01,
             Property = 0x02,
             Calls = 0x04,
             GC = 0x08,

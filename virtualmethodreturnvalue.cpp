@@ -21,7 +21,7 @@
 
 #include "virtualmethodreturnvalue.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
 
 VirtualMethodReturnValue::VirtualMethodReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue) :
     m_smoke(smoke), m_method(meth), m_stack(stack), m_returnValue(returnValue) 

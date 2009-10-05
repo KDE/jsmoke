@@ -39,8 +39,8 @@ ImplementationClass* RunQtScriptSmoke::s_implClass = 0;
 RunQtScriptSmoke::RunQtScriptSmoke()
 {
     init_qt_Smoke();
-    QtScript::Global::binding = QtScriptSmokeBinding(qt_Smoke);
-    QtScript::installHandlers(QtScript::Handlers);
+    QtScriptSmoke::Global::binding = QtScriptSmokeBinding(qt_Smoke);
+    QtScriptSmoke::installHandlers(QtScriptSmoke::Handlers);
 
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }

@@ -39,14 +39,14 @@ char* QtScriptSmokeBinding::className(Smoke::Index classId)
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
 bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
 {
-    QScriptValue * obj = QtScript::Global::getScriptValue(ptr);
+    QScriptValue * obj = QtScriptSmoke::Global::getScriptValue(ptr);
     if (obj == 0) {
         return false;
     }
     
     QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
 
-    if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
+    if (QtScriptSmoke::Debug::DoDebug & QtScriptSmoke::Debug::Virtual) {
         Smoke::Method & meth = smoke->methods[method];
         QByteArray signature(smoke->methodNames[meth.name]);
         signature += "(";
@@ -73,7 +73,7 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     }
 
     if (instance == 0) {
-        if (QtScript::Debug::DoDebug & QtScript::Debug::Virtual) {
+        if (QtScriptSmoke::Debug::DoDebug & QtScriptSmoke::Debug::Virtual) {
             qWarning("Cannot find object for virtual method %p -> %p", ptr, obj);
         }
         
@@ -89,7 +89,7 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
     if( obj->propertyFlags( methodName ) ==  0 ) {
          //no flags means the property doesn't exist, maybe
         QScriptValue overridenMethod = obj->property(methodName);    
-        QtScript::VirtualMethodCall methodCall(smoke, method, args, *obj, overridenMethod);
+        QtScriptSmoke::VirtualMethodCall methodCall(smoke, method, args, *obj, overridenMethod);
         methodCall.next();
         qDebug() << "[QtScriptSmokeBinding] called the C++ function for" << methodName; 
         return true;
@@ -103,10 +103,10 @@ bool QtScriptSmokeBinding::callMethod(Smoke::Index method, void* ptr, Smoke::Sta
 
 void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* ptr)
 {
-    QScriptValue * obj = QtScript::Global::getScriptValue(ptr);
+    QScriptValue * obj = QtScriptSmoke::Global::getScriptValue(ptr);
     QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
     
-    if (QtScript::Debug::DoDebug & QtScript::Debug::GC) {
+    if (QtScriptSmoke::Debug::DoDebug & QtScriptSmoke::Debug::GC) {
         qWarning("%p->~%s()", ptr, smoke->className(classId));
     }
     
@@ -114,7 +114,7 @@ void QtScriptSmokeBinding::deleted(Smoke::Index classId, void* ptr)
         return;
     }
     
-    QtScript::Global::unmapPointer(instance, instance->classId.index, 0);
+    QtScriptSmoke::Global::unmapPointer(instance, instance->classId.index, 0);
     instance->value = 0;
     return;
 }

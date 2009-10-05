@@ -111,7 +111,6 @@ QtScriptSmoke::resolveMethod(Smoke::ModuleIndex classId, const QByteArray& metho
         return matches;
     }
     
-    Smoke::Method meth;
     QVector<Smoke::ModuleIndex> candidates;
     
     foreach (Smoke::ModuleIndex methodId, methodIds) {
@@ -138,10 +137,9 @@ QtScriptSmoke::resolveMethod(Smoke::ModuleIndex classId, const QByteArray& metho
         
         if ((methodRef.flags & Smoke::mf_internal) == 0) {
             Smoke::Index *args = method.smoke->argumentList + methodRef.args;            
-            const char *tname = method.smoke->types[methodRef.ret].name;
-            
-            bool converted = true;
+            const char *tname = method.smoke->types[methodRef.ret].name;            
             int matchDistance = 0;
+            
             for (int i = 0; i < methodRef.numArgs; i++) {
                 QScriptValue actual = context->argument(i);
                 ushort argFlags = method.smoke->types[method.smoke->argumentList[methodRef.args+i]].flags;

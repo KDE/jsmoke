@@ -22,7 +22,7 @@
 #include "virtualmethodcall.h"
 #include "virtualmethodreturnvalue.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
 
 VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod) :
     m_smoke(smoke), m_method(meth), m_stack(stack), m_obj(obj),

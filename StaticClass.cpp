@@ -155,7 +155,7 @@ StaticClass::extension( QScriptClass::Extension extension, const QVariant& argum
             // Good, found a single match in matches[0]
         }
         
-        QtScript::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
+        QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
         return 15;
     }

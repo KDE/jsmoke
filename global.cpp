@@ -20,7 +20,7 @@
 #include "global.h"
 #include <QtCore/QHash>
 
-namespace QtScript {
+namespace QtScriptSmoke {
     namespace Debug {
         int DoDebug = 0;
     }

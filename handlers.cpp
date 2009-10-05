@@ -23,7 +23,7 @@
 #include "global.h"
 #include "qtscript-smoke.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
 	
 void
 marshall_basetype(Marshall *m)
@@ -332,7 +332,7 @@ marshall_basetype(Marshall *m)
             }
             
             void * ptr = m->item().s_voidp;
-            QScriptValue * value = QtScript::Global::getScriptValue(ptr);
+            QScriptValue * value = QtScriptSmoke::Global::getScriptValue(ptr);
             if (value != 0) {
                 *(m->var()) = *value;
                 return ;

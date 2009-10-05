@@ -26,7 +26,7 @@
 #include "marshall.h"
 
 
-namespace QtScript {
+namespace QtScriptSmoke {
 
 class Q_DECL_EXPORT MethodCall : public Marshall {
     

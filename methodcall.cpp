@@ -25,7 +25,7 @@
 
 #include <QtScript/QScriptEngine>
 
-namespace QtScript {
+namespace QtScriptSmoke {
 
 MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine) :
     m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), m_called(false),
@@ -92,7 +92,7 @@ void MethodCall::callMethod()
     
     if ((m_methodRef.flags & Smoke::mf_ctor) != 0) {
         Smoke::StackItem initializeInstanceStack[2];
-        initializeInstanceStack[1].s_voidp = &QtScript::Global::binding;
+        initializeInstanceStack[1].s_voidp = &QtScriptSmoke::Global::binding;
         fn(0, m_stack[0].s_class, initializeInstanceStack);
         
         m_instance = new QtScriptSmoke::Instance();
@@ -104,10 +104,10 @@ void MethodCall::callMethod()
         QScriptValue proto = m_engine->newObject(RunQtScriptSmoke::s_implClass); 
         QtScriptSmoke::Instance::set(proto, m_instance);
         m_context->setThisObject(proto);
-        QtScript::Global::mapPointer(new QScriptValue(proto), m_instance, m_instance->classId.index, 0);
+        QtScriptSmoke::Global::mapPointer(new QScriptValue(proto), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();
-        QtScript::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
+        QtScriptSmoke::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
     }
 }
 

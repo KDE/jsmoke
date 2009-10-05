@@ -30,7 +30,7 @@
 
 #include "StaticClass.h"
 
-namespace QtScript {
+namespace QtScriptSmoke {
     
 class SmokeType {
     Smoke::Type *m_type;        // derived from _smoke and _id, but cached
