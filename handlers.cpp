@@ -22,6 +22,7 @@
 #include "marshall.h"
 #include "global.h"
 #include "qtscript-smoke.h"
+#include "SmokeQtScriptUtils.h"
 
 namespace QtScriptSmoke {
 	
@@ -313,13 +314,21 @@ marshall_basetype(Marshall *m)
             void * ptr = instance->value;
             
             if (!m->cleanup() && m->type().isStack()) {
-                // ptr = construct_copy(instance);
+                ptr = constructCopy(instance);
             }
             
-            const Smoke::Class &klass = m->smoke()->classes[m->type().classId()];
-            ptr = instance->classId.smoke->cast(    ptr, 
-                                                    instance->classId.index, 
-                                                    instance->classId.smoke->idClass(klass.className, true).index );            
+            if (instance->classId.smoke == m->smoke()) {
+                ptr = instance->classId.smoke->cast(ptr, instance->classId.index, m->type().classId() );
+            } else {
+                // If the method's class and the instance's class are in different smoke modules
+                // then we need to convert them both to be class ids in the instance's module in
+                // order to do the cast
+                const Smoke::Class &klass = m->smoke()->classes[m->type().classId()];
+                ptr = instance->classId.smoke->cast(    ptr, 
+                                                        instance->classId.index, 
+                                                        instance->classId.smoke->idClass(klass.className, true).index );            
+            }
+            
             m->item().s_class = ptr;
             break;
         }
@@ -343,6 +352,15 @@ marshall_basetype(Marshall *m)
             instance->classId.index = m->type().classId();
             instance->value = ptr;
             instance->ownership = QScriptEngine::QtOwnership;
+            
+            if (m->type().isConst() && m->type().isRef()) {
+                ptr = constructCopy(instance);
+
+                if (ptr != 0) {
+                    instance->value = ptr;
+                    instance->ownership = QScriptEngine::ScriptOwnership;
+                }
+            }
             
             QScriptValue obj = m->engine()->newObject(RunQtScriptSmoke::s_implClass); 
             QtScriptSmoke::Instance::set(obj, instance);

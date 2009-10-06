@@ -1,3 +1,8 @@
+2009-10-06  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a QtScriptSmoke::constructCopy() method for when a C++ instance being
+marshalled needs to be copied
+
 2009-10-05  Richard Dale  <richard.j.dale@gmail.com>
 
 * Fixed off by one error in the virtual method override argument marshalling

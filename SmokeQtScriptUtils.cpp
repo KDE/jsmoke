@@ -18,16 +18,20 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SmokeQtScriptUtils.h"
-
-#include "StaticClass.h"
-
 #include <QByteArray>
 #include <QScriptContext>
 #include <QScriptValue>
 #include <QVariant>
 #include <QtDebug>
 
+#include "SmokeQtScriptUtils.h"
+#include "marshall.h"
+#include "global.h"
+
+
+
+namespace QtScriptSmoke {
+    
 /* http://lists.kde.org/?l=kde-bindings&m=105167029023219&w=2
 * The handler will first determine the Qt class hierarchy of the object (using 
 * Smoke's idClass() and looking in the class hierarchy array) then build the 
@@ -38,7 +42,7 @@
 * - append ? for things like an array, or a hash, or an undefined value     
 */
 QVector<QByteArray> 
-QtScriptSmoke::mungedMethods( const QByteArray& nameFn, QScriptContext* context )
+mungedMethods( const QByteArray& nameFn, QScriptContext* context )
 {
         QVector<QByteArray> ret;
         ret.append( nameFn );
@@ -82,7 +86,7 @@ QtScriptSmoke::mungedMethods( const QByteArray& nameFn, QScriptContext* context 
 // in script/qscriptextqobject.cpp
 //
 QVector<QPair<Smoke::ModuleIndex, int> > 
-QtScriptSmoke::resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context)
+resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context)
 {
     Smoke::Class & klass = classId.smoke->classes[classId.index];
     QVector<Smoke::ModuleIndex> methodIds;
@@ -221,4 +225,73 @@ QtScriptSmoke::resolveMethod(Smoke::ModuleIndex classId, const QByteArray& metho
     }
     
     return matches;    
+}
+
+void *
+constructCopy(Instance *instance)
+{
+    Smoke * smoke = instance->classId.smoke;
+    const char *className = smoke->className(instance->classId.index);
+    int classNameLen = strlen(className);
+    // copy constructor signature
+    QByteArray ccSignature(className);
+    int pos = ccSignature.lastIndexOf("::");
+    if (pos != -1) {
+        ccSignature = ccSignature.mid(pos + strlen("::"));
+    }
+    ccSignature.append("#");
+    Smoke::ModuleIndex ccId = smoke->findMethodName(className, ccSignature);
+
+    char *ccArg = new char[classNameLen + 8];
+    sprintf(ccArg, "const %s&", className);
+
+    Smoke::ModuleIndex ccMethod = smoke->findMethod(instance->classId, ccId);
+
+    if (ccMethod.index == 0) {
+        qWarning("construct_copy() failed %s %p\n", className, instance->value);
+        delete[] ccArg;
+        return 0;
+    }
+    Smoke::Index method = ccMethod.smoke->methodMaps[ccMethod.index].method;
+    if (method > 0) {
+        // Make sure it's a copy constructor
+        if (qstrcmp(smoke->types[*(smoke->argumentList + smoke->methods[method].args)].name, ccArg) == 0) {
+            qWarning("construct_copy() failed %s %p\n", className, instance->value);
+            delete[] ccArg;
+            return 0;
+        }
+        delete[] ccArg;
+        ccMethod.index = method;
+    } else {
+        // ambiguous method, pick the copy constructor
+        Smoke::Index i = -method;
+        while (ccMethod.smoke->ambiguousMethodList[i]) {
+            if (qstrcmp(smoke->types[*(smoke->argumentList + smoke->methods[ccMethod.smoke->ambiguousMethodList[i]].args)].name, ccArg) == 0) {
+                break;
+            }
+            i++;
+        }
+        delete[] ccArg;
+        ccMethod.index = ccMethod.smoke->ambiguousMethodList[i];
+        if (ccMethod.index == 0) {
+            qWarning("construct_copy() failed %s %p\n", className, instance->value);
+            return 0;
+        }
+    }
+
+    // Okay, ccMethod is the copy constructor. Time to call it.
+    Smoke::StackItem args[2];
+    args[0].s_voidp = 0;
+    args[1].s_voidp = instance->value;
+    Smoke::ClassFn fn = smoke->classes[instance->classId.index].classFn;
+    (*fn)(smoke->methods[ccMethod.index].method, 0, args);
+
+    // Initialize the binding for the new instance
+    Smoke::StackItem initializeInstanceStack[2];
+    initializeInstanceStack[1].s_voidp = &QtScriptSmoke::Global::binding;
+    (*fn)(0, initializeInstanceStack[0].s_voidp, initializeInstanceStack);
+
+    return args[0].s_voidp;
+}
+
 }

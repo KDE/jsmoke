@@ -24,10 +24,13 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QPair>
 
+#include "metaobject.h"
+
 class QScriptContext;
 
 namespace QtScriptSmoke
 {
     QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
     QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
+    void * constructCopy(Instance *instance);
 }
