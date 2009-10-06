@@ -110,9 +110,14 @@ RunQtScriptSmoke::output()
     QByteArray code = testFile.readAll();
     
     engine->evaluate( code, "test.js" );
-    qDebug() << engine->isEvaluating();
-    qDebug() << engine->hasUncaughtException();
-    qDebug() << engine->uncaughtExceptionBacktrace();
+    qDebug() << "engine isEvaluating:" << engine->isEvaluating();
+    qDebug() << "engine hasUncaughtException:" << engine->hasUncaughtException();
+    if (engine->hasUncaughtException()) {
+        qDebug() << "Uncaught exception:" << engine->uncaughtException().toString();
+        foreach (QString string, engine->uncaughtExceptionBacktrace()) {
+            qDebug() << "backtrace>" << string;
+        }
+    }
 
 }
 
