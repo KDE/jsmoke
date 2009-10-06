@@ -70,10 +70,11 @@ void Instance::set(QScriptValue &object, Instance * instance)
     object.setData(object.engine()->newVariant(QVariant::fromValue<QtScriptSmoke::Instance*>(instance)));        
 }
 
-MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * implClass )
+MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * object )
     : QScriptClass( engine )
     , m_className( className )
-    , m_implClass( implClass )
+    , m_classId( qt_Smoke->findClass(className.constData()) )
+    , m_object( object )
 { }
 
 MetaObject::~MetaObject()
@@ -137,13 +138,8 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
 
         QScriptContext* context = argument.value<QScriptContext*>();
         qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
-        qDebug() << "context as string" << context->toString();
         
-        const char* className = m_className;
-        Smoke::ModuleIndex classId = qt_Smoke->findClass(className);
-        qDebug() << "classId: " << classId.index;
-        
-        QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, className, context);
+        QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
 
         if (matches.count() == 0) {
             // Error

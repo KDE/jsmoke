@@ -2,6 +2,7 @@
 
 * Added a QtScriptSmoke::constructCopy() method for when a C++ instance being
 marshalled needs to be copied
+* Add a m_classId instance variable to the QtScriptSmoke::MetaObject class
 
 2009-10-05  Richard Dale  <richard.j.dale@gmail.com>
 

@@ -60,7 +60,8 @@ class MetaObject : public QScriptClass
         bool supportsExtension( QScriptClass::Extension extension ) const;
     private:
         QByteArray m_className;
-        Object* m_implClass;
+        Smoke::ModuleIndex m_classId;
+        Object* m_object;
 };
 
 }
