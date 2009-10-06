@@ -26,9 +26,8 @@
 
 #include "SmokeQtScriptUtils.h"
 #include "marshall.h"
+#include "methodcall.h"
 #include "global.h"
-
-
 
 namespace QtScriptSmoke {
     
@@ -225,6 +224,47 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     }
     
     return matches;    
+}
+
+QScriptValue 
+callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
+{
+    QString nameFn = context->callee().data().toString();
+    QScriptClass * cls = context->thisObject().scriptClass();
+    Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, nameFn.toLatin1(), context);
+    
+    if (matches.count() == 0) {
+        // Error
+    } else if (matches.count() > 1) {
+        // Error
+    } else {
+        // Good, found a single match in matches[0]
+    }
+    
+    QtScriptSmoke::MethodCall methodCall(classId.smoke, matches[0].first.index, context, engine);
+    methodCall.next();
+    return *(methodCall.var());
+}
+
+QScriptValue 
+callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
+{
+    QString nameFn = context->callee().data().toString();
+    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(context->thisObject());
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
+    
+    if (matches.count() == 0) {
+        // Error
+    } else if (matches.count() > 1) {
+        // Error
+    } else {
+        // Good, found a single match in matches[0]
+    }
+    
+    QtScriptSmoke::MethodCall methodCall(instance->classId.smoke, matches[0].first.index, context, engine);
+    methodCall.next();
+    return *(methodCall.var());
 }
 
 void *

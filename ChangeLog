@@ -3,6 +3,11 @@
 * Added a QtScriptSmoke::constructCopy() method for when a C++ instance being
 marshalled needs to be copied
 * Add a m_classId instance variable to the QtScriptSmoke::MetaObject class
+* Use the same trick of storing the name of a function in the data() of a 
+Function object for static method calls as for instance method calls. Add a
+classId() accessor method to the QtScriptSmoke::MetaObject class so that the
+classId for a static method call can be obtained from the thisObject() by the
+new callSmokeStaticMethod() function.
 
 2009-10-05  Richard Dale  <richard.j.dale@gmail.com>
 

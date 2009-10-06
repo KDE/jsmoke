@@ -34,6 +34,7 @@
 #include <QScriptValueIterator>
 #include <QScriptString>
 #include <QVariant>
+
 #include "SmokeQtScriptUtils.h"
 
 namespace QtScriptSmoke {
@@ -104,8 +105,10 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
 
 QScriptValue stuff(QScriptContext *context, QScriptEngine* engine)
 {
+    QString nameFn = context->callee().data().toString();
+
     QScriptValue ret = engine->newObject();
-    qDebug() << "calling a C++ function!!";
+    qDebug() << "calling a C++ function!!" << nameFn;
     return ret;
 }
 
@@ -114,15 +117,17 @@ QScriptValue
 MetaObject::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
     qDebug() << "property" << name << id;
-    if( name == engine()->toStringHandle("stuff") )
-        return engine()->newFunction( stuff );
-    else if( name == engine()->toStringHandle("prototype") )
+
+    if( name == engine()->toStringHandle("prototype") )
     {
         qDebug() << "its asking for the prototype";
         //return m_proto;
         return engine()->newObject();
     }
-    return engine()->newObject();
+    
+    QScriptValue fn = engine()->newFunction(callSmokeStaticMethod);
+    fn.setData(QScriptValue(name));
+    return fn;
 }
 
 QVariant

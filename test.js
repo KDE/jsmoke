@@ -3,6 +3,10 @@ include("QDialog");
 include("QHBoxLayout");
 include("QWidget");
 include("QVariant");
+include("QDir");
+
+var path = QDir.currentPath();
+print("path: " + path);
 
 layout = new QHBoxLayout();
 layout.addWidget( new QLabel("hello") );
