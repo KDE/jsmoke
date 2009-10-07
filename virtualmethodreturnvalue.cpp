@@ -34,10 +34,11 @@ VirtualMethodReturnValue::VirtualMethodReturnValue(Smoke *smoke, Smoke::Index me
 void
 VirtualMethodReturnValue::unsupported()
 {
-    qFatal("Cannot handle '%s' as return-type of virtual method %s::%s",
-            type().name(),
-            m_smoke->className(method().classId),
-            m_smoke->methodNames[method().name] );
+    m_returnValue.engine()->currentContext()->throwError(   QScriptContext::TypeError, 
+                                                            QString("Cannot handle '%1' as return type of virtual method %2::%3")
+                                                                    .arg(type().name())
+                                                                    .arg(m_smoke->className(method().classId))
+                                                                    .arg(m_smoke->methodNames[method().name]) );
 }
 
 void

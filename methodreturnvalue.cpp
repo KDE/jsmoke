@@ -31,10 +31,18 @@ MethodReturnValue::MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::S
 void
 MethodReturnValue::unsupported()
 {
-    qFatal("Cannot handle '%s' as return-type of %s::%s",
-           type().name(),
-           strcmp(m_smoke->className(method().classId), "QGlobalSpace") == 0 ? "" : m_smoke->className(method().classId),
-           m_smoke->methodNames[method().name] );
+    if (strcmp(m_smoke->className(method().classId), "QGlobalSpace") == 0) {
+        m_engine->currentContext()->throwError( QScriptContext::TypeError, 
+                                                QString("Cannot handle '%1' as return type of %2")
+                                                        .arg(type().name())
+                                                        .arg(m_smoke->methodNames[method().name]) );
+    } else {
+        m_engine->currentContext()->throwError( QScriptContext::TypeError, 
+                                                QString("Cannot handle '%1' as return type of %2::%3")
+                                                        .arg(type().name())
+                                                        .arg(m_smoke->className(method().classId))
+                                                        .arg(m_smoke->methodNames[method().name]) );
+    }
 }
 
 void

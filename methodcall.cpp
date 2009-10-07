@@ -51,14 +51,16 @@ MethodCall::~MethodCall()
 void MethodCall::unsupported()
 {
     if (qstrcmp(m_smoke->className(m_methodRef.classId), "QGlobalSpace") == 0) {
-        qFatal("Cannot handle '%s' as argument to %s",
-               type().name(),
-               m_smoke->methodNames[m_methodRef.name]);
+        m_context->throwError(  QScriptContext::TypeError, 
+                                QString("Cannot handle '%1' as argument to %2")
+                                        .arg(type().name())
+                                        .arg(m_smoke->methodNames[m_methodRef.name]) );
     } else {
-        qFatal("Cannot handle '%s' as argument to %s::%s",
-               type().name(),
-               m_smoke->className(m_methodRef.classId),
-               m_smoke->methodNames[m_methodRef.name]);
+        m_context->throwError(  QScriptContext::TypeError, 
+                                QString("Cannot handle '%1' as argument to %2::%3")
+                                        .arg(type().name())
+                                        .arg(m_smoke->className(m_methodRef.classId))
+                                        .arg(m_smoke->methodNames[m_methodRef.name]) );
     }
 }
 

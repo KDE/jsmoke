@@ -24,14 +24,15 @@
 
 namespace QtScriptSmoke {
 
-VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod) :
-    m_smoke(smoke), m_method(meth), m_stack(stack), m_obj(obj),
-    m_overridenMethod(overridenMethod), m_current(-1), m_called(false) 
+VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod) :
+    m_smoke(smoke), m_method(method), m_stack(stack), m_obj(obj),
+    m_overridenMethod(overridenMethod), m_current(-1), m_called(false), 
+    m_methodRef(smoke->methods[method])
 {
     m_engine = m_obj.engine();
-    m_args = m_smoke->argumentList + method().args;
+    m_args = m_smoke->argumentList + m_methodRef.args;
     
-    for (int count = 0; count < method().numArgs; count++) {
+    for (int count = 0; count < m_methodRef.numArgs; count++) {
         m_valueList << m_engine->newObject();
     }
 }
@@ -41,10 +42,11 @@ VirtualMethodCall::~VirtualMethodCall() {
 
 void
 VirtualMethodCall::unsupported() {
-    qFatal("Cannot handle '%s' as argument of virtual method %s::%s",
-            type().name(),
-            m_smoke->className(method().classId),
-            m_smoke->methodNames[method().name] );
+    engine()->currentContext()->throwError( QScriptContext::TypeError, 
+                                            QString("Cannot handle '%1' as argument of virtual method %2::%3")
+                                                    .arg(type().name())
+                                                    .arg(m_smoke->className(m_methodRef.classId))
+                                                    .arg(m_smoke->methodNames[m_methodRef.name]) );
 }
 
 void
@@ -63,7 +65,7 @@ VirtualMethodCall::next() {
     int previous = m_current;
     m_current++;
     
-    while (!m_called && m_current < method().numArgs) {
+    while (!m_called && m_current < m_methodRef.numArgs) {
         Marshall::HandlerFn fn = getMarshallFn(type());
         (*fn)(this);
         m_current++;

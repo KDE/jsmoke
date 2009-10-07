@@ -39,7 +39,7 @@ public:
     inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
     inline QScriptEngine * engine() { return m_engine; }
     inline QScriptValue * var() { return &(m_valueList[m_current]); }
-    inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
+    inline const Smoke::Method &method() { return m_methodRef; }
     inline Smoke *smoke() { return m_smoke; }
     inline bool cleanup() { return false; }   // is this right?
 
@@ -58,6 +58,7 @@ private:
     Smoke::Index * m_args;
     QScriptValueList m_valueList;
     bool m_called;
+    Smoke::Method & m_methodRef;
 };
 
 }

@@ -1,3 +1,8 @@
+2009-10-07  Richard Dale  <richard.j.dale@gmail.com>
+
+* Argument and return types that can't be handled are no longer fatal, but are
+QScript TypeError exceptions instead
+
 2009-10-06  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a QtScriptSmoke::constructCopy() method for when a C++ instance being
