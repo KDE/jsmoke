@@ -94,7 +94,7 @@ QScriptClass::QueryFlags
 MetaObject::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
 {
     //qDebug() << object.toVariant();
-    qDebug() << "queryProperty" << name << flags << id;
+    qDebug() << "MetaObject::queryProperty" << name << flags << id;
     if( engine()->toStringHandle("prototype") == name )
     {
       //  return QScriptClass::HandlesReadAccess;
@@ -104,28 +104,50 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
         return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
 }
 
-QScriptValue stuff(QScriptContext *context, QScriptEngine* engine)
+// This will be called for any call() invocation, not just something like 
+// QWidget.call(this, parent); which is what the code below is trying to do.
+//
+// The aim is to push a new activation and change the 'thisObject' to be the first
+// argument of the call. Then create a new arguments object without that first arg,
+// and call the 'QWidget' constructor. Whether it is successfully doing that isn't
+// obvious...
+QScriptValue 
+callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 {
-    QString nameFn = context->callee().data().toString();
-
-    QScriptValue ret = engine->newObject();
-    qDebug() << "calling a C++ function!!" << nameFn;
-    return ret;
+    QScriptClass * cls = context->thisObject().scriptClass();
+    Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
+    
+    QScriptContext * constructorContext = engine->pushContext();
+    constructorContext->setThisObject(context->argument(0));
+    
+    QScriptValue args = context->argumentsObject();
+    args.property("shift").call(args);
+    constructorContext->activationObject().setProperty("arguments", args);
+    
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(    classId, 
+                                                                                        classId.smoke->classes[classId.index].className, 
+                                                                                        constructorContext );
+    QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, constructorContext, constructorContext->engine());
+    methodCall.next();
+    engine->popContext();
+    
+    return *(methodCall.var());
 }
 
-//TODO we need to handle static functions here
 QScriptValue
 MetaObject::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
-    qDebug() << "property" << name << id;
+    qDebug() << "MetaObject::property" << name << id;
 
     if( name == engine()->toStringHandle("prototype") )
     {
         qDebug() << "its asking for the prototype";
         //return m_proto;
         return engine()->newObject();
+    } else if (name == engine()->toStringHandle("call")) {
+        return engine()->newFunction(callFunctionInvocation);
     }
-    
+
     QScriptValue fn = engine()->newFunction(callSmokeStaticMethod);
     fn.setData(QScriptValue(name));
     return fn;
@@ -143,6 +165,11 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
         //qDebug() << "we find the classname to be" << className
 
         QScriptContext* context = argument.value<QScriptContext*>();
+        for (int count = 0; count < context->argumentCount(); count++) {
+            printf("arg: %s\n", context->argument(count).toString().toLatin1().constData());
+        }
+        
+        // printf("context callee: %s\n", context->callee().toString().toLatin1().constData());
         qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
         
         QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
@@ -155,7 +182,7 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
             // Good, found a single match in matches[0]
         }
         
-        QScriptValue proto = context->engine()->newObject(QtScriptSmoke::Global::Object); 
+        QScriptValue proto = context->engine()->newObject(m_object); 
         context->setThisObject(proto);
         QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();

@@ -8,6 +8,9 @@ Smoke instances
 constructed, but assume a correct one has been set up in the context before, and
 passed to the MethodCall. This is to allow constructors to be called for 
 subclasses of the classes in the Smoke library.
+* Attempt to allow subclassing by implementing the call() method to trap calls
+like 'QWidget(this, parent);' in constructor functions. Not sure if it is 
+really working, but it is a start.
 
 2009-10-06  Richard Dale  <richard.j.dale@gmail.com>
 
