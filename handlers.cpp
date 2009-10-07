@@ -362,7 +362,7 @@ marshall_basetype(Marshall *m)
                 }
             }
             
-            QScriptValue obj = m->engine()->newObject(RunQtScriptSmoke::s_implClass); 
+            QScriptValue obj = m->engine()->newObject(QtScriptSmoke::Global::Object); 
             QtScriptSmoke::Instance::set(obj, instance);
             *(m->var()) = obj;
             break;

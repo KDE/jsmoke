@@ -36,6 +36,7 @@
 #include <QVariant>
 
 #include "SmokeQtScriptUtils.h"
+#include "global.h"
 
 namespace QtScriptSmoke {
     
@@ -154,6 +155,8 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
             // Good, found a single match in matches[0]
         }
         
+        QScriptValue proto = context->engine()->newObject(QtScriptSmoke::Global::Object); 
+        context->setThisObject(proto);
         QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
         return 15;

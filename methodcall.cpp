@@ -103,10 +103,9 @@ void MethodCall::callMethod()
         m_instance->value = m_stack[0].s_class;
         m_instance->ownership = QScriptEngine::ScriptOwnership;
         
-        QScriptValue proto = m_engine->newObject(RunQtScriptSmoke::s_implClass); 
+        QScriptValue proto = m_context->thisObject();
         QtScriptSmoke::Instance::set(proto, m_instance);
-        m_context->setThisObject(proto);
-        QtScriptSmoke::Global::mapPointer(new QScriptValue(proto), m_instance, m_instance->classId.index, 0);
+        QtScriptSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();
         QtScriptSmoke::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);

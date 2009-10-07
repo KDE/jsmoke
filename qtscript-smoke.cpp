@@ -34,8 +34,6 @@
 #include <QtDebug>
 #include <QTimer>
 
-QtScriptSmoke::Object * RunQtScriptSmoke::s_implClass = 0;
-
 RunQtScriptSmoke::RunQtScriptSmoke()
 {
     init_qt_Smoke();
@@ -56,7 +54,7 @@ RunQtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine)
         QByteArray className( context->argument(0).toString().toLatin1() );
         if( qt_Smoke->findClass(className).index != 0 )
         {
-            QScriptClass* sclass = new QtScriptSmoke::MetaObject( engine, className, s_implClass );
+            QScriptClass* sclass = new QtScriptSmoke::MetaObject( engine, className, QtScriptSmoke::Global::Object );
             QScriptValue classValue = engine->newObject( sclass );
             engine->globalObject().setProperty(context->argument(0).toString(), classValue );
         }
@@ -73,7 +71,7 @@ void
 RunQtScriptSmoke::output()
 {
     QScriptEngine* engine = new QScriptEngine( this );
-    s_implClass = new QtScriptSmoke::Object( engine );
+    QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
     

@@ -2,6 +2,12 @@
 
 * Argument and return types that can't be handled are no longer fatal, but are
 QScript TypeError exceptions instead
+* Add a singleton QtScriptSmoke::Global::Object which is the QScriptClass of 
+Smoke instances
+* Don't change the 'thisObject' in the MethodCall when a new instance has been
+constructed, but assume a correct one has been set up in the context before, and
+passed to the MethodCall. This is to allow constructors to be called for 
+subclasses of the classes in the Smoke library.
 
 2009-10-06  Richard Dale  <richard.j.dale@gmail.com>
 

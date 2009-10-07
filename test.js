@@ -9,6 +9,14 @@ var path = QDir.currentPath();
 print("path: " + path);
 
 layout = new QHBoxLayout();
+
+d = new Date();
+print("ENTER for loop");
+for (var name in Date) {
+   print("name: " + name);
+}
+print("EXIT for loop");
+
 layout.addWidget( new QLabel("hello") );
 layout.addWidget( new QLabel("world") );
 

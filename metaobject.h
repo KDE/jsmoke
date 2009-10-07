@@ -51,7 +51,7 @@ public:
 class MetaObject : public QScriptClass
 {
     public:
-        MetaObject( QScriptEngine*, const QByteArray& className, Object * implClass );
+        MetaObject( QScriptEngine*, const QByteArray& className, Object * object );
         ~MetaObject();
         QScriptValue prototype() const;
         QueryFlags queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id );
