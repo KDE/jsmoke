@@ -154,6 +154,18 @@ MetaObject::property ( const QScriptValue & object, const QScriptString & name, 
         return engine()->newObject();
     } else if (name == engine()->toStringHandle("call")) {
         return engine()->newFunction(callFunctionInvocation);
+    } else {
+        // Look for enums and if found, return the value directly
+        Smoke::Class & klass = m_classId.smoke->classes[m_classId.index];
+        Smoke::ModuleIndex methodId = m_classId.smoke->findMethod(klass.className, name.toString().toLatin1().constData());
+        if (methodId.index != 0) {
+            Smoke::Index ix = methodId.smoke->methodMaps[methodId.index].method;
+            if (ix > 0 && (m_classId.smoke->methods[ix].flags & Smoke::mf_enum) != 0) {
+                QtScriptSmoke::MethodCall methodCall(m_classId.smoke, ix, object.engine()->currentContext(), object.engine());
+                methodCall.next();
+                return *(methodCall.var());
+            }
+        }
     }
 
     QScriptValue fn = engine()->newFunction(callSmokeStaticMethod);
