@@ -30,7 +30,8 @@ class Object : public QScriptClass
 {
     public:
         Object( QScriptEngine* );
-        ~Object();        
+        ~Object(); 
+        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
         QString name() const;

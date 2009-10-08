@@ -90,18 +90,26 @@ MetaObject::prototype() const
     return QScriptValue();
 }
 
+QScriptValue::PropertyFlags 
+MetaObject::propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id )
+{
+    qDebug() << "MetaObject::propertyFlags(" << name << "," << id << ")";
+    return QScriptValue::ReadOnly;
+}
+
 QScriptClass::QueryFlags
 MetaObject::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
 {
     //qDebug() << object.toVariant();
-    qDebug() << "MetaObject::queryProperty" << name << flags << id;
+    qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
+    
     if( engine()->toStringHandle("prototype") == name )
     {
       //  return QScriptClass::HandlesReadAccess;
         return 0;
     }
     else
-        return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
+        return QScriptClass::HandlesReadAccess;
 }
 
 // This will be called for any call() invocation, not just something like 
@@ -137,7 +145,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 QScriptValue
 MetaObject::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
-    qDebug() << "MetaObject::property" << name << id;
+    qDebug() << "MetaObject::property(" << name << "," << id << ")";
 
     if( name == engine()->toStringHandle("prototype") )
     {

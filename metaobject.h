@@ -54,6 +54,7 @@ class MetaObject : public QScriptClass
         MetaObject( QScriptEngine*, const QByteArray& className, Object * object );
         ~MetaObject();
         QScriptValue prototype() const;
+        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         QueryFlags queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id );
         QScriptValue property ( const QScriptValue & object, const QScriptString & name, uint id );
         QVariant extension( QScriptClass::Extension extension, const QVariant& argument );

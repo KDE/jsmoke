@@ -45,19 +45,34 @@ Object::Object( QScriptEngine* engine )
 Object::~Object()
 { }
 
+QScriptValue::PropertyFlags 
+Object::propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id )
+{
+    // qDebug() << "Object::propertyFlags(" << name << "," << id << ")";
+    return QScriptValue::ReadOnly;
+}
+
 QScriptClass::QueryFlags
 Object::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
-    qDebug() << "[Object] queryProperty" << name << flags << id;
+    // qDebug() << "Object::queryProperty(" << name << "," << flags << "," << *id << ")";
+    
     if( name.toString() == "toString" )
         return 0;
-    return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
+    
+    if( name.toString() == "valueOf" )
+        return 0;
 
+    // We don't handle write access because a script can override a virtual
+    // method by overwriting a property with a custom function.
+    return QScriptClass::HandlesReadAccess;
 }
 
 QScriptValue
 Object::property(const QScriptValue& object, const QScriptString& name, uint id)
 {
+    qDebug() << "Object::property(" << name << "," << id << ")";
+
     QString nameStr = name;
     QScriptValue fn = engine()->newFunction( callSmokeMethod );
     fn.setData( QScriptValue( name ) );

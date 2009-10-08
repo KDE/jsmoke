@@ -220,7 +220,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     }
 
     for (int i = 0; i < matches.count(); i++) {
-        printf("resolveMethodSignature index: %d matchDistance: %d\n", matches[i].first.index, matches[i].second);
+        printf("resolveMethodSignature %s index: %d matchDistance: %d\n", methodName.constData(), matches[i].first.index, matches[i].second);
     }
     
     return matches;    

@@ -1,3 +1,10 @@
+2009-10-08  Richard Dale  <richard.j.dale@gmail.com>
+
+* Virtual method overrides are now working. Added propertyFlags() methods to
+QtScriptSmoke::MetaObject and Object classes that returns 
+QScriptValue::ReadOnly. This makes it possible to distiguish between custom
+qtscript functions and built in smoke methods.
+
 2009-10-07  Richard Dale  <richard.j.dale@gmail.com>
 
 * Argument and return types that can't be handled are no longer fatal, but are
