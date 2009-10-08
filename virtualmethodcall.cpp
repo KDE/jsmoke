@@ -42,6 +42,8 @@ VirtualMethodCall::~VirtualMethodCall() {
 
 void
 VirtualMethodCall::unsupported() {
+    m_called = true;
+    
     engine()->currentContext()->throwError( QScriptContext::TypeError, 
                                             QString("Cannot handle '%1' as argument of virtual method %2::%3")
                                                     .arg(type().name())

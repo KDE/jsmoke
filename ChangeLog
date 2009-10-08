@@ -6,6 +6,10 @@ QScriptValue::ReadOnly. This makes it possible to distiguish between custom
 qtscript functions and built in smoke methods.
 * If an enum, such as QPainter.Antialiasing, is referenced, then return the
 value directly, rather than returning a function to be evaluated.
+* Once an argument type that can't be marshalled has been found, abandon the 
+method call and throw an exception
+* If an argument type has 'QList' or 'QVector' in it, assume it will match a
+QtScript Array
 
 2009-10-07  Richard Dale  <richard.j.dale@gmail.com>
 

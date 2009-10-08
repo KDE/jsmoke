@@ -203,6 +203,10 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     }
                 } else if (actual.isVariant()) {
                 } else if (actual.isArray()) {
+                    if (argType.contains("QVector") || argType.contains("QList")) {
+                    } else {
+                        matchDistance += 10;
+                    }
                 } else if (actual.isQObject()) {
                 } else if (actual.isNull()) {
                 } else if (actual.isObject()) {

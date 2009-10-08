@@ -50,6 +50,8 @@ MethodCall::~MethodCall()
 
 void MethodCall::unsupported()
 {
+    m_called = true;
+
     if (qstrcmp(m_smoke->className(m_methodRef.classId), "QGlobalSpace") == 0) {
         m_context->throwError(  QScriptContext::TypeError, 
                                 QString("Cannot handle '%1' as argument to %2")
