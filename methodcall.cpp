@@ -28,7 +28,8 @@
 namespace QtScriptSmoke {
 
 MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine) :
-    m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), m_called(false),
+    m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), 
+    m_called(false), m_error(false),
     m_methodRef(smoke->methods[method])
 {
     m_target = m_context->thisObject();
@@ -50,25 +51,26 @@ MethodCall::~MethodCall()
 
 void MethodCall::unsupported()
 {
-    m_called = true;
-
+    QString message;
+    
     if (qstrcmp(m_smoke->className(m_methodRef.classId), "QGlobalSpace") == 0) {
-        m_context->throwError(  QScriptContext::TypeError, 
-                                QString("Cannot handle '%1' as argument to %2")
-                                        .arg(type().name())
-                                        .arg(m_smoke->methodNames[m_methodRef.name]) );
+        message = QString("Cannot handle '%1' as argument to %2")
+                            .arg(type().name())
+                            .arg(m_smoke->methodNames[m_methodRef.name]);
     } else {
-        m_context->throwError(  QScriptContext::TypeError, 
-                                QString("Cannot handle '%1' as argument to %2::%3")
-                                        .arg(type().name())
-                                        .arg(m_smoke->className(m_methodRef.classId))
-                                        .arg(m_smoke->methodNames[m_methodRef.name]) );
+        message = QString("Cannot handle '%1' as argument to %2::%3")
+                            .arg(type().name())
+                            .arg(m_smoke->className(m_methodRef.classId))
+                            .arg(m_smoke->methodNames[m_methodRef.name]);
     }
+    
+    m_returnValue = m_context->throwError(QScriptContext::TypeError, message);
+    m_error = true;
 }
 
 void MethodCall::callMethod()
 {
-    if (m_called) {
+    if (m_called || m_error) {
         return;
     }
     
@@ -105,8 +107,8 @@ void MethodCall::callMethod()
         m_instance->value = m_stack[0].s_class;
         m_instance->ownership = QScriptEngine::ScriptOwnership;
         
-        QScriptValue proto = m_context->thisObject();
-        QtScriptSmoke::Instance::set(proto, m_instance);
+        QScriptValue m_returnValue = m_context->thisObject();
+        QtScriptSmoke::Instance::set(m_returnValue, m_instance);
         QtScriptSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();
@@ -119,7 +121,7 @@ void MethodCall::next()
     int previous = m_current;
     m_current++;
     
-    while (!m_called && m_current < m_methodRef.numArgs) {
+    while (!m_called && !m_error && m_current < m_methodRef.numArgs) {
         Marshall::HandlerFn fn = getMarshallFn(type());
         (*fn)(this);
         m_current++;

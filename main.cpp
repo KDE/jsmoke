@@ -19,12 +19,14 @@
  */
 
 #include <QApplication>
+#include <QtCore/QByteArray>
 #include "qtscript-smoke.h"
 
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    RunQtScriptSmoke foo;
+    QByteArray script(argc > 1 ? argv[1] : "../test/test.js");
+    RunQtScriptSmoke foo(script);
     return app.exec();
 }

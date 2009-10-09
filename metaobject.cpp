@@ -103,13 +103,14 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
     //qDebug() << object.toVariant();
     qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
     
-    if( engine()->toStringHandle("prototype") == name )
+    if (    name.toString() == "prototype"
+            || name.toString() == "toString"
+            || name.toString() == "valueOf" )
     {
-      //  return QScriptClass::HandlesReadAccess;
         return 0;
+    } else {
+        return QScriptClass::HandlesReadAccess; 
     }
-    else
-        return QScriptClass::HandlesReadAccess;
 }
 
 // This will be called for any call() invocation, not just something like 
@@ -135,6 +136,16 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(    classId, 
                                                                                         classId.smoke->classes[classId.index].className, 
                                                                                         constructorContext );
+    if (matches.count() == 0) {
+        QString message = QString("overloaded %1() constructor not resolved").arg(classId.smoke->classes[classId.index].className);
+        return context->throwError(QScriptContext::TypeError, message);
+    } else if (matches.count() > 1 && matches[0].second == matches[1].second) {
+        QString message = QString("overloaded %1() constructor not resolved").arg(classId.smoke->classes[classId.index].className);
+        return context->throwError(QScriptContext::TypeError, message);
+    } else {
+        // Good, found a single best match in matches[0]
+    }
+
     QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, constructorContext, constructorContext->engine());
     methodCall.next();
     engine->popContext();
@@ -152,7 +163,7 @@ MetaObject::property ( const QScriptValue & object, const QScriptString & name, 
         qDebug() << "its asking for the prototype";
         //return m_proto;
         return engine()->newObject();
-    } else if (name == engine()->toStringHandle("call")) {
+    } else if (name.toString() == "call") {
         return engine()->newFunction(callFunctionInvocation);
     } else {
         // Look for enums and if found, return the value directly
@@ -195,17 +206,22 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
         QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
 
         if (matches.count() == 0) {
-            // Error
-        } else if (matches.count() > 1) {
-            // Error
+            QString message = QString("overloaded %1() constructor not resolved").arg(m_className.constData());
+            context->setThisObject(context->throwError(QScriptContext::TypeError, message));
+            return 15;
+        } else if (matches.count() > 1 && matches[0].second == matches[1].second) {
+            QString message = QString("overloaded %1() constructor not resolved").arg(m_className.constData());
+            context->setThisObject(context->throwError(QScriptContext::TypeError, message));
+            return 15;
         } else {
-            // Good, found a single match in matches[0]
+            // Good, found a single best match in matches[0]
         }
         
         QScriptValue proto = context->engine()->newObject(m_object); 
         context->setThisObject(proto);
         QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
+        context->setThisObject(*(methodCall.var()));
         return 15;
     }
 }

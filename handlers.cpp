@@ -19,6 +19,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QtCore/QDate>
+#include <QtCore/QDateTime>
+#include <QtCore/QTime>
+
 #include "marshall.h"
 #include "global.h"
 #include "qtscript-smoke.h"
@@ -305,6 +309,25 @@ marshall_basetype(Marshall *m)
                 return;
             }
             
+            if (value.isDate()) {
+                if (    m->type().classId() == QtScriptSmoke::Global::QDateClassId.index
+                        && m->type().smoke() == QtScriptSmoke::Global::QDateClassId.smoke ) 
+                {
+                    m->item().s_class = new QDate(value.toDateTime().date());
+                } else if ( m->type().classId() == QtScriptSmoke::Global::QDateTimeClassId.index
+                            && m->type().smoke() == QtScriptSmoke::Global::QDateTimeClassId.smoke ) 
+                {
+                    m->item().s_class = new QDateTime(value.toDateTime());
+                } else if ( m->type().classId() == QtScriptSmoke::Global::QTimeClassId.index
+                            && m->type().smoke() == QtScriptSmoke::Global::QTimeClassId.smoke ) 
+                {
+                    m->item().s_class = new QTime(value.toDateTime().time());
+                } else {
+                    m->item().s_class = 0;
+                }
+                return;
+            }
+            
             if (!QtScriptSmoke::Instance::isSmokeObject(value)) {
                 m->item().s_class = 0;
                 return;
@@ -341,6 +364,26 @@ marshall_basetype(Marshall *m)
             }
             
             void * ptr = m->item().s_voidp;
+
+            /* Is this needed - should QtScript Dates be returned instead of QDateTime here?
+            if (    m->type().classId() == QtScriptSmoke::Global::QDateClassId.index
+                    && m->type().smoke() == QtScriptSmoke::Global::QDateClassId.smoke ) 
+            {
+                *(m->var()) = m->engine()->newDate(QDateTime(*(static_cast<QDate*>(ptr))));
+                return;
+            } else if ( m->type().classId() == QtScriptSmoke::Global::QDateTimeClassId.index
+                        && m->type().smoke() == QtScriptSmoke::Global::QDateTimeClassId.smoke ) 
+            {
+                *(m->var()) = m->engine()->newDate(*(static_cast<QDateTime*>(ptr)));
+                return;
+            } else if ( m->type().classId() == QtScriptSmoke::Global::QTimeClassId.index
+                        && m->type().smoke() == QtScriptSmoke::Global::QTimeClassId.smoke ) 
+            {
+                *(m->var()) = m->engine()->newDate(QDateTime(QDate(), *(static_cast<QTime*>(ptr))));
+                return;
+            }
+            */
+            
             QScriptValue * value = QtScriptSmoke::Global::getScriptValue(ptr);
             if (value != 0) {
                 *(m->var()) = *value;

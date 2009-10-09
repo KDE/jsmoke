@@ -39,7 +39,7 @@ public:
     inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
     inline QScriptEngine * engine() { return m_engine; }
     inline QScriptValue * var() {
-        if (m_current < 0) {
+        if (m_current < 0 || m_error) {
             return &m_returnValue;
         }
         
@@ -66,6 +66,7 @@ private:
     QScriptValue m_returnValue;
     QScriptValueList m_valueList;
     bool m_called;
+    bool m_error;
     Smoke::Method & m_methodRef;
 };
 

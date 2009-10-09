@@ -4,11 +4,17 @@ include("QHBoxLayout");
 include("QWidget");
 include("QVariant");
 include("QDir");
+include("QDateTime");
 
 var path = QDir.currentPath();
 print("path: " + path);
 
+var date = new Date();
+var datetime = new QDateTime(date);
+print("day: " + datetime.date().day());
+
 layout = new QHBoxLayout();
+print("layout.prototype: " + layout.prototype);
 layout.addWidget( new QLabel("hello") );
 layout.addWidget( new QLabel("world") );
 

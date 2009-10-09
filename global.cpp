@@ -27,9 +27,14 @@ namespace QtScriptSmoke {
     
     namespace Global {
 
+        
 QtScriptSmoke::Object * Object = 0;
-
 QtScriptSmoke::Binding binding;
+
+Smoke::ModuleIndex QObjectClassId;
+Smoke::ModuleIndex QDateClassId;
+Smoke::ModuleIndex QDateTimeClassId;
+Smoke::ModuleIndex QTimeClassId;
 
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
 Q_GLOBAL_STATIC(QScriptValuesMap, qscriptValues)

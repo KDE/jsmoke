@@ -34,12 +34,17 @@
 #include <QtDebug>
 #include <QTimer>
 
-RunQtScriptSmoke::RunQtScriptSmoke()
+RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
 {
     init_qt_Smoke();
     QtScriptSmoke::Global::binding = QtScriptSmoke::Binding(qt_Smoke);
     QtScriptSmoke::installHandlers(QtScriptSmoke::Handlers);
-
+    
+    QtScriptSmoke::Global::QObjectClassId = qt_Smoke->idClass("QObject");
+    QtScriptSmoke::Global::QDateClassId = qt_Smoke->idClass("QDate");
+    QtScriptSmoke::Global::QDateTimeClassId = qt_Smoke->idClass("QDateTime");
+    QtScriptSmoke::Global::QTimeClassId = qt_Smoke->idClass("QTime");
+    
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }
 
@@ -92,26 +97,29 @@ RunQtScriptSmoke::output()
      So as far a I can see, creating the classes on startup is pretty cheap.
      
      -- Richard
-     
+    */
+    
     for (int i = 0; i < qt_Smoke->numClasses; i++) {
         // printf("className: %s\n", qt_Smoke->classes[i].className);
         
-        QScriptClass* sclass = new StaticClass(engine, qt_Smoke->classes[i].className, s_implClass);
+        QScriptClass* sclass = new QtScriptSmoke::MetaObject(   engine, 
+                                                                qt_Smoke->classes[i].className, 
+                                                                QtScriptSmoke::Global::Object );
         QScriptValue classValue = engine->newObject(sclass);
         engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
     }
-    */
 
-    qDebug() << "opening ../test.js";
-    QFile testFile("../test.js");
+    qDebug() << "opening" << m_script;
+    QFile testFile(m_script);
     testFile.open( QFile::ReadOnly );
     QByteArray code = testFile.readAll();
     
-    engine->evaluate( code, "test.js" );
+    QScriptValue result = engine->evaluate( code, "test.js" );
     qDebug() << "engine isEvaluating:" << engine->isEvaluating();
     qDebug() << "engine hasUncaughtException:" << engine->hasUncaughtException();
     if (engine->hasUncaughtException()) {
-        qDebug() << "Uncaught exception:" << engine->uncaughtException().toString();
+        int line = engine->uncaughtExceptionLineNumber();
+        qDebug() << "Uncaught exception at line" << line << ":" << engine->uncaughtException().toString();
         foreach (QString string, engine->uncaughtExceptionBacktrace()) {
             qDebug() << "backtrace>" << string;
         }

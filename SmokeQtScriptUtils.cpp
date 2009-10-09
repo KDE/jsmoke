@@ -71,11 +71,13 @@ mungedMethods( const QByteArray& nameFn, QScriptContext* context )
                 }
                 ret = temp;
             }
-            else
+            else if (QtScriptSmoke::Instance::isSmokeObject(val) || val.isDate())
             {
                 for (int i = 0; i < ret.count(); i++) {
                     ret[i] += '#';
                 }
+            } else {
+                qDebug() << "Unknown value type:" << val.toString();
             }
         }
         return ret;
@@ -239,11 +241,14 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, nameFn.toLatin1(), context);
     
     if (matches.count() == 0) {
-        // Error
-    } else if (matches.count() > 1) {
-        // Error
+        QString message = QString("%1 is not defined").arg(nameFn);
+        return context->throwError(QScriptContext::ReferenceError, message);
+    } else if (matches.count() > 1 && matches[0].second == matches[1].second) {
+        // Error if the first two have the same matchDistance
+        QString message = QString("overloaded %1() call not resolved").arg(nameFn);
+        return context->throwError(QScriptContext::TypeError, message);
     } else {
-        // Good, found a single match in matches[0]
+        // Good, found a single best match in matches[0]
     }
     
     QtScriptSmoke::MethodCall methodCall(classId.smoke, matches[0].first.index, context, engine);
@@ -259,11 +264,14 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
     
     if (matches.count() == 0) {
-        // Error
-    } else if (matches.count() > 1) {
-        // Error
+        QString message = QString("%1 is not defined").arg(nameFn);
+        return context->throwError(QScriptContext::ReferenceError, message);
+    } else if (matches.count() > 1 && matches[0].second == matches[1].second) {
+        // Error if the first two have the same matchDistance
+        QString message = QString("overloaded %1() call not resolved").arg(nameFn);
+        return context->throwError(QScriptContext::TypeError, message);
     } else {
-        // Good, found a single match in matches[0]
+        // Good, found a single best match in matches[0]
     }
     
     QtScriptSmoke::MethodCall methodCall(instance->classId.smoke, matches[0].first.index, context, engine);

@@ -32,11 +32,12 @@ class RunQtScriptSmoke : public QObject
 {
     Q_OBJECT
     public:
-        RunQtScriptSmoke();
+        RunQtScriptSmoke(const QByteArray & script);
         virtual ~RunQtScriptSmoke();
     private slots:
         void output();
     private:
+        QByteArray m_script;
         static QScriptValue includeQtClass(QScriptContext *context, QScriptEngine* engine);
 };
 
