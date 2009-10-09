@@ -56,7 +56,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
     quint32 i;
     for (it = begin, i = 0; it != end; ++it, ++i) {
         int id = qMetaTypeId<typename Container::value_type>();
-        a.setProperty(i, qScriptSmokeValueFromSequence_helper(eng, id, &(*it)));
+        a.setProperty(i, qScriptSmokeValueFromSequence_helper(eng, id, (void *) &(*it)));
     }
     
     return a;
@@ -97,9 +97,9 @@ void qScriptSmokeValueToSequence(const QScriptValue &value, Container &cont)
         int id = qMetaTypeId<typename Container::value_type>();
                 
 #if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET
-        cont.push_back(*(static_cast<Container::value_type>(qScriptSmokeValueToSequence_helper(value.property(i), id))));
+        cont.push_back(*(static_cast<Container::value_type *>(qScriptSmokeValueToSequence_helper(value.property(i), id))));
 #else
-        cont.push_back(*(static_cast<typename Container::value_type>(qScriptSmokeValueToSequence_helper(value.property(i), id))));
+        cont.push_back(*(static_cast<typename Container::value_type *>(qScriptSmokeValueToSequence_helper(value.property(i), id))));
 #endif
     }
 }

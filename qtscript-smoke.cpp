@@ -25,6 +25,7 @@
 #include "metaobject.h"
 #include "QtScriptSmokeBinding.h"
 #include "global.h"
+#include "marshall_macros.h"
 
 #include "smoke/qt_smoke.h"
 
@@ -33,6 +34,8 @@
 #include <QStringList>
 #include <QtDebug>
 #include <QTimer>
+#include <QVector>
+#include <QPoint>
 
 RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
 {
@@ -72,10 +75,14 @@ RunQtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine)
     return QScriptValue();
 }
 
+Q_DECLARE_METATYPE(QVector<QPoint>)
+
 void
 RunQtScriptSmoke::output()
 {
     QScriptEngine* engine = new QScriptEngine( this );
+    qScriptSmokeRegisterSequenceMetaType<QVector<QPoint> >(engine); 
+
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );

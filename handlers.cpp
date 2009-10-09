@@ -22,12 +22,16 @@
 #include <QtCore/QDate>
 #include <QtCore/QDateTime>
 #include <QtCore/QTime>
+#include <QtCore/QPoint>
+#include <QtCore/QVector>
 
 #include "marshall.h"
 #include "global.h"
 #include "qtscript-smoke.h"
 #include "SmokeQtScriptUtils.h"
 #include "marshall_macros.h"
+
+Q_DECLARE_METATYPE(QVector<QPoint>)
 
 namespace QtScriptSmoke {
 	
@@ -472,10 +476,42 @@ static void marshall_QString(Marshall *m) {
     }
 }
 
+static void marshall_QVectorQPoint(Marshall *m) {
+    switch(m->action()) {
+    case Marshall::FromQScriptValue:
+    {        
+        if (m->var()->isNull()) {
+            m->item().s_voidp = 0;
+            return;
+        }
+
+        m->item().s_voidp = new QVector<QPoint>(qscriptvalue_cast<QVector<QPoint> >(*(m->var())));
+        break;
+    }
+ 
+    case Marshall::ToQScriptValue:
+    {
+        if (m->item().s_voidp == 0) {
+            *(m->var()) = m->engine()->nullValue();
+            return;
+        }
+        
+        *(m->var()) = m->engine()->toScriptValue(*(static_cast<QVector<QPoint>* >(m->item().s_voidp)));
+        break;
+    }
+    
+    default:
+        m->unsupported();
+        break;
+    }
+}
+
 TypeHandler Handlers[] = {
     { "QString", marshall_QString },
     { "QString*", marshall_QString },
     { "QString&", marshall_QString },
+    { "QVector<QPoint>", marshall_QVectorQPoint },
+    { "QVector<QPoint>&", marshall_QVectorQPoint },
 
     { 0, 0 }
 };

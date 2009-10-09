@@ -12,6 +12,9 @@ than just '../test.qs' can be run. Create a test subdirectory for test scripts.
 * Added a qScriptSmokeRegisterSequenceMetaType() function based on 
 qScriptRegisterSequenceMetaType() but using marshaller and demarshaller 
 functions that work with QScriptValues wrapped as smoke instances.
+* Added a test marshaller for QVector<QPoint> to try the sequence marshaller,
+and it does seem to do something useful. Where the metatypes should be declared
+and so on needs more thought though.
 
 2009-10-08  Richard Dale  <richard.j.dale@gmail.com>
 
