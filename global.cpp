@@ -43,8 +43,17 @@ QScriptValue *
 getScriptValue(void *ptr) 
 {
     if (!qscriptValues() || !qscriptValues()->contains(ptr)) {
+        if (Debug::DoDebug & Debug::GC) {
+            qWarning("getScriptValue %p -> nil", ptr);
+            if (!qscriptValues()) {
+                qWarning("QtScriptSmoke::Global::getScriptValue qscriptValues deleted");
+            }
+        }
         return 0;
     } else {
+        if (Debug::DoDebug & Debug::GC) {
+            qWarning("QtScriptSmoke::Global::getScriptValue %p -> %p", ptr, (void *) qscriptValues()->operator[](ptr));
+        }
         return qscriptValues()->operator[](ptr);
     }
 }
@@ -57,7 +66,14 @@ unmapPointer(QtScriptSmoke::Instance * instance, Smoke::Index classId, void *las
     if (ptr != lastptr) {
         lastptr = ptr;
         if (qscriptValues() && qscriptValues()->contains(ptr)) {
-            QScriptValue * obj = qscriptValues()->operator[](ptr);        
+            QScriptValue * obj = qscriptValues()->operator[](ptr);
+            
+            if (Debug::DoDebug & Debug::GC) {
+                QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
+                const char *className = instance->classId.smoke->classes[instance->classId.index].className;
+                qWarning("QtScriptSmoke::Global::unmapPointer (%s*)%p -> %p size: %d", className, ptr, obj, qscriptValues()->size() - 1);
+            }
+            
             qscriptValues()->remove(ptr);
         }
     }
@@ -80,7 +96,14 @@ mapPointer(QScriptValue * obj, QtScriptSmoke::Instance * instance, Smoke::Index 
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
      
     if (ptr != lastptr) {
-        lastptr = ptr;     
+        lastptr = ptr; 
+        
+        if (Debug::DoDebug & Debug::GC) {
+            QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
+            const char *className = instance->classId.smoke->classes[instance->classId.index].className;
+            qWarning("QtScriptSmoke::Global::mapPointer (%s*)%p -> %p size: %d", className, ptr, (void*)obj, qscriptValues()->size() + 1);
+        }
+        
         qscriptValues()->insert(ptr, obj);
     }
     
