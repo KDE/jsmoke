@@ -9,6 +9,9 @@ time and memory used to make sure it isn't a problem.
 * Add an optional arguement to allow a script name to be given so that more 
 than just '../test.qs' can be run. Create a test subdirectory for test scripts.
 * Added some debug logging for accessing the C++ pointer to QScriptValue map
+* Added a qScriptSmokeRegisterSequenceMetaType() function based on 
+qScriptRegisterSequenceMetaType() but using marshaller and demarshaller 
+functions that work with QScriptValues wrapped as smoke instances.
 
 2009-10-08  Richard Dale  <richard.j.dale@gmail.com>
 

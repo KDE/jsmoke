@@ -27,6 +27,7 @@
 #include "global.h"
 #include "qtscript-smoke.h"
 #include "SmokeQtScriptUtils.h"
+#include "marshall_macros.h"
 
 namespace QtScriptSmoke {
 	

@@ -44,7 +44,7 @@ getScriptValue(void *ptr)
 {
     if (!qscriptValues() || !qscriptValues()->contains(ptr)) {
         if (Debug::DoDebug & Debug::GC) {
-            qWarning("getScriptValue %p -> nil", ptr);
+            qWarning("QtScriptSmoke::Global::getScriptValue %p -> nil", ptr);
             if (!qscriptValues()) {
                 qWarning("QtScriptSmoke::Global::getScriptValue qscriptValues deleted");
             }
