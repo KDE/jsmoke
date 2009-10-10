@@ -93,19 +93,18 @@ MetaObject::prototype() const
 QScriptValue::PropertyFlags 
 MetaObject::propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id )
 {
-    qDebug() << "MetaObject::propertyFlags(" << name << "," << id << ")";
+    // qDebug() << "MetaObject::propertyFlags(" << name << "," << id << ")";
     return QScriptValue::ReadOnly;
 }
 
 QScriptClass::QueryFlags
 MetaObject::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
 {
-    //qDebug() << object.toVariant();
-    qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
+    // qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
     
-    if (    name.toString() == "prototype"
-            || name.toString() == "toString"
-            || name.toString() == "valueOf" )
+    if (    name.toString() == QLatin1String("prototype")
+            || name.toString() == QLatin1String("toString")
+            || name.toString() == QLatin1String("valueOf") )
     {
         return 0;
     } else {
@@ -156,7 +155,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 QScriptValue
 MetaObject::property ( const QScriptValue & object, const QScriptString & name, uint id )
 {
-    qDebug() << "MetaObject::property(" << name << "," << id << ")";
+    // qDebug() << "MetaObject::property(" << name << "," << id << ")";
 
     if( name == engine()->toStringHandle("prototype") )
     {
@@ -195,14 +194,8 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
         //const char* className = classNameByteArray.constData();
         //qDebug() << "we find the classname to be" << className
 
-        QScriptContext* context = argument.value<QScriptContext*>();
-        for (int count = 0; count < context->argumentCount(); count++) {
-            printf("arg: %s\n", context->argument(count).toString().toLatin1().constData());
-        }
-        
-        // printf("context callee: %s\n", context->callee().toString().toLatin1().constData());
-        qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();
-        
+        QScriptContext* context = argument.value<QScriptContext*>();        
+        // qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();        
         QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
 
         if (matches.count() == 0) {

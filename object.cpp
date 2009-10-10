@@ -71,7 +71,7 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
 QScriptValue
 Object::property(const QScriptValue& object, const QScriptString& name, uint id)
 {
-    qDebug() << "Object::property(" << name << "," << id << ")";
+    // qDebug() << "Object::property(" << name << "," << id << ")";
 
     QString nameStr = name;
     QScriptValue fn = engine()->newFunction( callSmokeMethod );

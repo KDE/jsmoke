@@ -546,6 +546,10 @@ Marshall::HandlerFn getMarshallFn(const SmokeType &type) {
     return marshall_unknown;
 }
 
+void registerTypes(QScriptEngine * engine) {   
+    qScriptSmokeRegisterSequenceMetaType<QVector<QPoint> >(engine); 
+}
+
 }
 
 // kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;

@@ -30,7 +30,48 @@
 #include "global.h"
 
 namespace QtScriptSmoke {
+
+QString
+methodToString(Smoke::ModuleIndex methodId)
+{
+    QString result;
+    Smoke * smoke = methodId.smoke;
+    Smoke::Method& methodRef = smoke->methods[methodId.index];
+    const char * typeName = smoke->types[methodRef.ret].name;
     
+    if ((methodRef.flags & Smoke::mf_enum) != 0) {
+        result.append(QString("enum %1::%2")
+                            .arg(smoke->classes[methodRef.classId].className)
+                            .arg(smoke->methodNames[methodRef.name]) );
+        return result;
+    }
+    
+    if ((methodRef.flags & Smoke::mf_static) != 0) {
+        result.append("static ");
+    }
+    
+    result.append((typeName != 0 ? typeName : "void"));
+    result.append(  QString(" %1::%2(")
+                        .arg(smoke->classes[methodRef.classId].className)
+                        .arg(smoke->methodNames[methodRef.name]) );
+                        
+    for (int i = 0; i < methodRef.numArgs; i++) {
+        if (i > 0) {
+            result.append(", ");
+        }
+        
+        typeName = smoke->types[smoke->argumentList[methodRef.args+i]].name;
+        result.append((typeName != 0 ? typeName : "void"));
+    }
+    
+    result.append(")");
+    if ((methodRef.flags & Smoke::mf_const) != 0) {
+        result.append(" const");
+    }
+    
+    return result;
+}
+
 /* http://lists.kde.org/?l=kde-bindings&m=105167029023219&w=2
 * The handler will first determine the Qt class hierarchy of the object (using 
 * Smoke's idClass() and looking in the class hierarchy array) then build the 
@@ -153,6 +194,9 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 
                 if (actual.isNumber()) {
                     switch (argFlags & Smoke::tf_elem) {
+                    case Smoke::t_enum:
+                        matchDistance += 0;
+                        break;
                     case Smoke::t_double:
                         // perfect
                         break;
@@ -203,6 +247,25 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     } else {
                         matchDistance += 10;
                     }
+                } else if (QtScriptSmoke::Instance::isSmokeObject(actual)) {
+                    if ((argFlags & Smoke::t_class) != 0) {
+                        QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(actual);
+                        Smoke::ModuleIndex classId = qt_Smoke->findClass(argType);
+                        if (    instance->classId.index == classId.index
+                                && instance->classId.smoke == classId.smoke )
+                        {
+                        } else if ( qt_Smoke->isDerivedFrom(    instance->classId.smoke, 
+                                                                instance->classId.index,
+                                                                classId.smoke,
+                                                                classId.index ) )
+                        {
+                            matchDistance += 1;
+                        } else {
+                            matchDistance += 10;
+                        }
+                    } else {
+                        matchDistance += 10;
+                    }
                 } else if (actual.isVariant()) {
                 } else if (actual.isArray()) {
                     if (argType.contains("QVector") || argType.contains("QList")) {
@@ -225,8 +288,15 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         }
     }
 
-    for (int i = 0; i < matches.count(); i++) {
-        printf("resolveMethodSignature %s index: %d matchDistance: %d\n", methodName.constData(), matches[i].first.index, matches[i].second);
+    if ((Debug::DoDebug & Debug::Calls) != 0) {
+        qWarning("Method metches:\n");
+        for (int i = 0; i < matches.count(); i++) {
+            qWarning("    %s index: %d matchDistance: %d\n", 
+                methodToString(matches[i].first).toLatin1().constData(),
+                matches[i].first.index, 
+                matches[i].second);
+        }
+        qWarning("\n");
     }
     
     return matches;    

@@ -25,7 +25,6 @@
 #include "metaobject.h"
 #include "QtScriptSmokeBinding.h"
 #include "global.h"
-#include "marshall_macros.h"
 
 #include "smoke/qt_smoke.h"
 
@@ -34,15 +33,13 @@
 #include <QStringList>
 #include <QtDebug>
 #include <QTimer>
-#include <QVector>
-#include <QPoint>
 
 RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
 {
     init_qt_Smoke();
-    QtScriptSmoke::Global::binding = QtScriptSmoke::Binding(qt_Smoke);
+    QtScriptSmoke::Global::binding = QtScriptSmoke::Binding(qt_Smoke);    
     QtScriptSmoke::installHandlers(QtScriptSmoke::Handlers);
-    
+
     QtScriptSmoke::Global::QObjectClassId = qt_Smoke->idClass("QObject");
     QtScriptSmoke::Global::QDateClassId = qt_Smoke->idClass("QDate");
     QtScriptSmoke::Global::QDateTimeClassId = qt_Smoke->idClass("QDateTime");
@@ -75,14 +72,11 @@ RunQtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine)
     return QScriptValue();
 }
 
-Q_DECLARE_METATYPE(QVector<QPoint>)
-
 void
 RunQtScriptSmoke::output()
 {
     QScriptEngine* engine = new QScriptEngine( this );
-    qScriptSmokeRegisterSequenceMetaType<QVector<QPoint> >(engine); 
-
+    QtScriptSmoke::registerTypes(engine);
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
@@ -106,7 +100,7 @@ RunQtScriptSmoke::output()
      -- Richard
     */
     
-    for (int i = 0; i < qt_Smoke->numClasses; i++) {
+    for (int i = 1; i <= qt_Smoke->numClasses; i++) {
         // printf("className: %s\n", qt_Smoke->classes[i].className);
         
         QScriptClass* sclass = new QtScriptSmoke::MetaObject(   engine, 

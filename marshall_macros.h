@@ -35,7 +35,6 @@ inline QScriptValue qScriptSmokeValueFromSequence_helper(QScriptEngine *eng, int
     }
     
     const char * typeName = QMetaType::typeName(id);
-    printf("qScriptSmokeValueFromSequence() arg typeName: %s\n", typeName);
     Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
     QtScriptSmoke::Instance * instance = new QtScriptSmoke::Instance();
     instance->classId = classId;
@@ -70,7 +69,6 @@ inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, int i
         printf("Error type not registered\n");
     } else {
         const char * typeName = QMetaType::typeName(id);
-        printf("qScriptSmokeValueToSequence() arg typeName: %s\n", typeName);
         Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
         
         if (instance->classId.smoke == classId.smoke) {

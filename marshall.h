@@ -139,6 +139,7 @@ struct TypeHandler {
 extern TypeHandler Handlers[];
 
 extern Q_DECL_EXPORT void installHandlers(TypeHandler * handler);
+extern Q_DECL_EXPORT void registerTypes(QScriptEngine * engine);
 extern Q_DECL_EXPORT Marshall::HandlerFn getMarshallFn(const SmokeType &type);
 
 }

@@ -14,7 +14,6 @@ var datetime = new QDateTime(date);
 print("day: " + datetime.date().day());
 
 layout = new QHBoxLayout();
-print("layout.prototype: " + layout.prototype);
 layout.addWidget( new QLabel("hello") );
 layout.addWidget( new QLabel("world") );
 

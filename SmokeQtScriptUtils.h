@@ -30,6 +30,7 @@ class QScriptContext;
 
 namespace QtScriptSmoke
 {
+    QString methodToString(Smoke::ModuleIndex methodId);
     QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
     QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
     QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);

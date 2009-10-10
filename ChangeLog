@@ -1,3 +1,18 @@
+2009-10-10  Richard Dale  <richard.j.dale@gmail.com>
+
+* The AnalogClock.qs example nearly works! Remaining problems are slots/signals
+not being implemented, and 'this.height' not working as it needs to be 
+'this.height()'. It isn't obvious how function calls and attribute accesses 
+should be distinguished in QScriptClass in order to fix the attribute problem.
+For signals/slots it might be possible to reuse the existing implementation,
+but it seem that it expects instances to be embedded inside QVariants and 
+wouldn't work with a QScriptSmoke::Instance embedded inside a QVariant.
+* Fixed class loading problem where the Qt class and associated enums wasn't
+being loaded at startup
+* Improved overloaded method resolution so that it takes into account instances
+of class being the same or subclasses
+* Moved all the type registration code into handlers.cpp
+
 2009-10-09  Richard Dale  <richard.j.dale@gmail.com>
 
 * Improve error messages over 'seg fault' when a method isn't found in the 
