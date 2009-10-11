@@ -99,7 +99,6 @@ RunQtScriptSmoke::output()
      
      -- Richard
     */
-    
     for (int i = 1; i <= qt_Smoke->numClasses; i++) {
         // printf("className: %s\n", qt_Smoke->classes[i].className);
         

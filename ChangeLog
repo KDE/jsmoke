@@ -1,3 +1,8 @@
+2009-10-11  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a DEF_CONTAINER_MARSHALLER macro and defined a lot of QList and QVector
+types to be marshalled
+
 2009-10-10  Richard Dale  <richard.j.dale@gmail.com>
 
 * The AnalogClock.qs example nearly works! Remaining problems are slots/signals
@@ -10,14 +15,14 @@ wouldn't work with a QScriptSmoke::Instance embedded inside a QVariant.
 * Fixed class loading problem where the Qt class and associated enums wasn't
 being loaded at startup
 * Improved overloaded method resolution so that it takes into account instances
-of class being the same or subclasses
+of a class being the same or subclasses
 * Moved all the type registration code into handlers.cpp
 
 2009-10-09  Richard Dale  <richard.j.dale@gmail.com>
 
 * Improve error messages over 'seg fault' when a method isn't found in the 
 Smoke lib, or an overloaded method isn't resolved
-* All a QtScript Date to be passed for any QDate, QDateTime or QDate arg
+* Allow a QtScript Date to be passed for any QDate, QDateTime or QDate arg
 * Load all the classes from a Smoke lib at startup, as all the 'include()'
 statements make the scripts look a bit clunky IMHO. But we should compare the
 time and memory used to make sure it isn't a problem.

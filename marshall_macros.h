@@ -22,6 +22,36 @@
 #ifndef QTSCRIPT_SMOKE_MARSHALL_MACROS_H
 #define QTSCRIPT_SMOKE_MARSHALL_MACROS_H
 
+#include "marshall.h"
+
+#define DEF_CONTAINER_MARSHALLER(ContainerIdentifier, Container)  \
+        Marshall::HandlerFn marshall_##ContainerIdentifier = marshall_Container<Container>;
+
+namespace QtScriptSmoke {
+    
+template <class Container>
+void marshall_Container(Marshall *m) {
+    switch(m->action()) {
+    case Marshall::FromQScriptValue:
+    {        
+        m->item().s_voidp = new Container(qscriptvalue_cast<Container>(*(m->var())));
+        break;
+    }
+ 
+    case Marshall::ToQScriptValue:
+    {
+        *(m->var()) = m->engine()->toScriptValue(*(static_cast<Container*>(m->item().s_voidp)));
+        break;
+    }
+    
+    default:
+        m->unsupported();
+        break;
+    }
+}
+
+}
+
 /*
     These functions are based on the ones in qscriptengine.h, but adapted to use Smoke instances
 */

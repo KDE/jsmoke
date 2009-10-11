@@ -19,11 +19,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
+#include <QtCore/QByteArray>                                                                                                              
 #include <QtCore/QDate>
 #include <QtCore/QDateTime>
-#include <QtCore/QTime>
+#include <QtCore/QFileInfo>                                                                                                               
+#include <QtCore/QLine>
+#include <QtCore/QList>
+#include <QtCore/QLocale>
+#include <QtCore/QModelIndex>
 #include <QtCore/QPoint>
+#include <QtCore/QPointF>
+// #include <QtCore/QPrinterInfo>
+#include <QtCore/QRect>
+#include <QtCore/QRectF>
+#include <QtCore/QSize>
+#include <QtCore/QTime>
+#include <QtCore/QUrl>
+#include <QtCore/QVariant>
 #include <QtCore/QVector>
+
+#include <QtGui/QColor>
+#include <QtGui/QImageTextKeyLang>                                                                                                       
+#include <QtGui/QKeySequence>
+#include <QtGui/QPolygon>
+#include <QtGui/QTableWidgetSelectionRange>
+#include <QtGui/QTextBlock>
+#include <QtGui/QTextFormat>
+#include <QtGui/QTextLength>
+
+// #include <QtNetork/QSslError>
+#include <QtNetwork/QHostAddress>                                                                                                            
+#include <QtNetwork/QNetworkAddressEntry>
+#include <QtNetwork/QNetworkCookie>
+#include <QtNetwork/QNetworkInterface>
+#include <QtNetwork/QNetworkProxy>
+#include <QtNetwork/QSslCertificate>
+#include <QtNetwork/QSslCipher>
+
 
 #include "marshall.h"
 #include "global.h"
@@ -31,12 +64,63 @@
 #include "SmokeQtScriptUtils.h"
 #include "marshall_macros.h"
 
+
+Q_DECLARE_METATYPE(QLocale::Country)
+Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(QFileInfo)
+Q_DECLARE_METATYPE(QHostAddress)
+Q_DECLARE_METATYPE(QImageTextKeyLang)
+Q_DECLARE_METATYPE(QModelIndex)
+Q_DECLARE_METATYPE(QNetworkAddressEntry)
+Q_DECLARE_METATYPE(QNetworkInterface)
+Q_DECLARE_METATYPE(QNetworkProxy)
+Q_DECLARE_METATYPE(QPolygonF)
+Q_DECLARE_METATYPE(QSslCertificate)
+Q_DECLARE_METATYPE(QSslCipher)
+Q_DECLARE_METATYPE(QTableWidgetSelectionRange)
+Q_DECLARE_METATYPE(QTextBlock)
+
+Q_DECLARE_METATYPE(QList<QLocale::Country>)
+Q_DECLARE_METATYPE(QList<int>)
+Q_DECLARE_METATYPE(QList<qreal>)
+Q_DECLARE_METATYPE(QList<QByteArray>)                                                                                                              
+Q_DECLARE_METATYPE(QList<QFileInfo>)                                                                                                              
+Q_DECLARE_METATYPE(QList<QHostAddress>)                                                                                                          
+Q_DECLARE_METATYPE(QList<QImageTextKeyLang>)                                                                                                       
+Q_DECLARE_METATYPE(QList<QKeySequence>)
+Q_DECLARE_METATYPE(QList<QModelIndex>)
+Q_DECLARE_METATYPE(QList<QNetworkAddressEntry>)
+//Q_DECLARE_METATYPE(QList<QNetworkCookie>)
+Q_DECLARE_METATYPE(QList<QNetworkInterface>)
+Q_DECLARE_METATYPE(QList<QNetworkProxy>)
+Q_DECLARE_METATYPE(QList<QPolygonF>)
+// Q_DECLARE_METATYPE(QList<QPrinterInfo>)
+Q_DECLARE_METATYPE(QList<QRectF>)
+Q_DECLARE_METATYPE(QList<QSize>)
+Q_DECLARE_METATYPE(QList<QSslCertificate>)
+Q_DECLARE_METATYPE(QList<QSslCipher>)
+// Q_DECLARE_METATYPE(QList<QSslError>)
+Q_DECLARE_METATYPE(QList<QTableWidgetSelectionRange>)
+Q_DECLARE_METATYPE(QList<QTextBlock>)
+Q_DECLARE_METATYPE(QList<QUrl>)
+Q_DECLARE_METATYPE(QList<QVariant>)
+
+Q_DECLARE_METATYPE(QVector<QColor>)
+Q_DECLARE_METATYPE(QVector<QLine>)
+Q_DECLARE_METATYPE(QVector<QLineF>)
 Q_DECLARE_METATYPE(QVector<QPoint>)
+Q_DECLARE_METATYPE(QVector<QPointF>)
+Q_DECLARE_METATYPE(QVector<QRect>)
+Q_DECLARE_METATYPE(QVector<QRectF>)
+Q_DECLARE_METATYPE(QVector<QTextFormat>)
+Q_DECLARE_METATYPE(QVector<QTextLength>)
+Q_DECLARE_METATYPE(QVector<QVariant>)
+Q_DECLARE_METATYPE(QVector<unsigned int>)
+Q_DECLARE_METATYPE(QVector<qreal>)
 
 namespace QtScriptSmoke {
-	
-void
-marshall_basetype(Marshall *m)
+
+static void marshall_basetype(Marshall *m)
 {
     switch(m->type().element()) {        
     case Smoke::t_bool:
@@ -369,27 +453,8 @@ marshall_basetype(Marshall *m)
             }
             
             void * ptr = m->item().s_voidp;
-
-            /* Is this needed - should QtScript Dates be returned instead of QDateTime here?
-            if (    m->type().classId() == QtScriptSmoke::Global::QDateClassId.index
-                    && m->type().smoke() == QtScriptSmoke::Global::QDateClassId.smoke ) 
-            {
-                *(m->var()) = m->engine()->newDate(QDateTime(*(static_cast<QDate*>(ptr))));
-                return;
-            } else if ( m->type().classId() == QtScriptSmoke::Global::QDateTimeClassId.index
-                        && m->type().smoke() == QtScriptSmoke::Global::QDateTimeClassId.smoke ) 
-            {
-                *(m->var()) = m->engine()->newDate(*(static_cast<QDateTime*>(ptr)));
-                return;
-            } else if ( m->type().classId() == QtScriptSmoke::Global::QTimeClassId.index
-                        && m->type().smoke() == QtScriptSmoke::Global::QTimeClassId.smoke ) 
-            {
-                *(m->var()) = m->engine()->newDate(QDateTime(QDate(), *(static_cast<QTime*>(ptr))));
-                return;
-            }
-            */
-            
             QScriptValue * value = QtScriptSmoke::Global::getScriptValue(ptr);
+            
             if (value != 0) {
                 *(m->var()) = *value;
                 return ;
@@ -476,27 +541,21 @@ static void marshall_QString(Marshall *m) {
     }
 }
 
-static void marshall_QVectorQPoint(Marshall *m) {
+/*
+    This marshaller will work with any enum as they are all the same size in C++, 
+    but use 'QLocale::Country' here to keep the compiler happy.
+*/
+static void marshall_QListEnum(Marshall *m) {
     switch(m->action()) {
     case Marshall::FromQScriptValue:
     {        
-        if (m->var()->isNull()) {
-            m->item().s_voidp = 0;
-            return;
-        }
-
-        m->item().s_voidp = new QVector<QPoint>(qscriptvalue_cast<QVector<QPoint> >(*(m->var())));
+        m->item().s_voidp = new QList<QLocale::Country>(qscriptvalue_cast<QList<QLocale::Country> >(*(m->var())));
         break;
     }
  
     case Marshall::ToQScriptValue:
     {
-        if (m->item().s_voidp == 0) {
-            *(m->var()) = m->engine()->nullValue();
-            return;
-        }
-        
-        *(m->var()) = m->engine()->toScriptValue(*(static_cast<QVector<QPoint>* >(m->item().s_voidp)));
+        *(m->var()) = m->engine()->toScriptValue(*(static_cast<QList<QLocale::Country>* >(m->item().s_voidp)));
         break;
     }
     
@@ -506,12 +565,82 @@ static void marshall_QVectorQPoint(Marshall *m) {
     }
 }
 
+DEF_CONTAINER_MARSHALLER(QListQReal, QList<qreal>)
+DEF_CONTAINER_MARSHALLER(QListInt, QList<int>)
+
+DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)                                                                                                             
+DEF_CONTAINER_MARSHALLER(QListQFileInfo, QList<QFileInfo>)                                                                                                               
+DEF_CONTAINER_MARSHALLER(QListQHostAddress, QList<QHostAddress>)                                                                                                            
+DEF_CONTAINER_MARSHALLER(QListQImageTextKeyLang, QList<QImageTextKeyLang>)                                                                                                      
+DEF_CONTAINER_MARSHALLER(QListQKeySequence, QList<QKeySequence>)
+DEF_CONTAINER_MARSHALLER(QListQModelIndex, QList<QModelIndex>)
+DEF_CONTAINER_MARSHALLER(QListQNetworkAddressEntry, QList<QNetworkAddressEntry>)
+DEF_CONTAINER_MARSHALLER(QListQNetworkCookie, QList<QNetworkCookie>)
+DEF_CONTAINER_MARSHALLER(QListQNetworkInterface, QList<QNetworkInterface>)
+DEF_CONTAINER_MARSHALLER(QListQNetworkProxy, QList<QNetworkProxy>)
+DEF_CONTAINER_MARSHALLER(QListQPolygonF, QList<QPolygonF>)
+// DEF_CONTAINER_MARSHALLER(QListQPrinterInfo, QList<QPrinterInfo>)
+DEF_CONTAINER_MARSHALLER(QListQRectF, QList<QRectF>)
+DEF_CONTAINER_MARSHALLER(QListQSize, QList<QSize>)
+DEF_CONTAINER_MARSHALLER(QListQSslCertificate, QList<QSslCertificate>)
+// DEF_CONTAINER_MARSHALLER(QListQSslCipher, QList<QSslCipher>)
+// DEF_CONTAINER_MARSHALLER(QListQSslError, QList<QSslError>
+DEF_CONTAINER_MARSHALLER(QListQTableWidgetSelectionRange, QList<QTableWidgetSelectionRange>)
+DEF_CONTAINER_MARSHALLER(QListQTextBlock, QList<QTextBlock>)
+DEF_CONTAINER_MARSHALLER(QListQUrl, QList<QUrl>)
+DEF_CONTAINER_MARSHALLER(QListQVariant, QList<QVariant>)
+
+DEF_CONTAINER_MARSHALLER(QVectorQReal, QVector<qreal>)
+DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
+DEF_CONTAINER_MARSHALLER(QVectorQColor, QVector<QColor>)
+DEF_CONTAINER_MARSHALLER(QVectorQLine, QVector<QLine>)
+DEF_CONTAINER_MARSHALLER(QVectorQLineF, QVector<QLineF>)
+DEF_CONTAINER_MARSHALLER(QVectorQPoint, QVector<QPoint>)
+DEF_CONTAINER_MARSHALLER(QVectorQPointF, QVector<QPointF>)
+DEF_CONTAINER_MARSHALLER(QVectorQRect, QVector<QRect>)
+DEF_CONTAINER_MARSHALLER(QVectorQRectF, QVector<QRectF>)
+DEF_CONTAINER_MARSHALLER(QVectorQTextFormat, QVector<QTextFormat>)
+DEF_CONTAINER_MARSHALLER(QVectorQTextLength, QVector<QTextLength>)
+DEF_CONTAINER_MARSHALLER(QVectorQVariant, QVector<QVariant>)
+
 TypeHandler Handlers[] = {
+    { "QList<int>", marshall_QListInt },
+    { "QList<int>*", marshall_QListInt },
+    { "QList<int>&", marshall_QListInt },
+    { "QList<QFontDatabase::WritingSystem>", marshall_QListEnum },
+    { "QList<QLocale::Country>", marshall_QListEnum },
+    { "QList<QPrinter::PageSize>", marshall_QListEnum },
+    { "QList<qreal>", marshall_QListQReal },
+    { "QList<qreal>&", marshall_QListQReal },
+    { "QList<QTextOption::Tab>", marshall_QListEnum },
+    { "QList<QTextOption::Tab>&", marshall_QListEnum },
+    { "QList<QWizard::WizardButton>&", marshall_QListEnum },
+    { "QListView::Flow", marshall_QListEnum },
+    { "QListView::LayoutMode", marshall_QListEnum },
+    { "QListView::Movement", marshall_QListEnum },
+    { "QListView::ResizeMode", marshall_QListEnum },
+    { "QListView::ViewMode", marshall_QListEnum },
+    { "QListWidgetItem::ItemType", marshall_QListEnum },
     { "QString", marshall_QString },
     { "QString*", marshall_QString },
     { "QString&", marshall_QString },
+    { "QVector<QColor>", marshall_QVectorQColor },
+    { "QVector<QLineF>&", marshall_QVectorQLineF },
+    { "QVector<QLine>&", marshall_QVectorQLine },
+    { "QVector<QPointF>&", marshall_QVectorQPointF },
     { "QVector<QPoint>", marshall_QVectorQPoint },
     { "QVector<QPoint>&", marshall_QVectorQPoint },
+    { "QVector<qreal>", marshall_QVectorQReal },
+    { "QVector<qreal>&", marshall_QVectorQReal },
+    { "QVector<QRectF>&", marshall_QVectorQRectF },
+    { "QVector<QRect>", marshall_QVectorQRect },
+    { "QVector<QRect>&", marshall_QVectorQRect },
+    { "QVector<QTextFormat>", marshall_QVectorQTextFormat },
+    { "QVector<QTextLength>", marshall_QVectorQTextLength },
+    { "QVector<QTextLength>&", marshall_QVectorQTextLength },
+    { "QVector<QVariant>&", marshall_QVectorQVariant },
+    { "QVector<unsigned int>", marshall_QVectorUInt },
+    { "QVector<unsigned int>&", marshall_QVectorUInt },
 
     { 0, 0 }
 };
@@ -547,7 +676,46 @@ Marshall::HandlerFn getMarshallFn(const SmokeType &type) {
 }
 
 void registerTypes(QScriptEngine * engine) {   
-    qScriptSmokeRegisterSequenceMetaType<QVector<QPoint> >(engine); 
+    qScriptRegisterSequenceMetaType<QList<QLocale::Country> >(engine); 
+    qScriptRegisterSequenceMetaType<QList<int> >(engine); 
+    qScriptRegisterSequenceMetaType<QList<qreal> >(engine); 
+    
+    qScriptRegisterSequenceMetaType<QVector<unsigned int> >(engine); 
+    qScriptRegisterSequenceMetaType<QVector<qreal> >(engine); 
+    
+    qScriptSmokeRegisterSequenceMetaType<QVector<QColor> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QLine> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QLineF> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QPoint> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QPointF> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QRect> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QRectF> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QTextFormat> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QTextLength> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QVariant> >(engine);
+
+    qScriptSmokeRegisterSequenceMetaType<QList<QByteArray> >(engine);                                                                                                            
+    qScriptSmokeRegisterSequenceMetaType<QList<QFileInfo> >(engine);                                                                                                              
+    qScriptSmokeRegisterSequenceMetaType<QList<QHostAddress> >(engine);                                                                                                            
+    qScriptSmokeRegisterSequenceMetaType<QList<QImageTextKeyLang> >(engine);                                                                                                       
+    qScriptSmokeRegisterSequenceMetaType<QList<QKeySequence> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QModelIndex> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QNetworkAddressEntry> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QNetworkCookie> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QNetworkInterface> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QNetworkProxy> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QPolygonF> >(engine);
+//    qScriptSmokeRegisterSequenceMetaType<QList<QPrinterInfo> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QRectF> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QSize> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QSslCertificate> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QSslCipher> >(engine);
+//    qScriptSmokeRegisterSequenceMetaType<QList<QSslError> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTableWidgetSelectionRange> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTextBlock> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QUrl> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QVariant> >(engine);
+
 }
 
 }
