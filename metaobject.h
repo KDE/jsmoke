@@ -34,8 +34,11 @@ namespace QtScriptSmoke {
 class Instance {
 public:
     Instance() : ownership(QScriptEngine::QtOwnership) { }
-    virtual void finalize(QScriptEngine *engine);
-    virtual ~Instance() {}
+    virtual void finalize();
+    void dispose();
+    virtual ~Instance() {
+        finalize();
+    }
 
     static bool isSmokeObject(const QScriptValue &object);
     static Instance *get(const QScriptValue &object);

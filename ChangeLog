@@ -1,3 +1,9 @@
+2009-10-12  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added more marshallers
+* Amend the AnalogClock example to use SLOT() and SIGNAL() functions so that it
+works for now, until the more QtScript-like slot/signal handling is implemented.
+
 2009-10-11  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a DEF_CONTAINER_MARSHALLER macro and defined a lot of QList and QVector

@@ -21,10 +21,21 @@
 **
 ****************************************************************************/
 
+function SLOT(str) {
+    return "1" + str;
+}
+
+function SIGNAL(str) {
+    return "2" + str;
+}
+
 function AnalogClock(parent) {
     QWidget.call(this, parent);
 
     var timer = new QTimer(this);
+    
+    this.connect(timer, SIGNAL("timeout()"), this, SLOT("update()"));
+    
     // FIXME: We need to implement slots/signals handling
     //timer.timeout.connect(this, "update()");
     timer.start(1000);

@@ -34,13 +34,31 @@ void marshall_Container(Marshall *m) {
     switch(m->action()) {
     case Marshall::FromQScriptValue:
     {        
-        m->item().s_voidp = new Container(qscriptvalue_cast<Container>(*(m->var())));
+        m->item().s_voidp = new Container(qscriptvalue_cast<Container>(*(m->var())));        
+        m->next();
+        
+        if (!m->type().isConst()) {
+            *(m->var()) = m->engine()->toScriptValue(*(static_cast<Container*>(m->item().s_voidp)));
+        }
+        
+        if (m->cleanup()) {
+            delete static_cast<Container*>(m->item().s_voidp);
+        }        
         break;
     }
  
     case Marshall::ToQScriptValue:
     {
-        *(m->var()) = m->engine()->toScriptValue(*(static_cast<Container*>(m->item().s_voidp)));
+        *(m->var()) = m->engine()->toScriptValue(*(static_cast<Container*>(m->item().s_voidp)));        
+        m->next();
+        
+        if (!m->type().isConst()) {
+            *(static_cast<Container*>(m->item().s_voidp)) = qscriptvalue_cast<Container>(*(m->var()));
+        }
+        
+        if (m->cleanup()) {
+            delete static_cast<Container*>(m->item().s_voidp);
+        }
         break;
     }
     
@@ -57,15 +75,13 @@ void marshall_Container(Marshall *m) {
 */
 
 
-inline QScriptValue qScriptSmokeValueFromSequence_helper(QScriptEngine *eng, int id, void * ptr)
+inline QScriptValue qScriptSmokeValueFromSequence_helper(QScriptEngine *eng, Smoke::ModuleIndex classId, void * ptr)
 {
     QScriptValue * value = QtScriptSmoke::Global::getScriptValue(ptr);
     if (value != 0) {
         return *value;
     }
     
-    const char * typeName = QMetaType::typeName(id);
-    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
     QtScriptSmoke::Instance * instance = new QtScriptSmoke::Instance();
     instance->classId = classId;
     instance->value = ptr;
@@ -79,39 +95,36 @@ template <class Container>
 QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &cont)
 {
     QScriptValue a = eng->newArray();
+    const char * typeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type>());
+    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
     typename Container::const_iterator begin = cont.begin();
     typename Container::const_iterator end = cont.end();
     typename Container::const_iterator it;
     quint32 i;
     for (it = begin, i = 0; it != end; ++it, ++i) {
-        int id = qMetaTypeId<typename Container::value_type>();
-        a.setProperty(i, qScriptSmokeValueFromSequence_helper(eng, id, (void *) &(*it)));
+        a.setProperty(i, qScriptSmokeValueFromSequence_helper(eng, classId, (void *) &(*it)));
     }
     
     return a;
 }
 
-inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, int id)
+inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, Smoke::ModuleIndex classId)
 {
     QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(item);
     void * ptr = instance->value;
-    if (id == 0) {
-        printf("Error type not registered\n");
-    } else {
-        const char * typeName = QMetaType::typeName(id);
-        Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
-        
-        if (instance->classId.smoke == classId.smoke) {
+    
+    if (instance->classId.smoke == classId.smoke) {
+        if (instance->classId.index != classId.index) {
             ptr = instance->classId.smoke->cast(ptr, instance->classId.index, classId.index);
-        } else {
-            // If the method's class and the instance's class are in different smoke modules
-            // then we need to convert them both to be class ids in the instance's module in
-            // order to do the cast
-            const Smoke::Class &klass = classId.smoke->classes[classId.index];
-            ptr = instance->classId.smoke->cast(    ptr, 
-                                                    instance->classId.index, 
-                                                    instance->classId.smoke->idClass(klass.className, true).index );            
         }
+    } else {
+        // If the containers's class and the instance's class are in different smoke modules
+        // then we need to convert them both to be class ids in the instance's module in
+        // order to do the cast
+        const Smoke::Class &klass = classId.smoke->classes[classId.index];
+        ptr = instance->classId.smoke->cast(    ptr, 
+                                                instance->classId.index, 
+                                                instance->classId.smoke->idClass(klass.className, true).index );            
     }
     
     return ptr;
@@ -121,13 +134,14 @@ template <class Container>
 void qScriptSmokeValueToSequence(const QScriptValue &value, Container &cont)
 {
     quint32 len = value.property(QLatin1String("length")).toUInt32();
+    const char * typeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type>());
+    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
     for (quint32 i = 0; i < len; ++i) {
-        int id = qMetaTypeId<typename Container::value_type>();
                 
 #if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET
-        cont.push_back(*(static_cast<Container::value_type *>(qScriptSmokeValueToSequence_helper(value.property(i), id))));
+        cont.push_back(*(static_cast<Container::value_type *>(qScriptSmokeValueToSequence_helper(value.property(i), classId))));
 #else
-        cont.push_back(*(static_cast<typename Container::value_type *>(qScriptSmokeValueToSequence_helper(value.property(i), id))));
+        cont.push_back(*(static_cast<typename Container::value_type *>(qScriptSmokeValueToSequence_helper(value.property(i), classId))));
 #endif
     }
 }
@@ -143,6 +157,56 @@ int qScriptSmokeRegisterSequenceMetaType(
 {
     return qScriptRegisterMetaType<T>(engine, qScriptSmokeValueFromSequence,
                                       qScriptSmokeValueToSequence, prototype);
+}
+
+template <class Container>
+QScriptValue qScriptSmokeValueFromPointerSequence(QScriptEngine *eng, const Container &cont)
+{
+    QScriptValue a = eng->newArray();
+    QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
+    // Remove the star from the type name
+    typeName.chop(1);
+    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
+    typename Container::const_iterator begin = cont.begin();
+    typename Container::const_iterator end = cont.end();
+    typename Container::const_iterator it;
+    quint32 i;
+    for (it = begin, i = 0; it != end; ++it, ++i) {
+        a.setProperty(i, qScriptSmokeValueFromSequence_helper(eng, classId, (void *) *it));
+    }
+    
+    return a;
+}
+
+template <class Container>
+void qScriptSmokeValueToPointerSequence(const QScriptValue &value, Container &cont)
+{
+    quint32 len = value.property(QLatin1String("length")).toUInt32();
+    QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
+    // Remove the star from the type name
+    typeName.chop(1);
+    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
+    for (quint32 i = 0; i < len; ++i) {
+                
+#if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET
+        cont.push_back(static_cast<Container::value_type>(qScriptSmokeValueToSequence_helper(value.property(i), classId)));
+#else
+        cont.push_back(static_cast<typename Container::value_type>(qScriptSmokeValueToSequence_helper(value.property(i), classId)));
+#endif
+    }
+}
+
+template<typename T>
+int qScriptSmokeRegisterPointerSequenceMetaType(
+    QScriptEngine *engine,
+    const QScriptValue &prototype = QScriptValue()
+#ifndef qdoc
+    , T * /* dummy */ = 0
+#endif
+)
+{
+    return qScriptRegisterMetaType<T>(engine, qScriptSmokeValueFromPointerSequence,
+                                      qScriptSmokeValueToPointerSequence, prototype);
 }
 
 #endif

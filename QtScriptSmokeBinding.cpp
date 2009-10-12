@@ -25,6 +25,7 @@
 
 #include "global.h"
 #include "virtualmethodcall.h"
+#include "SmokeQtScriptUtils.h"
 
 namespace QtScriptSmoke {
     
@@ -34,48 +35,32 @@ Binding::Binding(Smoke* s)
 char* Binding::className(Smoke::Index classId)
 {
     qDebug() << "QtScriptSmoke::Binding::className " << smoke->className(classId);
-    // What about '::' scope operators in className paths in JavaScript?
+    // Convert '::' to '.' heree
     return (char *) smoke->className(classId);
 }
 
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
 bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
 {
-    QScriptValue * obj = QtScriptSmoke::Global::getScriptValue(ptr);
+    QScriptValue * obj = Global::getScriptValue(ptr);
     if (obj == 0) {
         return false;
     }
     
-    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
+    QtScriptSmoke::Instance * instance = Instance::get(*obj);
 
-    if (QtScriptSmoke::Debug::DoDebug & QtScriptSmoke::Debug::Virtual) {
-        Smoke::Method & meth = smoke->methods[method];
-        QByteArray signature(smoke->methodNames[meth.name]);
-        signature += "(";
-        
-        for (int i = 0; i < meth.numArgs; i++) {
-            if (i != 0) {
-                signature += ", ";
-            }
-            
-            signature += smoke->types[smoke->argumentList[meth.args + i]].name;
-        }
-        
-        signature += ")";
-        
-        if ((meth.flags & Smoke::mf_const) != 0) {
-            signature += " const";
-        }
+    if ((Debug::DoDebug & Debug::Virtual) != 0) {
+        Smoke::ModuleIndex methodId = { smoke, methodId.index };
         
         qWarning(   "module: %s virtual %p->%s::%s called", 
                     smoke->moduleName(),
                     ptr,
                     smoke->classes[smoke->methods[method].classId].className,
-                    (const char *) signature );
+                    methodToString(methodId).toLatin1().constData() );
     }
 
     if (instance == 0) {
-        if (QtScriptSmoke::Debug::DoDebug & QtScriptSmoke::Debug::Virtual) {
+        if ((Debug::DoDebug & Debug::Virtual) != 0) {
             qWarning("Cannot find object for virtual method %p -> %p", ptr, obj);
         }
         
@@ -89,17 +74,17 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     }
     
     QScriptValue function = obj->property(methodName);   
-    QtScriptSmoke::VirtualMethodCall methodCall(smoke, method, args, *obj, function);
+    VirtualMethodCall methodCall(smoke, method, args, *obj, function);
     methodCall.next();
     return true;
 }
 
 void Binding::deleted(Smoke::Index classId, void* ptr)
 {
-    QScriptValue * obj = QtScriptSmoke::Global::getScriptValue(ptr);
-    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
+    QScriptValue * obj = Global::getScriptValue(ptr);
+    Instance * instance = Instance::get(*obj);
     
-    if (QtScriptSmoke::Debug::DoDebug & QtScriptSmoke::Debug::GC) {
+    if ((Debug::DoDebug & Debug::GC) != 0) {
         qWarning("%p->~%s()", ptr, smoke->className(classId));
     }
     
@@ -107,7 +92,7 @@ void Binding::deleted(Smoke::Index classId, void* ptr)
         return;
     }
     
-    QtScriptSmoke::Global::unmapPointer(instance, instance->classId.index, 0);
+    Global::unmapPointer(instance, instance->classId.index, 0);
     instance->value = 0;
     return;
 }

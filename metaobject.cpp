@@ -40,20 +40,45 @@
 
 namespace QtScriptSmoke {
     
-void Instance::finalize(QScriptEngine *engine) 
+void Instance::finalize() 
 {
     switch (ownership) {
     case QScriptEngine::QtOwnership:
         break;
     case QScriptEngine::ScriptOwnership:
-//        if (value)
-//            engine->disposeQObject(value);
+        if (value != 0) {
+            dispose();
+        }
         break;
     case QScriptEngine::AutoOwnership:
-//        if (value && !value->parent())
-//            engine->disposeQObject(value);
+//        if (value != 0 && value->parent() == 0) {
+//            dispose();
+//        }
         break;
     }
+}
+
+void Instance::dispose()
+{
+    const char *className = classId.smoke->classes[classId.index].className;
+
+    if  ((Debug::DoDebug & Debug::GC) != 0) {
+        qWarning("Deleting (%s*)%p", className, value);
+    }
+    
+    QByteArray methodName(className);
+    methodName.prepend("~");
+    Smoke::ModuleIndex nameId = classId.smoke->findMethodName(className, methodName);
+    Smoke::ModuleIndex methodId = classId.smoke->findMethod(classId, nameId);
+    
+    if(methodId.index > 0) {
+        Smoke::Method &methodRef = methodId.smoke->methods[methodId.smoke->methodMaps[methodId.index].method];
+        Smoke::ClassFn fn = methodId.smoke->classes[methodRef.classId].classFn;
+        Smoke::StackItem destroyInstanceStack[1];
+        (*fn)(methodRef.method, value, destroyInstanceStack);
+    }
+    
+    value = 0;
 }
 
 bool Instance::isSmokeObject(const QScriptValue &object)
@@ -133,8 +158,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     constructorContext->activationObject().setProperty("arguments", args);
     
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(    classId, 
-                                                                                        classId.smoke->classes[classId.index].className, 
-                                                                                        constructorContext );
+                                                                                        classId.smoke->classes[classId.index].className,                                                                                        constructorContext );
     if (matches.count() == 0) {
         QString message = QString("overloaded %1() constructor not resolved").arg(classId.smoke->classes[classId.index].className);
         return context->throwError(QScriptContext::TypeError, message);
