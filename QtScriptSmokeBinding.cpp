@@ -35,7 +35,7 @@ Binding::Binding(Smoke* s)
 char* Binding::className(Smoke::Index classId)
 {
     qDebug() << "QtScriptSmoke::Binding::className " << smoke->className(classId);
-    // Convert '::' to '.' heree
+    // Convert '::' to '.' here
     return (char *) smoke->className(classId);
 }
 

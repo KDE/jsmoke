@@ -67,6 +67,10 @@
 #include <QtNetwork/QSslCipher>
 #include <QtNetwork/QSslError>
 
+#include <QtXml/QXmlStreamEntityDeclaration>
+#include <QtXml/QXmlStreamNamespaceDeclaration>
+#include <QtXml/QXmlStreamNotationDeclaration>
+
 #include "marshall.h"
 #include "global.h"
 #include "qtscript-smoke.h"
@@ -89,6 +93,9 @@ Q_DECLARE_METATYPE(QSslCipher)
 Q_DECLARE_METATYPE(QSslError)
 Q_DECLARE_METATYPE(QTableWidgetSelectionRange)
 Q_DECLARE_METATYPE(QTextBlock)
+Q_DECLARE_METATYPE(QXmlStreamEntityDeclaration)
+Q_DECLARE_METATYPE(QXmlStreamNamespaceDeclaration)
+Q_DECLARE_METATYPE(QXmlStreamNotationDeclaration)
 
 Q_DECLARE_METATYPE(QAbstractButton*)
 Q_DECLARE_METATYPE(QAction*)
@@ -155,6 +162,9 @@ Q_DECLARE_METATYPE(QVector<QTextLength>)
 Q_DECLARE_METATYPE(QVector<QVariant>)
 Q_DECLARE_METATYPE(QVector<unsigned int>)
 Q_DECLARE_METATYPE(QVector<qreal>)
+Q_DECLARE_METATYPE(QVector<QXmlStreamEntityDeclaration>)
+Q_DECLARE_METATYPE(QVector<QXmlStreamNamespaceDeclaration>)
+Q_DECLARE_METATYPE(QVector<QXmlStreamNotationDeclaration>)
 
 namespace QtScriptSmoke {
 
@@ -750,13 +760,12 @@ DEF_CONTAINER_MARSHALLER(QVectorQRectF, QVector<QRectF>)
 DEF_CONTAINER_MARSHALLER(QVectorQTextFormat, QVector<QTextFormat>)
 DEF_CONTAINER_MARSHALLER(QVectorQTextLength, QVector<QTextLength>)
 DEF_CONTAINER_MARSHALLER(QVectorQVariant, QVector<QVariant>)
+DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamEntityDeclaration, QVector<QXmlStreamEntityDeclaration>)
+DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNamespaceDeclaration, QVector<QXmlStreamNamespaceDeclaration>)
+DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNotationDeclaration, QVector<QXmlStreamNotationDeclaration>)
 
 TypeHandler Handlers[] = {
     { "char*", marshall_CString },
-    { "qlonglong", marshall_QLongLong },
-    { "qlonglong&", marshall_QLongLong },
-    { "qulonglong", marshall_QULongLong },
-    { "qulonglong&", marshall_QULongLong },
     { "QList<int>", marshall_QListInt },
     { "QList<int>*", marshall_QListInt },
     { "QList<int>&", marshall_QListInt },
@@ -829,11 +838,17 @@ TypeHandler Handlers[] = {
     { "QListView::ResizeMode", marshall_QListEnum },
     { "QListView::ViewMode", marshall_QListEnum },
     { "QListWidgetItem::ItemType", marshall_QListEnum },
+    { "qlonglong", marshall_QLongLong },
+    { "qlonglong&", marshall_QLongLong },
     { "QStringList", marshall_QStringList },
     { "QStringList&", marshall_QStringList },
     { "QString", marshall_QString },
     { "QString*", marshall_QString },
     { "QString&", marshall_QString },
+    { "qulonglong", marshall_QULongLong },
+    { "qulonglong&", marshall_QULongLong },
+    { "QVector<double>", marshall_QVectorQReal },
+    { "QVector<double>&", marshall_QVectorQReal },
     { "QVector<QColor>", marshall_QVectorQColor },
     { "QVector<QLineF>&", marshall_QVectorQLineF },
     { "QVector<QLine>&", marshall_QVectorQLine },
@@ -849,9 +864,15 @@ TypeHandler Handlers[] = {
     { "QVector<QTextLength>", marshall_QVectorQTextLength },
     { "QVector<QTextLength>&", marshall_QVectorQTextLength },
     { "QVector<QVariant>&", marshall_QVectorQVariant },
+    { "QVector<QXmlStreamEntityDeclaration>", marshall_QVectorQXmlStreamEntityDeclaration },
+    { "QVector<QXmlStreamEntityDeclaration>&", marshall_QVectorQXmlStreamEntityDeclaration },
+    { "QVector<QXmlStreamNamespaceDeclaration>", marshall_QVectorQXmlStreamNamespaceDeclaration },
+    { "QVector<QXmlStreamNamespaceDeclaration>&", marshall_QVectorQXmlStreamNamespaceDeclaration },
+    { "QVector<QXmlStreamNotationDeclaration>", marshall_QVectorQXmlStreamNotationDeclaration },
+    { "QVector<QXmlStreamNotationDeclaration>&", marshall_QVectorQXmlStreamNotationDeclaration },
     { "QVector<unsigned int>", marshall_QVectorUInt },
     { "QVector<unsigned int>&", marshall_QVectorUInt },
-
+    
     { 0, 0 }
 };
 
@@ -903,6 +924,9 @@ void registerTypes(QScriptEngine * engine) {
     qScriptSmokeRegisterSequenceMetaType<QVector<QTextFormat> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QTextLength> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QVariant> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamEntityDeclaration> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNamespaceDeclaration> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNotationDeclaration> >(engine);
 
     qScriptSmokeRegisterSequenceMetaType<QList<QByteArray> >(engine);                                                                                                            
     qScriptSmokeRegisterSequenceMetaType<QList<QFileInfo> >(engine);                                                                                                              

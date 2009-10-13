@@ -36,9 +36,7 @@ public:
     Instance() : ownership(QScriptEngine::QtOwnership) { }
     virtual void finalize();
     void dispose();
-    virtual ~Instance() {
-        finalize();
-    }
+    virtual ~Instance();
 
     static bool isSmokeObject(const QScriptValue &object);
     static Instance *get(const QScriptValue &object);

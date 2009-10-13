@@ -81,6 +81,10 @@ void Instance::dispose()
     value = 0;
 }
 
+Instance::~Instance() {
+    finalize();
+}
+
 bool Instance::isSmokeObject(const QScriptValue &object)
 {
     return  object.data().isVariant() 
