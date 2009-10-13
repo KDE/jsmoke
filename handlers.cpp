@@ -75,7 +75,7 @@
 #include "global.h"
 #include "qtscript-smoke.h"
 #include "SmokeQtScriptUtils.h"
-#include "marshall_macros.h"
+#include "marshallmacros.h"
 
 Q_DECLARE_METATYPE(QLocale::Country)
 Q_DECLARE_METATYPE(QVariant)
