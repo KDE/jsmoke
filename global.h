@@ -61,7 +61,7 @@ namespace QtScriptSmoke {
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                 
-        extern Q_DECL_EXPORT QScriptValue wrapInstance(const char * className, void * ptr, QScriptEngine * engine);
+        extern Q_DECL_EXPORT QScriptValue wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr);
 
     }
 }

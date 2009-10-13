@@ -82,13 +82,7 @@ inline QScriptValue qScriptSmokeValueFromSequence_helper(QScriptEngine *eng, Smo
         return *value;
     }
     
-    QtScriptSmoke::Instance * instance = new QtScriptSmoke::Instance();
-    instance->classId = classId;
-    instance->value = ptr;
-    instance->ownership = QScriptEngine::QtOwnership;
-    QScriptValue obj = eng->newObject(QtScriptSmoke::Global::Object); 
-    QtScriptSmoke::Instance::set(obj, instance);
-    return obj;
+    return QtScriptSmoke::Global::wrapInstance(eng, classId, ptr);
 }
 
 template <class Container>

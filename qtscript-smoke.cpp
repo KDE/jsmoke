@@ -112,7 +112,8 @@ RunQtScriptSmoke::output()
         engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
     }
 
-    engine->globalObject().setProperty("qApp", QtScriptSmoke::Global::wrapInstance("QApplication", qApp, engine));
+    QScriptValue app = QtScriptSmoke::Global::wrapInstance(engine, qt_Smoke->findClass("QApplication"), qApp);
+    engine->globalObject().setProperty("qApp", app);
             
     qDebug() << "opening" << m_script;
     QFile testFile(m_script);
