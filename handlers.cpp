@@ -512,7 +512,6 @@ static void marshall_basetype(Marshall *m)
             instance->classId.smoke = m->smoke();
             instance->classId.index = m->type().classId();
             instance->value = ptr;
-            instance->ownership = QScriptEngine::QtOwnership;
             
             if (m->type().isConst() && m->type().isRef()) {
                 ptr = constructCopy(instance);

@@ -117,5 +117,16 @@ mapPointer(QScriptValue * obj, QtScriptSmoke::Instance * instance, Smoke::Index 
     return;
 }
 
+QScriptValue 
+wrapInstance(const char * className, void * ptr, QScriptEngine * engine)
+{
+    QtScriptSmoke::Instance * instance = new QtScriptSmoke::Instance();
+    instance->classId = qt_Smoke->findClass(className);
+    instance->value = ptr;
+    QScriptValue obj = engine->newObject(QtScriptSmoke::Global::Object); 
+    QtScriptSmoke::Instance::set(obj, instance);
+    return obj;
+}
+
     }
 }

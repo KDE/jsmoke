@@ -28,6 +28,9 @@
 
 #include "smoke/qt_smoke.h"
 
+#include <QtGui/QApplication>
+
+#include <QtCore/QFileInfo>
 #include <QFile>
 #include <QScriptEngine>
 #include <QStringList>
@@ -109,12 +112,15 @@ RunQtScriptSmoke::output()
         engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
     }
 
+    engine->globalObject().setProperty("qApp", QtScriptSmoke::Global::wrapInstance("QApplication", qApp, engine));
+            
     qDebug() << "opening" << m_script;
     QFile testFile(m_script);
+    QFileInfo fileInfo(testFile);
     testFile.open( QFile::ReadOnly );
     QByteArray code = testFile.readAll();
     
-    QScriptValue result = engine->evaluate( code, "test.js" );
+    QScriptValue result = engine->evaluate( code, fileInfo.fileName() );
     qDebug() << "engine isEvaluating:" << engine->isEvaluating();
     qDebug() << "engine hasUncaughtException:" << engine->hasUncaughtException();
     if (engine->hasUncaughtException()) {
