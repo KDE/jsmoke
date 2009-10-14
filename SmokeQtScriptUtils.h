@@ -24,7 +24,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QPair>
 
-#include "metaobject.h"
+#include "object.h"
 
 class QScriptContext;
 
@@ -35,5 +35,5 @@ namespace QtScriptSmoke
     QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
     QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
     QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
-    void * constructCopy(Instance *instance);
+    void * constructCopy(Object::Instance *instance);
 }

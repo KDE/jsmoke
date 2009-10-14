@@ -52,12 +52,12 @@ namespace QtScriptSmoke {
         
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         
-        extern Q_DECL_EXPORT void unmapPointer( QtScriptSmoke::Instance * instance, 
+        extern Q_DECL_EXPORT void unmapPointer( Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                 
         extern Q_DECL_EXPORT void mapPointer(   QScriptValue * obj, 
-                                                QtScriptSmoke::Instance * instance, 
+                                                Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                 

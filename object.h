@@ -21,7 +21,10 @@
 #ifndef SAMPLEIMPL_H
 #define SAMPLEIMPL_H
 
+#include <smoke.h>
+
 #include <QScriptClass>
+#include <QScriptEngine>
 
 namespace QtScriptSmoke {
     
@@ -31,6 +34,24 @@ class Object : public QScriptClass
     public:
         Object( QScriptEngine* );
         ~Object(); 
+        
+        class Instance {
+        public:
+            Instance() : ownership(QScriptEngine::QtOwnership) { }
+            virtual void finalize();
+            void dispose();
+            virtual ~Instance();
+
+            static bool isSmokeObject(const QScriptValue &object);
+            static Instance *get(const QScriptValue &object);
+            static void set(QScriptValue &object, Instance * instance);
+
+        public:
+            void * value;
+            QScriptEngine::ValueOwnership ownership;
+            Smoke::ModuleIndex classId;
+        };
+
         QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
@@ -38,4 +59,7 @@ class Object : public QScriptClass
 };
 
 }
+
+Q_DECLARE_METATYPE( QtScriptSmoke::Object::Instance* )
+
 #endif // SAMPLEIMPL_H

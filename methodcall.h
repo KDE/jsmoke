@@ -62,7 +62,7 @@ private:
     QScriptContext * m_context;
     QScriptEngine * m_engine;
     QScriptValue m_target;
-    QtScriptSmoke::Instance * m_instance;
+    QtScriptSmoke::Object::Instance * m_instance;
     QScriptValue m_returnValue;
     QScriptValueList m_valueList;
     bool m_called;

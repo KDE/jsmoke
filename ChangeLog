@@ -1,3 +1,12 @@
+2009-10-14  Richard Dale  <richard.j.dale@gmail.com>
+
+* Changed QScriptSmoke::Instance to be nested within QScriptSmoke::Object
+* Fixed bugs in constructCopy() and it now works
+* Attempted to return a signal handler when a signal name property was 
+referenced by wrapping a Smoke QObject instance with 
+QScriptEngine::newQObject(), and then obtaining the property from it. However,
+although there are no runtime errors the target slot is never called.
+
 2009-10-13  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a convenience method for wrapping an existing C++ instance, 

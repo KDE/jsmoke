@@ -112,7 +112,7 @@ mungedMethods( const QByteArray& nameFn, QScriptContext* context )
                 }
                 ret = temp;
             }
-            else if (QtScriptSmoke::Instance::isSmokeObject(val) || val.isDate())
+            else if (Object::Instance::isSmokeObject(val) || val.isDate())
             {
                 for (int i = 0; i < ret.count(); i++) {
                     ret[i] += '#';
@@ -247,9 +247,9 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     } else {
                         matchDistance += 10;
                     }
-                } else if (QtScriptSmoke::Instance::isSmokeObject(actual)) {
+                } else if (Object::Instance::isSmokeObject(actual)) {
                     if ((argFlags & Smoke::t_class) != 0) {
-                        QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(actual);
+                        Object::Instance * instance = Object::Instance::get(actual);
                         Smoke::ModuleIndex classId = qt_Smoke->findClass(argType);
                         if (    instance->classId.index == classId.index
                                 && instance->classId.smoke == classId.smoke )
@@ -330,7 +330,7 @@ QScriptValue
 callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
-    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(context->thisObject());
+    Object::Instance * instance = Object::Instance::get(context->thisObject());
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
     
     if (matches.count() == 0) {
@@ -350,53 +350,51 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 }
 
 void *
-constructCopy(Instance *instance)
+constructCopy(Object::Instance *instance)
 {
     Smoke * smoke = instance->classId.smoke;
     const char *className = smoke->className(instance->classId.index);
-    int classNameLen = strlen(className);
-    // copy constructor signature
+    
     QByteArray ccSignature(className);
-    int pos = ccSignature.lastIndexOf("::");
+    int pos = ccSignature.lastIndexOf("::");    
     if (pos != -1) {
         ccSignature = ccSignature.mid(pos + strlen("::"));
-    }
+    }    
     ccSignature.append("#");
+    
+    QByteArray ccArg("const ");
+    ccArg.append(className).append("&");
+
     Smoke::ModuleIndex ccId = smoke->findMethodName(className, ccSignature);
-
-    char *ccArg = new char[classNameLen + 8];
-    sprintf(ccArg, "const %s&", className);
-
     Smoke::ModuleIndex ccMethod = smoke->findMethod(instance->classId, ccId);
 
     if (ccMethod.index == 0) {
-        qWarning("construct_copy() failed %s %p\n", className, instance->value);
-        delete[] ccArg;
+        qWarning("QtScriptSmoke::constructCopy() failed %s %p\n", className, instance->value);
         return 0;
     }
+    
     Smoke::Index method = ccMethod.smoke->methodMaps[ccMethod.index].method;
     if (method > 0) {
         // Make sure it's a copy constructor
-        if (qstrcmp(smoke->types[*(smoke->argumentList + smoke->methods[method].args)].name, ccArg) == 0) {
-            qWarning("construct_copy() failed %s %p\n", className, instance->value);
-            delete[] ccArg;
+        if (ccArg != smoke->types[*(smoke->argumentList + smoke->methods[method].args)].name) {
+            qWarning("QtScriptSmoke::constructCopy() failed %s %p\n", className, instance->value);
             return 0;
         }
-        delete[] ccArg;
+
         ccMethod.index = method;
     } else {
         // ambiguous method, pick the copy constructor
         Smoke::Index i = -method;
         while (ccMethod.smoke->ambiguousMethodList[i]) {
-            if (qstrcmp(smoke->types[*(smoke->argumentList + smoke->methods[ccMethod.smoke->ambiguousMethodList[i]].args)].name, ccArg) == 0) {
+            if (ccArg == smoke->types[*(smoke->argumentList + smoke->methods[ccMethod.smoke->ambiguousMethodList[i]].args)].name) {
                 break;
             }
             i++;
         }
-        delete[] ccArg;
+
         ccMethod.index = ccMethod.smoke->ambiguousMethodList[i];
         if (ccMethod.index == 0) {
-            qWarning("construct_copy() failed %s %p\n", className, instance->value);
+            qWarning("QtScriptSmoke::constructCopy() failed %s %p\n", className, instance->value);
             return 0;
         }
     }
@@ -411,7 +409,7 @@ constructCopy(Instance *instance)
     // Initialize the binding for the new instance
     Smoke::StackItem initializeInstanceStack[2];
     initializeInstanceStack[1].s_voidp = &QtScriptSmoke::Global::binding;
-    (*fn)(0, initializeInstanceStack[0].s_voidp, initializeInstanceStack);
+    (*fn)(0, args[0].s_voidp, initializeInstanceStack);
 
     return args[0].s_voidp;
 }

@@ -47,7 +47,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
         return false;
     }
     
-    QtScriptSmoke::Instance * instance = Instance::get(*obj);
+    Object::Instance * instance = Object::Instance::get(*obj);
 
     if ((Debug::DoDebug & Debug::Virtual) != 0) {
         Smoke::ModuleIndex methodId = { smoke, methodId.index };
@@ -82,7 +82,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
 void Binding::deleted(Smoke::Index classId, void* ptr)
 {
     QScriptValue * obj = Global::getScriptValue(ptr);
-    Instance * instance = Instance::get(*obj);
+    Object::Instance * instance = Object::Instance::get(*obj);
     
     if ((Debug::DoDebug & Debug::GC) != 0) {
         qWarning("%p->~%s()", ptr, smoke->className(classId));

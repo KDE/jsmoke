@@ -104,7 +104,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
 
 inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, Smoke::ModuleIndex classId)
 {
-    QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(item);
+    QtScriptSmoke::Object::Instance * instance = QtScriptSmoke::Object::Instance::get(item);
     void * ptr = instance->value;
     
     if (instance->classId.smoke == classId.smoke) {

@@ -59,7 +59,7 @@ getScriptValue(void *ptr)
 }
 
 void 
-unmapPointer(QtScriptSmoke::Instance * instance, Smoke::Index classId, void *lastptr) 
+unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr) 
 {
     Smoke * smoke = instance->classId.smoke;
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
@@ -69,7 +69,7 @@ unmapPointer(QtScriptSmoke::Instance * instance, Smoke::Index classId, void *las
             QScriptValue * obj = qscriptValues()->operator[](ptr);
             
             if (Debug::DoDebug & Debug::GC) {
-                QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
+                Object::Instance * instance = Object::Instance::get(*obj);
                 const char *className = instance->classId.smoke->classes[instance->classId.index].className;
                 qWarning("QtScriptSmoke::Global::unmapPointer (%s*)%p -> %p size: %d", className, ptr, obj, qscriptValues()->size() - 1);
             }
@@ -90,7 +90,7 @@ unmapPointer(QtScriptSmoke::Instance * instance, Smoke::Index classId, void *las
 // Recurse to store it also as casted to its parent classes.
 
 void 
-mapPointer(QScriptValue * obj, QtScriptSmoke::Instance * instance, Smoke::Index classId, void *lastptr) 
+mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId, void *lastptr) 
 {
     Smoke * smoke = instance->classId.smoke;
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
@@ -99,7 +99,7 @@ mapPointer(QScriptValue * obj, QtScriptSmoke::Instance * instance, Smoke::Index 
         lastptr = ptr; 
         
         if (Debug::DoDebug & Debug::GC) {
-            QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(*obj);
+            Object::Instance * instance = Object::Instance::get(*obj);
             const char *className = instance->classId.smoke->classes[instance->classId.index].className;
             qWarning("QtScriptSmoke::Global::mapPointer (%s*)%p -> %p size: %d", className, ptr, (void*)obj, qscriptValues()->size() + 1);
         }
@@ -120,11 +120,11 @@ mapPointer(QScriptValue * obj, QtScriptSmoke::Instance * instance, Smoke::Index 
 QScriptValue 
 wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr)
 {
-    QtScriptSmoke::Instance * instance = new QtScriptSmoke::Instance();
+    Object::Instance * instance = new Object::Instance();
     instance->classId = classId;
     instance->value = ptr;
     QScriptValue obj = engine->newObject(QtScriptSmoke::Global::Object); 
-    QtScriptSmoke::Instance::set(obj, instance);
+    Object::Instance::set(obj, instance);
     return obj;
 }
 

@@ -465,12 +465,12 @@ static void marshall_basetype(Marshall *m)
                 return;
             }
             
-            if (!QtScriptSmoke::Instance::isSmokeObject(value)) {
+            if (!Object::Instance::isSmokeObject(value)) {
                 m->item().s_class = 0;
                 return;
             }
             
-            QtScriptSmoke::Instance * instance = QtScriptSmoke::Instance::get(value);
+            Object::Instance * instance = Object::Instance::get(value);
             void * ptr = instance->value;
             
             if (!m->cleanup() && m->type().isStack()) {
@@ -508,7 +508,7 @@ static void marshall_basetype(Marshall *m)
                 return ;
             }
             
-            QtScriptSmoke::Instance * instance = new QtScriptSmoke::Instance();
+            Object::Instance * instance = new Object::Instance();
             instance->classId.smoke = m->smoke();
             instance->classId.index = m->type().classId();
             instance->value = ptr;
@@ -523,7 +523,7 @@ static void marshall_basetype(Marshall *m)
             }
             
             QScriptValue obj = m->engine()->newObject(QtScriptSmoke::Global::Object); 
-            QtScriptSmoke::Instance::set(obj, instance);
+            Object::Instance::set(obj, instance);
             *(m->var()) = obj;
             break;
         }

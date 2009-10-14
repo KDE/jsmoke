@@ -31,23 +31,6 @@
 
 namespace QtScriptSmoke {
    
-class Instance {
-public:
-    Instance() : ownership(QScriptEngine::QtOwnership) { }
-    virtual void finalize();
-    void dispose();
-    virtual ~Instance();
-
-    static bool isSmokeObject(const QScriptValue &object);
-    static Instance *get(const QScriptValue &object);
-    static void set(QScriptValue &object, Instance * instance);
-
-public:
-    void * value;
-    QScriptEngine::ValueOwnership ownership;
-    Smoke::ModuleIndex classId;
-};
-
 //!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
 class MetaObject : public QScriptClass
 {
@@ -70,6 +53,5 @@ class MetaObject : public QScriptClass
 }
 
 Q_DECLARE_METATYPE( QScriptContext* )
-Q_DECLARE_METATYPE( QtScriptSmoke::Instance* )
 
 #endif
