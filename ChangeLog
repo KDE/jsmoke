@@ -6,6 +6,18 @@
 referenced by wrapping a Smoke QObject instance with 
 QScriptEngine::newQObject(), and then obtaining the property from it. However,
 although there are no runtime errors the target slot is never called.
+* It seems the above problem is caused by only one of these two syntaxes work;
+
+    timer.timeout.connect(this, "update()");   // Doesn't work
+    timer.timeout.connect(this, this.update);  // Works
+
+And in fact QtScript style connect() call do actually work. At the moment 
+everytime a method is called on a QObject, it checks whether or not it is a
+signal by looking in the QMetaObject. Maybe it would be better to find all the
+signal names when a QObject is first instantiated and add all the signal 
+functions as properties. Rather than just QtScriptSmoke::Object, there should
+a QtScriptSmoke::QObject class as well, that held its QObject instance wrapped
+with a engine->newQObject() call in a nested QObject::Instance class.
 
 2009-10-13  Richard Dale  <richard.j.dale@gmail.com>
 

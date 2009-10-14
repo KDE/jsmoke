@@ -193,4 +193,10 @@ MetaObject::supportsExtension( QScriptClass::Extension extension ) const
             return true;
 }
 
+QString
+MetaObject::name() const
+{
+    return m_className;
+}
+
 }

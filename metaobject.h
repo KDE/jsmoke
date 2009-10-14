@@ -44,6 +44,7 @@ class MetaObject : public QScriptClass
         QVariant extension( QScriptClass::Extension extension, const QVariant& argument );
         bool supportsExtension( QScriptClass::Extension extension ) const;
         Smoke::ModuleIndex classId() { return m_classId; };
+        QString name() const;
     private:
         QByteArray m_className;
         Smoke::ModuleIndex m_classId;

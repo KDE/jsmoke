@@ -28,9 +28,13 @@
 #include <smoke/qt_smoke.h>
 
 #include <QtDebug>
+
+#include <QScriptContext>
+#include <QScriptContextInfo>
 #include <QScriptEngine>
 #include <QScriptString>
 #include <QScriptValue>
+
 #include <QStringList>
 #include <QObject>
 #include <QMetaMethod>
@@ -157,9 +161,11 @@ Object::property(const QScriptValue& object, const QScriptString& name, uint id)
                     
                     if (signalName == name.toString().toLatin1()) {
                         qDebug() << "Matched a property with signal name" << signalName;
-                        // FIXME: Sadly, this doesn't actually work - there are no error messages, but a
-                        // target slot connected to this signal is never called. Maybe it is being GC'd,
-                        // but putting a copy of it into a static variable didn't help.
+                        /*
+                            FIXME: This nearly works. but If a string is used as a target it doesn't work
+                            timer.timeout.connect(this, "update()");   // Doesn't work
+                            timer.timeout.connect(this, this.update);  // Works
+                         */
                         QScriptValue signalFunction = object.engine()->newQObject(qobject).property(name);
                         return signalFunction;
                     }
