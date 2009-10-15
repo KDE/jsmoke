@@ -2,6 +2,7 @@
 
 * Improved the debugging logging for querying properties
 * Added the Wiggly.qs example
+* Rename Debug::Property as Debug::Properties
 
 2009-10-14  Richard Dale  <richard.j.dale@gmail.com>
 

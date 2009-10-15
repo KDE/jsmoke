@@ -32,7 +32,7 @@ namespace QtScriptSmoke {
         enum QtDebugChannel {
             None = 0x00,
             Ambiguous = 0x01,
-            Property = 0x02,
+            Properties = 0x02,
             Calls = 0x04,
             GC = 0x08,
             Virtual = 0x10,

@@ -84,7 +84,7 @@ RunQtScriptSmoke::output()
     QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Virtual;
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Property;
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Properties;
     
     
     /*
