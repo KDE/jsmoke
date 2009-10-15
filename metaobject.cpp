@@ -68,6 +68,14 @@ MetaObject::propertyFlags ( const QScriptValue & object, const QScriptString & n
 QScriptClass::QueryFlags
 MetaObject::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
 {
+    if ((Debug::DoDebug & Debug::Property) != 0) {
+        qWarning("MetaObject::queryProperty(%s::%s, 0x%2.2x, %d)", 
+                 m_className.constData(),
+                 name.toString().toLatin1().constData(), 
+                 (uint) flags, 
+                 *id);
+    }
+
     // qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
     
     if (    name.toString() == QLatin1String("prototype")

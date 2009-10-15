@@ -124,8 +124,16 @@ Object::propertyFlags ( const QScriptValue & object, const QScriptString & name,
 QScriptClass::QueryFlags
 Object::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
-    // qDebug() << "Object::queryProperty(" << name << "," << flags << "," << *id << ")";
-    
+    if ((Debug::DoDebug & Debug::Property) != 0) {
+        Object::Instance * instance = Object::Instance::get(object);
+        qWarning("Object::queryProperty(%p->%s::%s, 0x%2.2x, %d)", 
+                 instance->value,
+                 instance->classId.smoke->classes[instance->classId.index].className,
+                 name.toString().toLatin1().constData(), 
+                 (uint) flags, 
+                 *id);
+    }
+        
     if( name.toString() == QLatin1String("toString") )
         return 0;
     

@@ -83,6 +83,9 @@ RunQtScriptSmoke::output()
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Virtual;
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Property;
+    
     
     /*
      Try timing this code with 'time ./qtscript-smoke'. On my slow netbook I got 
@@ -122,8 +125,8 @@ RunQtScriptSmoke::output()
     QByteArray code = testFile.readAll();
     
     QScriptValue result = engine->evaluate( code, fileInfo.fileName() );
-    qDebug() << "engine isEvaluating:" << engine->isEvaluating();
-    qDebug() << "engine hasUncaughtException:" << engine->hasUncaughtException();
+    // qDebug() << "engine isEvaluating:" << engine->isEvaluating();
+    // qDebug() << "engine hasUncaughtException:" << engine->hasUncaughtException();
     if (engine->hasUncaughtException()) {
         int line = engine->uncaughtExceptionLineNumber();
         qDebug() << "Uncaught exception at line" << line << ":" << engine->uncaughtException().toString();

@@ -25,7 +25,7 @@ function AnalogClock(parent) {
     QWidget.call(this, parent);
 
     var timer = new QTimer(this);
-    
+
     // FIXME: this.update works here, but "update()" doesn't
     //timer.timeout.connect(this, "update()");
     timer.timeout.connect(this, this.update);
@@ -75,7 +75,7 @@ AnalogClock.prototype.paintEvent = function() {
 
     for (var j = 0; j < 60; ++j) {
         if ((j % 5) != 0)
-	        painter.drawLine(92, 0, 96, 0);
+	painter.drawLine(92, 0, 96, 0);
         painter.rotate(6.0);
     }
     painter.end();
@@ -94,3 +94,5 @@ AnalogClock.minuteHand = new QPolygon([new QPoint(7, 8),
 
 var clock = new AnalogClock();
 clock.show();
+
+// QCoreApplication.exec();

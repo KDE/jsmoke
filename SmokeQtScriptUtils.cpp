@@ -288,15 +288,15 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         }
     }
 
-    if ((Debug::DoDebug & Debug::Calls) != 0) {
-        qWarning("Method metches:\n");
+    if ((Debug::DoDebug & Debug::Ambiguous) != 0) {
+        qWarning("Method metches:");
         for (int i = 0; i < matches.count(); i++) {
-            qWarning("    %s index: %d matchDistance: %d\n", 
+            qWarning("    %s index: %d matchDistance: %d", 
                 methodToString(matches[i].first).toLatin1().constData(),
                 matches[i].first.index, 
                 matches[i].second);
         }
-        qWarning("\n");
+        qWarning("");
     }
     
     return matches;    

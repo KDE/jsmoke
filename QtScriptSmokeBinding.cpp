@@ -50,7 +50,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     Object::Instance * instance = Object::Instance::get(*obj);
 
     if ((Debug::DoDebug & Debug::Virtual) != 0) {
-        Smoke::ModuleIndex methodId = { smoke, methodId.index };
+        Smoke::ModuleIndex methodId = { smoke, method };
         
         qWarning(   "module: %s virtual %p->%s::%s called", 
                     smoke->moduleName(),
@@ -71,6 +71,10 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     const char *methodName = smoke->methodNames[smoke->methods[method].name];
     if (obj->propertyFlags(methodName) != 0) {
         return false;
+    }
+    
+    if ((Debug::DoDebug & Debug::Virtual) != 0) {
+        qWarning("Method '%s' overriden", methodName);
     }
     
     QScriptValue function = obj->property(methodName);   

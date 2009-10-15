@@ -43,8 +43,9 @@ class MetaObject : public QScriptClass
         QScriptValue property ( const QScriptValue & object, const QScriptString & name, uint id );
         QVariant extension( QScriptClass::Extension extension, const QVariant& argument );
         bool supportsExtension( QScriptClass::Extension extension ) const;
-        Smoke::ModuleIndex classId() { return m_classId; };
         QString name() const;
+        Smoke::ModuleIndex classId() { return m_classId; };
+        Object * object() { return m_object; };
     private:
         QByteArray m_className;
         Smoke::ModuleIndex m_classId;
