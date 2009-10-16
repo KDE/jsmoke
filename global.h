@@ -43,7 +43,9 @@ namespace QtScriptSmoke {
 
     namespace Global {
         extern Binding binding;
+        
         extern QtScriptSmoke::Object * Object;
+        extern QtScriptSmoke::SmokeQObject * SmokeQObject;
         
         extern Smoke::ModuleIndex QObjectClassId;
         extern Smoke::ModuleIndex QDateClassId;

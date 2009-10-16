@@ -138,12 +138,12 @@ MetaObject::property ( const QScriptValue & object, const QScriptString & name, 
                  id);
     }
 
-    if( name == engine()->toStringHandle("prototype") )
+    if (name.toString() == QLatin1String("prototype") )
     {
         qDebug() << "its asking for the prototype";
         //return m_proto;
         return engine()->newObject();
-    } else if (name.toString() == "call") {
+    } else if (name.toString() == QLatin1String("call")) {
         return engine()->newFunction(callFunctionInvocation);
     } else {
         // Look for enums and if found, return the value directly
@@ -191,7 +191,7 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
             // Good, found a single best match in matches[0]
         }
         
-        QScriptValue proto = context->engine()->newObject(m_object); 
+        QScriptValue proto = context->engine()->newObject(object()); 
         context->setThisObject(proto);
         QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();

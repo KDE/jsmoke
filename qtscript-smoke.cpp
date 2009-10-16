@@ -81,10 +81,15 @@ RunQtScriptSmoke::output()
     QScriptEngine* engine = new QScriptEngine( this );
     QtScriptSmoke::registerTypes(engine);
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
+    QtScriptSmoke::Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
     QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
     engine->globalObject().setProperty( "include", includeFn );
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Virtual;
+    
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Ambiguous;
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Properties;
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Calls;
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::GC;
+    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Virtual;
     
     
     /*
@@ -108,10 +113,22 @@ RunQtScriptSmoke::output()
     for (int i = 1; i <= qt_Smoke->numClasses; i++) {
         // printf("className: %s\n", qt_Smoke->classes[i].className);
         
-        QScriptClass* sclass = new QtScriptSmoke::MetaObject(   engine, 
-                                                                qt_Smoke->classes[i].className, 
-                                                                QtScriptSmoke::Global::Object );
-        QScriptValue classValue = engine->newObject(sclass);
+        QScriptClass * klass;
+        if (qt_Smoke->isDerivedFrom(    qt_Smoke, 
+                                        i,
+                                        QtScriptSmoke::Global::QObjectClassId.smoke,
+                                        QtScriptSmoke::Global::QObjectClassId.index ) )
+        {
+            klass = new QtScriptSmoke::MetaObject(  engine, 
+                                                    qt_Smoke->classes[i].className, 
+                                                    QtScriptSmoke::Global::SmokeQObject );
+        } else {
+            klass = new QtScriptSmoke::MetaObject(  engine, 
+                                                    qt_Smoke->classes[i].className, 
+                                                    QtScriptSmoke::Global::Object );
+        }
+        
+        QScriptValue classValue = engine->newObject(klass);
         engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
     }
 

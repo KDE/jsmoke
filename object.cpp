@@ -157,38 +157,6 @@ Object::property(const QScriptValue& object, const QScriptString& name, uint id)
                  id);
     }
     
-    if (Object::Instance::isSmokeObject(object)) {
-        Object::Instance * instance = Object::Instance::get(object);
-        if (qt_Smoke->isDerivedFrom(    instance->classId.smoke, 
-                                        instance->classId.index,
-                                        Global::QObjectClassId.smoke,
-                                        Global::QObjectClassId.index ) )
-        {
-            QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                        instance->classId.index, 
-                                                                                        Global::QObjectClassId.index ) );
-            const QMetaObject * meta = qobject->metaObject();
-            
-            for (int i = meta->methodOffset(); i < meta->methodCount(); ++i) {
-                if (meta->method(i).methodType() == QMetaMethod::Signal) {
-                    QByteArray signalName(meta->method(i).signature());
-                    signalName = signalName.mid(0, signalName.indexOf('('));
-                    
-                    if (signalName == name.toString().toLatin1()) {
-                        qDebug() << "Matched a property with signal name" << signalName;
-                        /*
-                            FIXME: This nearly works. but If a string is used as a target it doesn't work
-                            timer.timeout.connect(this, "update()");   // Doesn't work
-                            timer.timeout.connect(this, this.update);  // Works
-                         */
-                        QScriptValue signalFunction = object.engine()->newQObject(qobject).property(name);
-                        return signalFunction;
-                    }
-                }
-            }
-        }
-    }
-    
     QString nameStr = name;
     QScriptValue fn = engine()->newFunction( callSmokeMethod );
     fn.setData( QScriptValue( name ) );
@@ -200,5 +168,100 @@ Object::name() const
 {
     return "QtScriptSmoke::Object";
 }
+
+SmokeQObject::SmokeQObject(QScriptEngine* engine)
+    : Object(engine) { }
+
+
+SmokeQObject::~SmokeQObject() { }
+
+QScriptValue::PropertyFlags 
+SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & name, uint id)
+{
+    SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
+
+    if ((Debug::DoDebug & Debug::Properties) != 0) {
+        if (name.toString() != QLatin1String("metaObject")) {
+            uint qflags = (uint) instance->qobject.propertyFlags(name, QScriptValue::ResolveLocal);
+            
+            qWarning("SmokeQObject::propertyFlags(%p->%s::%s, %d) => 0x%2.2x", 
+                    instance->value,
+                    instance->classId.smoke->classes[instance->classId.index].className,
+                    name.toString().toLatin1().constData(), 
+                    id,
+                    qflags);
+                    
+            if ((qflags & QScriptValue::PropertyGetter) != 0) {
+                qWarning("Property getter: %s 0x%2.2x", name.toString().toLatin1().constData(), qflags);
+            }
+            
+            if ((qflags & QScriptValue::PropertySetter) != 0) {
+                qWarning("Property setter: %s 0x%2.2x", name.toString().toLatin1().constData(), qflags);
+            }
+            
+            if ((qflags & QScriptValue::QObjectMember) != 0) {
+                qWarning("Object member: %s 0x%2.2x", name.toString().toLatin1().constData(), qflags);
+            }
+        }
+    }
+    
+    return Object::propertyFlags(object, name, id);
+}
+
+QScriptClass::QueryFlags
+SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
+{
+    return Object::queryProperty(object, name, flags, id);
+}
+
+QScriptValue
+SmokeQObject::property(const QScriptValue& object, const QScriptString& name, uint id)
+{
+    SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
+    QByteArray propertyName(name.toString().toLatin1());
+
+    if ((Debug::DoDebug & Debug::Properties) != 0) {
+        Object::Instance * instance = Object::Instance::get(object);
+        qWarning("SmokeQObject::property(%p->%s::%s, %d)", 
+                 instance->value,
+                 instance->classId.smoke->classes[instance->classId.index].className,
+                 propertyName.constData(), 
+                 id);
+    }
+    
+    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
+                                                                                instance->classId.index, 
+                                                                                Global::QObjectClassId.index ) );
+    const QMetaObject * meta = qobject->metaObject();
+    
+    while (meta != 0) {
+        for (int i = meta->methodOffset(); i < meta->methodCount(); ++i) {
+            if (meta->method(i).methodType() == QMetaMethod::Signal) {
+                QByteArray signalName(meta->method(i).signature());
+                signalName = signalName.mid(0, signalName.indexOf('('));
+                
+                if (signalName == propertyName) {
+                    // qDebug() << "Matched a property with signal name" << signalName;
+                    /*
+                        FIXME: This nearly works. but If a string is used as a target it doesn't work
+                        timer.timeout.connect(this, "update()");   // Doesn't work
+                        timer.timeout.connect(this, this.update);  // Works
+                    */
+                    return instance->qobject.property(name);
+                }
+            }
+        }
+        
+        meta = meta->superClass();
+    }
+    
+    return Object::property(object, name, id);
+}
+
+//void 
+// SmokeQObject::setProperty(QScriptValue & object, const QScriptString & name, uint id, const QScriptValue & value)
+//{
+//    setProperty::propertyFlags(object, name, id, value);
+//}
 
 }

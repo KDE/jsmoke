@@ -101,14 +101,28 @@ void MethodCall::callMethod()
         initializeInstanceStack[1].s_voidp = &QtScriptSmoke::Global::binding;
         fn(0, m_stack[0].s_class, initializeInstanceStack);
         
-        m_instance = new QtScriptSmoke::Object::Instance();
+        QScriptValue m_returnValue = m_context->thisObject();
+        
+        bool isQObject = qt_Smoke->isDerivedFrom(   m_smoke, 
+                                                    m_methodRef.classId,
+                                                    Global::QObjectClassId.smoke,
+                                                    Global::QObjectClassId.index );
+        if (isQObject) {
+            m_instance = new SmokeQObject::Instance();
+            QObject * obj = static_cast<QObject*>(m_smoke->cast(    m_stack[0].s_class, 
+                                                                        m_methodRef.classId, 
+                                                                        Global::QObjectClassId.index ) );
+            (static_cast<SmokeQObject::Instance*>(m_instance))->qobject = m_engine->newQObject(obj);
+        } else {
+            m_instance = new Object::Instance();
+        }
+                 
         m_instance->classId.smoke = m_smoke;
         m_instance->classId.index = m_methodRef.classId;
         m_instance->value = m_stack[0].s_class;
         m_instance->ownership = QScriptEngine::ScriptOwnership;
         
-        QScriptValue m_returnValue = m_context->thisObject();
-        QtScriptSmoke::Object::Instance::set(m_returnValue, m_instance);
+        Object::Instance::set(m_returnValue, m_instance);
         QtScriptSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();

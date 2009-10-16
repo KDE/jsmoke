@@ -331,6 +331,7 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
     Object::Instance * instance = Object::Instance::get(context->thisObject());
+    
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
     
     if (matches.count() == 0) {

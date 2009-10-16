@@ -29,6 +29,8 @@ namespace QtScriptSmoke {
 
         
 QtScriptSmoke::Object * Object = 0;
+QtScriptSmoke::SmokeQObject * SmokeQObject = 0;
+
 QtScriptSmoke::Binding binding;
 
 Smoke::ModuleIndex QObjectClassId;

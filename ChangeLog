@@ -1,3 +1,10 @@
+2009-10-16  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a QScriptClass called QtScriptSmoke::SmokeQObject to handle QObjects,
+and intercept access to signals, QObject set and get properties. Instances of
+QObjects are held in QtScriptSmoke::SmokeQObject::Instance, which has a 
+QScriptValue created with newQObject(), containing the QObject C++ instance.
+
 2009-10-15  Richard Dale  <richard.j.dale@gmail.com>
 
 * Improved the debugging logging for querying properties

@@ -52,14 +52,35 @@ class Object : public QScriptClass
             Smoke::ModuleIndex classId;
         };
 
-        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
-        QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
-        QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
+        virtual QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
+        virtual QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
+        virtual QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
         QString name() const;
+};
+
+class SmokeQObject : public Object 
+{
+    public:
+        SmokeQObject( QScriptEngine* );
+        ~SmokeQObject(); 
+        
+        class Instance : public Object::Instance {
+        public:
+            Instance() : Object::Instance() { }
+            ~Instance() { }
+        public:
+            QScriptValue qobject;
+        };
+        
+        virtual QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
+        virtual QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
+        virtual QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
+//        virtual void setProperty(QScriptValue & object, const QScriptString& name, uint id, const QScriptValue& value);
 };
 
 }
 
 Q_DECLARE_METATYPE( QtScriptSmoke::Object::Instance* )
+Q_DECLARE_METATYPE( QtScriptSmoke::SmokeQObject::Instance* )
 
 #endif // SAMPLEIMPL_H
