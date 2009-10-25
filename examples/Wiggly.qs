@@ -31,7 +31,7 @@ function WigglyWidget(parent)
     this.setBackgroundRole(QPalette.Midlight);
     this.setAutoFillBackground(true);
 
-    var newFont = new QFont(this.font());
+    var newFont = new QFont(this.font);
     newFont.setPointSize(newFont.pointSize() + 20);
     this.setFont(newFont);
 
@@ -46,9 +46,9 @@ WigglyWidget.prototype = new QWidget();
 
 WigglyWidget.prototype.paintEvent = function(/* event */)
 {
-    var metrics = new QFontMetrics(this.font());
-    var x = (this.width() - metrics.width(this.text)) / 2;
-    var y = (this.height() + metrics.ascent() - metrics.descent()) / 2;
+    var metrics = new QFontMetrics(this.font);
+    var x = (this.width - metrics.width(this.text)) / 2;
+    var y = (this.height + metrics.ascent() - metrics.descent()) / 2;
     var color = new QColor();
 
     var painter = new QPainter();

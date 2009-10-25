@@ -77,7 +77,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
         qWarning("Method '%s' overriden", methodName);
     }
     
-    QScriptValue function = obj->property(methodName);   
+    QScriptValue function = obj->property(methodName); 
     VirtualMethodCall methodCall(smoke, method, args, *obj, function);
     methodCall.next();
     return true;

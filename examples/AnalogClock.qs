@@ -38,13 +38,13 @@ function AnalogClock(parent) {
 AnalogClock.prototype = new QWidget();
 
 AnalogClock.prototype.paintEvent = function() {
-    var side = Math.min(this.width(), this.height());
+    var side = Math.min(this.width, this.height);
     var time = new Date();
 
     var painter = new QPainter();
     painter.begin(this);
     painter.setRenderHint(QPainter.Antialiasing);
-    painter.translate(this.width() / 2, this.height() / 2);
+    painter.translate(this.width / 2, this.height / 2);
     painter.scale(side / 200.0, side / 200.0);
 
     painter.setPen(new QPen(Qt.NoPen));

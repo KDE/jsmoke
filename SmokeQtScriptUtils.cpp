@@ -23,6 +23,8 @@
 #include <QScriptValue>
 #include <QVariant>
 #include <QtDebug>
+#include <QtCore/QDateTime>
+#include <QtCore/QRegExp>
 
 #include "SmokeQtScriptUtils.h"
 #include "marshall.h"
@@ -413,6 +415,122 @@ constructCopy(Object::Instance *instance)
     (*fn)(0, args[0].s_voidp, initializeInstanceStack);
 
     return args[0].s_voidp;
+}
+
+QVariant valueToVariant(const QScriptValue& value)
+{
+    if (!Object::Instance::isSmokeObject(value)) {
+        return value.toVariant();
+    }
+    
+    Object::Instance * instance = Object::Instance::get(value);
+    Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
+    return QVariant(QMetaType::type(klass.className), instance->value);
+}
+
+/*
+    The code in this method is devived from create() in scriptengine_p.cpp in Qt 4.5.2
+ */
+QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
+{
+    QScriptValue result;
+    const void * ptr = variant.data();
+    int type = variant.userType();
+    
+    // check if it's one of the types we know
+    switch (QMetaType::Type(type)) {
+    case QMetaType::Void:
+        result = engine->undefinedValue();
+        break;
+    case QMetaType::Bool:
+        result = QScriptValue(*reinterpret_cast<const bool*>(ptr));
+        break;
+    case QMetaType::Int:
+        result = QScriptValue(*reinterpret_cast<const int*>(ptr));
+        break;
+    case QMetaType::UInt:
+        result = QScriptValue(*reinterpret_cast<const uint*>(ptr));
+        break;
+    case QMetaType::LongLong:
+        result = QScriptValue(qsreal(*reinterpret_cast<const qlonglong*>(ptr)));
+        break;
+    case QMetaType::ULongLong:
+#if defined(Q_OS_WIN) && defined(_MSC_FULL_VER) && _MSC_FULL_VER <= 12008804
+#pragma message("** NOTE: You need the Visual Studio Processor Pack to compile support for 64bit unsigned integers.")
+        result = QScriptValue(qsreal((qlonglong)*reinterpret_cast<const qulonglong*>(ptr)));
+#elif defined(Q_CC_MSVC) && !defined(Q_CC_MSVC_NET)
+        result = QScriptValue(qsreal((qlonglong)*reinterpret_cast<const qulonglong*>(ptr)));
+#else
+        result = QScriptValue(qsreal(*reinterpret_cast<const qulonglong*>(ptr)));
+#endif
+        break;
+    case QMetaType::Double:
+        result = QScriptValue(*reinterpret_cast<const double*>(ptr));
+        break;
+    case QMetaType::QString:
+        result = QScriptValue(*reinterpret_cast<const QString*>(ptr));
+        break;
+    case QMetaType::Float:
+        result = QScriptValue(*reinterpret_cast<const float*>(ptr));
+        break;
+    case QMetaType::Short:
+        result = QScriptValue(*reinterpret_cast<const short*>(ptr));
+        break;
+    case QMetaType::UShort:
+        result = QScriptValue(*reinterpret_cast<const unsigned short*>(ptr));
+        break;
+    case QMetaType::Char:
+        result = QScriptValue(*reinterpret_cast<const char*>(ptr));
+        break;
+    case QMetaType::UChar:
+        result = QScriptValue(*reinterpret_cast<const unsigned char*>(ptr));
+        break;
+    case QMetaType::QChar:
+        result = QScriptValue((*reinterpret_cast<const QChar*>(ptr)).unicode());
+        break;
+    case QMetaType::QStringList:
+        result = engine->toScriptValue(*reinterpret_cast<const QStringList *>(ptr));
+        break;
+    case QMetaType::QVariantList:
+//        result = arrayFromVariantList(*reinterpret_cast<const QVariantList *>(ptr));
+        break;
+    case QMetaType::QVariantMap:
+//        result = objectFromVariantMap(*reinterpret_cast<const QVariantMap *>(ptr));
+        break;
+    case QMetaType::QDateTime: 
+    {
+        QDateTime dateTime = *reinterpret_cast<const QDateTime *>(ptr);
+        result = engine->newDate(dateTime);
+    } 
+    break;
+    case QMetaType::QDate: 
+    {
+        QDate date = *reinterpret_cast<const QDate *>(ptr);
+        result = engine->newDate(QDateTime(date));
+    } 
+    break;
+    case QMetaType::QRegExp: 
+    {
+        QRegExp rx = *reinterpret_cast<const QRegExp *>(ptr);
+        result = engine->newRegExp(rx);
+    } 
+    break;
+    case QMetaType::QObjectStar:
+    case QMetaType::QWidgetStar:
+//        engine->newQObject(&result, *reinterpret_cast<QObject* const *>(ptr));
+        break;
+    default:
+        void * value_ptr = QMetaType::construct(QMetaType::type(variant.typeName()), ptr);
+        Object::Instance * instance = new Object::Instance();
+        instance->classId = qt_Smoke->findClass(variant.typeName());
+        instance->value = value_ptr;
+        instance->ownership = QScriptEngine::ScriptOwnership;
+        result = engine->newObject(QtScriptSmoke::Global::Object); 
+        Object::Instance::set(result, instance);
+        break;
+    }
+    
+    return result;
 }
 
 }

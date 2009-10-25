@@ -36,4 +36,6 @@ namespace QtScriptSmoke
     QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
     QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
     void * constructCopy(Object::Instance *instance);
+    QVariant valueToVariant(const QScriptValue& value);
+    QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant);
 }

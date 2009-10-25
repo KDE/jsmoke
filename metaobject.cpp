@@ -123,8 +123,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, constructorContext, constructorContext->engine());
     methodCall.next();
     engine->popContext();
-    
-    return *(methodCall.var());
+    return engine->undefinedValue();
 }
 
 QScriptValue
@@ -196,7 +195,7 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
         QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
         context->setThisObject(*(methodCall.var()));
-        return 15;
+        return QVariant();
     }
 }
 

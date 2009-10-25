@@ -55,7 +55,7 @@ class Object : public QScriptClass
         virtual QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         virtual QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         virtual QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
-        QString name() const;
+        virtual QString name() const;
 };
 
 class SmokeQObject : public Object 
@@ -75,7 +75,8 @@ class SmokeQObject : public Object
         virtual QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         virtual QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         virtual QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
-//        virtual void setProperty(QScriptValue & object, const QScriptString& name, uint id, const QScriptValue& value);
+        virtual void setProperty(QScriptValue & object, const QScriptString& name, uint id, const QScriptValue& value);
+        virtual QString name() const;
 };
 
 }

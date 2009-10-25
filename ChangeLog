@@ -1,3 +1,8 @@
+2009-10-25  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added reading QObject properties. Setting QObject properties still doesn't 
+work.
+
 2009-10-16  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a QScriptClass called QtScriptSmoke::SmokeQObject to handle QObjects,
