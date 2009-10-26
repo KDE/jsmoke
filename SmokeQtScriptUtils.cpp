@@ -139,15 +139,14 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         
     foreach (QByteArray mungedMethod, mungedMethods) {
         Smoke::ModuleIndex methodId = classId.smoke->findMethod(klass.className, mungedMethod);
+
         if (methodId.index == 0) {
             // We actually need to look in the QGlobalSpace of each open smoke module,
             // not just the one the current class is in. But we don't keep a list of
             // open smoke modules yet.
             Smoke * smoke = classId.smoke;
-            Smoke::ModuleIndex globalClassId = smoke->idClass("QGlobalSpace");
-            Smoke::ModuleIndex globalMethodId = smoke->idMethodName(mungedMethod);
-            if (globalClassId.index != 0 && globalMethodId.index != 0) {
-                methodId = smoke->idMethod(globalClassId.index, globalMethodId.index);
+            methodId = smoke->findMethod("QGlobalSpace", mungedMethod);
+            if (methodId.index != 0) {
                 methodIds.append(methodId);
             }
         } else {

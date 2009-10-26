@@ -134,8 +134,8 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
                  *id);
     }
         
-    if( name.toString() == QLatin1String("toString") )
-        return 0;
+//    if( name.toString() == QLatin1String("toString") )
+//        return 0;
     
     if( name.toString() == QLatin1String("valueOf") )
         return 0;
