@@ -421,14 +421,20 @@ static void marshall_basetype(Marshall *m)
 
             if (value.isNull()) {
                 m->item().s_enum = 0;
+            } else if (value.instanceOf(QtScriptSmoke::Global::QtEnum)) {
+                m->item().s_enum = value.property("value").toUInt32();
             } else {
                 m->item().s_enum = value.toUInt32();
             }
             break;
         }
         case Marshall::ToQScriptValue:
-            *(m->var()) = QScriptValue(m->engine(), (uint) m->item().s_enum);
+        {
+            QScriptValueList args;
+            args << (uint) m->item().s_enum << m->type().name();
+            *(m->var()) = QtScriptSmoke::Global::QtEnum.call(QScriptValue(), args);
             break;
+        }
         default:
             m->unsupported();
             break;

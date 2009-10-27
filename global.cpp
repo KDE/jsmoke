@@ -38,6 +38,8 @@ Smoke::ModuleIndex QDateClassId;
 Smoke::ModuleIndex QDateTimeClassId;
 Smoke::ModuleIndex QTimeClassId;
 
+QScriptValue QtEnum;
+
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
 Q_GLOBAL_STATIC(QScriptValuesMap, qscriptValues)
 

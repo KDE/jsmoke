@@ -134,8 +134,18 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
                  *id);
     }
         
-//    if( name.toString() == QLatin1String("toString") )
-//        return 0;
+    if (name.toString() == QLatin1String("toString")) {
+        Object::Instance * instance = Object::Instance::get(object);
+        Smoke::ModuleIndex methodId = instance->classId.smoke->findMethod(  instance->classId.smoke->classes[instance->classId.index].className, 
+                                                                            "toString" );
+        if (methodId.index == 0) {
+            // TODO: Implement a function to pretty print the value of a smoke instance
+            return 0;
+        } else {
+            // If there is a C++ toString() method, call that
+            return QScriptClass::HandlesReadAccess;
+        }
+    }
     
     if( name.toString() == QLatin1String("valueOf") )
         return 0;

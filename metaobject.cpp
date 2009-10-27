@@ -80,7 +80,8 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
     
     if (    name.toString() == QLatin1String("prototype")
             || name.toString() == QLatin1String("toString")
-            || name.toString() == QLatin1String("valueOf") )
+            || name.toString() == QLatin1String("valueOf")
+            || name.toString() == QLatin1String("Enum") )
     {
         return 0;
     } else {
@@ -137,8 +138,7 @@ MetaObject::property ( const QScriptValue & object, const QScriptString & name, 
                  id);
     }
 
-    if (name.toString() == QLatin1String("prototype") )
-    {
+    if (name.toString() == QLatin1String("prototype")) {
         qDebug() << "its asking for the prototype";
         //return m_proto;
         return engine()->newObject();

@@ -92,7 +92,10 @@ mungedMethods( const QByteArray& nameFn, QScriptContext* context )
         for( int i = 0; i < context->argumentCount(); i++ )
         {
             QScriptValue val = context->argument( i );
-            if( val.isNumber() || val.isBool() || val.isString() )
+            if (    val.isNumber() 
+                    || val.isBool() 
+                    || val.isString() 
+                    || val.instanceOf(QtScriptSmoke::Global::QtEnum) )
             {
                 for (int i = 0; i < ret.count(); i++) {
                     ret[i] += '$';
@@ -196,7 +199,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 if (actual.isNumber()) {
                     switch (argFlags & Smoke::tf_elem) {
                     case Smoke::t_enum:
-                        matchDistance += 0;
+                        matchDistance += 1;
                         break;
                     case Smoke::t_double:
                         // perfect
@@ -220,6 +223,25 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     case Smoke::t_uchar:
                         matchDistance += 6;
                         break;
+                    default:
+                        matchDistance += 10;
+                        break;
+                    }
+                } else if (actual.instanceOf(QtScriptSmoke::Global::QtEnum)) {
+                    switch (argFlags & Smoke::tf_elem) {
+                    case Smoke::t_enum:
+                        if (actual.property("type").toString().toLatin1() != argType) {
+                            matchDistance += 10;
+                        }
+                        break;
+                    case Smoke::t_long:
+                    case Smoke::t_ulong:
+                        matchDistance += 3;
+                        break;
+                    case Smoke::t_int:
+                    case Smoke::t_uint:
+                        matchDistance += 4;
+                        break;                    
                     default:
                         matchDistance += 10;
                         break;
@@ -531,5 +553,5 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
     
     return result;
 }
-
+ 
 }

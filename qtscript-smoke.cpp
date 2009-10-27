@@ -24,6 +24,7 @@
 #include "object.h"
 #include "metaobject.h"
 #include "QtScriptSmokeBinding.h"
+#include "SmokeQtScriptUtils.h"
 #include "global.h"
 
 #include "smoke/qt_smoke.h"
@@ -75,6 +76,32 @@ RunQtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine)
     return QScriptValue();
 }
 
+static QScriptValue QtEnum_valueOf(QScriptContext* context, QScriptEngine* engine)
+{
+    return context->thisObject().property("value");
+}
+
+/*
+    The Qt.Enum class is used for marshalling enum values. It has a 'type' property
+    with the type name of the enum, and a 'value' property. The 'type' name is used
+    when overloaded methods need to be resolved on enum types of the arguments.
+ */
+static QScriptValue QtEnum_ctor(QScriptContext* context, QScriptEngine* engine)
+{
+     QScriptValue object;
+     if (context->isCalledAsConstructor()) {
+         object = context->thisObject();
+     } else {
+         object = engine->newObject();
+         object.setPrototype(context->callee().property("prototype"));
+     }
+     
+     object.setProperty("value", context->argument(0));
+     object.setProperty("type", context->argument(1));
+     object.setProperty("valueOf", engine->newFunction(QtEnum_valueOf));
+     return object;
+}
+ 
 void
 RunQtScriptSmoke::output()
 {
@@ -130,8 +157,13 @@ RunQtScriptSmoke::output()
         
         QScriptValue classValue = engine->newObject(klass);
         engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
+  
+        if (qstrcmp(qt_Smoke->classes[i].className, "Qt") == 0) {
+            QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
+            classValue.setProperty("Enum", QtScriptSmoke::Global::QtEnum);
+        }
     }
-
+  
     QScriptValue app = QtScriptSmoke::Global::wrapInstance(engine, qt_Smoke->findClass("QApplication"), qApp);
     engine->globalObject().setProperty("qApp", app);
             
@@ -142,8 +174,7 @@ RunQtScriptSmoke::output()
     QByteArray code = testFile.readAll();
     
     QScriptValue result = engine->evaluate( code, fileInfo.fileName() );
-    // qDebug() << "engine isEvaluating:" << engine->isEvaluating();
-    // qDebug() << "engine hasUncaughtException:" << engine->hasUncaughtException();
+
     if (engine->hasUncaughtException()) {
         int line = engine->uncaughtExceptionLineNumber();
         qDebug() << "Uncaught exception at line" << line << ":" << engine->uncaughtException().toString();

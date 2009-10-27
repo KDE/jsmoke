@@ -52,6 +52,8 @@ namespace QtScriptSmoke {
         extern Smoke::ModuleIndex QDateTimeClassId;
         extern Smoke::ModuleIndex QTimeClassId;
         
+        extern QScriptValue QtEnum;
+        
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         
         extern Q_DECL_EXPORT void unmapPointer( Object::Instance * instance, 
