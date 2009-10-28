@@ -90,7 +90,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
 {
     QScriptValue a = eng->newArray();
     const char * typeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type>());
-    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
+    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
     typename Container::const_iterator begin = cont.begin();
     typename Container::const_iterator end = cont.end();
     typename Container::const_iterator it;
@@ -129,7 +129,7 @@ void qScriptSmokeValueToSequence(const QScriptValue &value, Container &cont)
 {
     quint32 len = value.property(QLatin1String("length")).toUInt32();
     const char * typeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type>());
-    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
+    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
     for (quint32 i = 0; i < len; ++i) {
                 
 #if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET
@@ -160,7 +160,7 @@ QScriptValue qScriptSmokeValueFromPointerSequence(QScriptEngine *eng, const Cont
     QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
     // Remove the star from the type name
     typeName.chop(1);
-    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
+    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
     typename Container::const_iterator begin = cont.begin();
     typename Container::const_iterator end = cont.end();
     typename Container::const_iterator it;
@@ -179,7 +179,7 @@ void qScriptSmokeValueToPointerSequence(const QScriptValue &value, Container &co
     QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
     // Remove the star from the type name
     typeName.chop(1);
-    Smoke::ModuleIndex classId = qt_Smoke->idClass(typeName);
+    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
     for (quint32 i = 0; i < len; ++i) {
                 
 #if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET

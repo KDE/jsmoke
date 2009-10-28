@@ -18,13 +18,16 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QByteArray>
-#include <QScriptContext>
-#include <QScriptValue>
-#include <QVariant>
-#include <QtDebug>
+#include <QtCore/QByteArray>
+#include <QtCore/QVariant>
+#include <QtCore/QtDebug>
 #include <QtCore/QDateTime>
 #include <QtCore/QRegExp>
+
+#include <QtScript/QScriptContext>
+#include <QtScript/QScriptValue>
+
+#include "smoke/qtcore_smoke.h"
 
 #include "SmokeQtScriptUtils.h"
 #include "marshall.h"
@@ -116,8 +119,9 @@ mungedMethods( const QByteArray& nameFn, QScriptContext* context )
                     temp.append(mungedMethod + '#');
                 }
                 ret = temp;
-            }
-            else if (Object::Instance::isSmokeObject(val) || val.isDate())
+            } else if ( Object::Instance::isSmokeObject(val) 
+                        || val.isDate()
+                        || val.isRegExp() )
             {
                 for (int i = 0; i < ret.count(); i++) {
                     ret[i] += '#';
@@ -144,13 +148,15 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         Smoke::ModuleIndex methodId = classId.smoke->findMethod(klass.className, mungedMethod);
 
         if (methodId.index == 0) {
-            // We actually need to look in the QGlobalSpace of each open smoke module,
-            // not just the one the current class is in. But we don't keep a list of
-            // open smoke modules yet.
-            Smoke * smoke = classId.smoke;
-            methodId = smoke->findMethod("QGlobalSpace", mungedMethod);
-            if (methodId.index != 0) {
-                methodIds.append(methodId);
+            // Look in all the open smoke modules
+            QHashIterator<Smoke*, Module> it(Global::modules);
+            while (it.hasNext()) {
+                it.next();
+                methodId = it.key()->findMethod("QGlobalSpace", mungedMethod);
+                
+                if (methodId.index != 0) {
+                    methodIds.append(methodId);
+                }
             }
         } else {
             methodIds.append(methodId);
@@ -230,7 +236,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 } else if (actual.instanceOf(QtScriptSmoke::Global::QtEnum)) {
                     switch (argFlags & Smoke::tf_elem) {
                     case Smoke::t_enum:
-                        if (actual.property("type").toString().toLatin1() != argType) {
+                        if (actual.property("typeName").toString().toLatin1() != argType) {
                             matchDistance += 10;
                         }
                         break;
@@ -273,14 +279,12 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 } else if (Object::Instance::isSmokeObject(actual)) {
                     if ((argFlags & Smoke::t_class) != 0) {
                         Object::Instance * instance = Object::Instance::get(actual);
-                        Smoke::ModuleIndex classId = qt_Smoke->findClass(argType);
-                        if (    instance->classId.index == classId.index
-                                && instance->classId.smoke == classId.smoke )
-                        {
-                        } else if ( qt_Smoke->isDerivedFrom(    instance->classId.smoke, 
-                                                                instance->classId.index,
-                                                                classId.smoke,
-                                                                classId.index ) )
+                        Smoke::ModuleIndex classId = qtcore_Smoke->findClass(argType);
+                        if (instance->classId == classId) {
+                        } else if ( qtcore_Smoke->isDerivedFrom(    instance->classId.smoke, 
+                                                                    instance->classId.index,
+                                                                    classId.smoke,
+                                                                    classId.index ) )
                         {
                             matchDistance += 1;
                         } else {
@@ -432,7 +436,7 @@ constructCopy(Object::Instance *instance)
 
     // Initialize the binding for the new instance
     Smoke::StackItem initializeInstanceStack[2];
-    initializeInstanceStack[1].s_voidp = &QtScriptSmoke::Global::binding;
+    initializeInstanceStack[1].s_voidp = Global::modules[instance->classId.smoke].binding;
     (*fn)(0, args[0].s_voidp, initializeInstanceStack);
 
     return args[0].s_voidp;
@@ -543,7 +547,7 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
     default:
         void * value_ptr = QMetaType::construct(QMetaType::type(variant.typeName()), ptr);
         Object::Instance * instance = new Object::Instance();
-        instance->classId = qt_Smoke->findClass(variant.typeName());
+        instance->classId = qtcore_Smoke->findClass(variant.typeName());
         instance->value = value_ptr;
         instance->ownership = QScriptEngine::ScriptOwnership;
         result = engine->newObject(QtScriptSmoke::Global::Object); 

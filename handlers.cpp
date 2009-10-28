@@ -468,6 +468,10 @@ static void marshall_basetype(Marshall *m)
                 } else {
                     m->item().s_class = 0;
                 }
+                
+                return;
+            } else if (value.isRegExp()) {
+                m->item().s_class = new QRegExp(value.toRegExp());
                 return;
             }
             

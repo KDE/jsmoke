@@ -27,7 +27,9 @@
 #include "SmokeQtScriptUtils.h"
 #include "global.h"
 
-#include "smoke/qt_smoke.h"
+#include "smoke/qtcore_smoke.h"
+#include "smoke/qtnetwork_smoke.h"
+#include "smoke/qtgui_smoke.h"
 
 #include <QtGui/QApplication>
 
@@ -40,14 +42,33 @@
 
 RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
 {
-    init_qt_Smoke();
-    QtScriptSmoke::Global::binding = QtScriptSmoke::Binding(qt_Smoke);    
+    if (qtcore_Smoke == 0) {
+        init_qtcore_Smoke();
+    }
+
+    QtScriptSmoke::Module qtcore_module = { "qtcore", new QtScriptSmoke::Binding(qtcore_Smoke) };
+    QtScriptSmoke::Global::modules[qtcore_Smoke] = qtcore_module;
+    
+    if (qtgui_Smoke == 0) {
+        init_qtgui_Smoke();
+    }
+
+    QtScriptSmoke::Module qtgui_module = { "qtgui", new QtScriptSmoke::Binding(qtgui_Smoke) };
+    QtScriptSmoke::Global::modules[qtgui_Smoke] = qtgui_module;
+
+    if (qtnetwork_Smoke == 0) {
+        init_qtnetwork_Smoke();
+    }
+
+    QtScriptSmoke::Module qtnetwork_module = { "qtnetwork", new QtScriptSmoke::Binding(qtgui_Smoke) };
+    QtScriptSmoke::Global::modules[qtnetwork_Smoke] = qtnetwork_module;
+
     QtScriptSmoke::installHandlers(QtScriptSmoke::Handlers);
 
-    QtScriptSmoke::Global::QObjectClassId = qt_Smoke->idClass("QObject");
-    QtScriptSmoke::Global::QDateClassId = qt_Smoke->idClass("QDate");
-    QtScriptSmoke::Global::QDateTimeClassId = qt_Smoke->idClass("QDateTime");
-    QtScriptSmoke::Global::QTimeClassId = qt_Smoke->idClass("QTime");
+    QtScriptSmoke::Global::QObjectClassId = qtcore_Smoke->idClass("QObject");
+    QtScriptSmoke::Global::QDateClassId = qtcore_Smoke->idClass("QDate");
+    QtScriptSmoke::Global::QDateTimeClassId = qtcore_Smoke->idClass("QDateTime");
+    QtScriptSmoke::Global::QTimeClassId = qtcore_Smoke->idClass("QTime");
     
     QTimer::singleShot( 0, this, SLOT( output() ) );
 }
@@ -55,35 +76,14 @@ RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
 RunQtScriptSmoke::~RunQtScriptSmoke()
 {}
 
-QScriptValue 
-RunQtScriptSmoke::includeQtClass(QScriptContext *context, QScriptEngine* engine) //STATIC
-{
-    if( context->argumentCount() == 1 && context->argument(0).isString() )
-    {
-        QByteArray className( context->argument(0).toString().toLatin1() );
-        if( qt_Smoke->findClass(className).index != 0 )
-        {
-            QScriptClass* sclass = new QtScriptSmoke::MetaObject( engine, className, QtScriptSmoke::Global::Object );
-            QScriptValue classValue = engine->newObject( sclass );
-            engine->globalObject().setProperty(context->argument(0).toString(), classValue );
-        }
-        else
-            context->throwError(QScriptContext::RangeError, className + " is not a supported class." );
-    }
-    else
-       context->throwError(QScriptContext::TypeError, "Only one string argument for include.");
-
-    return QScriptValue();
-}
-
 static QScriptValue QtEnum_valueOf(QScriptContext* context, QScriptEngine* engine)
 {
     return context->thisObject().property("value");
 }
 
 /*
-    The Qt.Enum class is used for marshalling enum values. It has a 'type' property
-    with the type name of the enum, and a 'value' property. The 'type' name is used
+    The Qt.Enum class is used for marshalling enum values. It has a 'typeName' property
+    with the type name of the enum, and a 'value' property. The 'typeName' is used
     when overloaded methods need to be resolved on enum types of the arguments.
  */
 static QScriptValue QtEnum_ctor(QScriptContext* context, QScriptEngine* engine)
@@ -97,11 +97,42 @@ static QScriptValue QtEnum_ctor(QScriptContext* context, QScriptEngine* engine)
      }
      
      object.setProperty("value", context->argument(0));
-     object.setProperty("type", context->argument(1));
+     object.setProperty("typeName", context->argument(1));
      object.setProperty("valueOf", engine->newFunction(QtEnum_valueOf));
      return object;
 }
- 
+
+void
+initializeClasses(QScriptEngine * engine, Smoke * smoke)
+{
+    for (int i = 1; i <= smoke->numClasses; i++) {
+        // printf("className: %s\n", qt_Smoke->classes[i].className);
+        
+        QScriptClass * klass;
+        if (smoke->isDerivedFrom(   smoke, 
+                                    i,
+                                    QtScriptSmoke::Global::QObjectClassId.smoke,
+                                    QtScriptSmoke::Global::QObjectClassId.index ) )
+        {
+            klass = new QtScriptSmoke::MetaObject(  engine, 
+                                                    smoke->classes[i].className, 
+                                                    QtScriptSmoke::Global::SmokeQObject );
+        } else {
+            klass = new QtScriptSmoke::MetaObject(  engine, 
+                                                    smoke->classes[i].className, 
+                                                    QtScriptSmoke::Global::Object );
+        }
+        
+        QScriptValue classValue = engine->newObject(klass);
+        engine->globalObject().setProperty(QString(smoke->classes[i].className), classValue);
+  
+        if (qstrcmp(smoke->classes[i].className, "Qt") == 0) {
+            QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
+            classValue.setProperty("Enum", QtScriptSmoke::Global::QtEnum);
+        }
+    }
+}
+
 void
 RunQtScriptSmoke::output()
 {
@@ -109,62 +140,17 @@ RunQtScriptSmoke::output()
     QtScriptSmoke::registerTypes(engine);
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QtScriptSmoke::Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
-    QScriptValue includeFn = engine->newFunction( RunQtScriptSmoke::includeQtClass, 1 );
-    engine->globalObject().setProperty( "include", includeFn );
     
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Ambiguous;
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Properties;
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Calls;
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::GC;
     // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Virtual;
-    
-    
-    /*
-     Try timing this code with 'time ./qtscript-smoke'. On my slow netbook I got 
-     this time with the loop:
-     
-        real    0m3.916s
-        user    0m0.340s
-        sys     0m0.084s
-
-     Without the loop I got:
-     
-        real    0m3.295s
-        user    0m0.332s
-        sys     0m0.072s
-
-     So as far a I can see, creating the classes on startup is pretty cheap.
-     
-     -- Richard
-    */
-    for (int i = 1; i <= qt_Smoke->numClasses; i++) {
-        // printf("className: %s\n", qt_Smoke->classes[i].className);
-        
-        QScriptClass * klass;
-        if (qt_Smoke->isDerivedFrom(    qt_Smoke, 
-                                        i,
-                                        QtScriptSmoke::Global::QObjectClassId.smoke,
-                                        QtScriptSmoke::Global::QObjectClassId.index ) )
-        {
-            klass = new QtScriptSmoke::MetaObject(  engine, 
-                                                    qt_Smoke->classes[i].className, 
-                                                    QtScriptSmoke::Global::SmokeQObject );
-        } else {
-            klass = new QtScriptSmoke::MetaObject(  engine, 
-                                                    qt_Smoke->classes[i].className, 
-                                                    QtScriptSmoke::Global::Object );
-        }
-        
-        QScriptValue classValue = engine->newObject(klass);
-        engine->globalObject().setProperty(QString(qt_Smoke->classes[i].className), classValue);
   
-        if (qstrcmp(qt_Smoke->classes[i].className, "Qt") == 0) {
-            QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
-            classValue.setProperty("Enum", QtScriptSmoke::Global::QtEnum);
-        }
-    }
-  
-    QScriptValue app = QtScriptSmoke::Global::wrapInstance(engine, qt_Smoke->findClass("QApplication"), qApp);
+    initializeClasses(engine, qtcore_Smoke);
+    initializeClasses(engine, qtgui_Smoke);
+    initializeClasses(engine, qtnetwork_Smoke);
+    QScriptValue app = QtScriptSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QApplication"), qApp);
     engine->globalObject().setProperty("qApp", app);
             
     qDebug() << "opening" << m_script;

@@ -25,7 +25,7 @@
 #include "methodcall.h"
 #include "global.h"
 
-#include <smoke/qt_smoke.h>
+#include <smoke/qtcore_smoke.h>
 
 #include <QtDebug>
 

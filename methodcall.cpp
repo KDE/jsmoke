@@ -17,11 +17,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
 #include "methodcall.h"
 #include "methodreturnvalue.h"
 #include "QtScriptSmokeBinding.h"
 #include "qtscript-smoke.h"
 #include "global.h"
+
+#include "smoke/qtcore_smoke.h"
 
 #include <QtScript/QScriptEngine>
 
@@ -98,15 +101,15 @@ void MethodCall::callMethod()
     
     if ((m_methodRef.flags & Smoke::mf_ctor) != 0) {
         Smoke::StackItem initializeInstanceStack[2];
-        initializeInstanceStack[1].s_voidp = &QtScriptSmoke::Global::binding;
+        initializeInstanceStack[1].s_voidp = Global::modules[m_smoke].binding;
         fn(0, m_stack[0].s_class, initializeInstanceStack);
         
         QScriptValue m_returnValue = m_context->thisObject();
         
-        bool isQObject = qt_Smoke->isDerivedFrom(   m_smoke, 
-                                                    m_methodRef.classId,
-                                                    Global::QObjectClassId.smoke,
-                                                    Global::QObjectClassId.index );
+        bool isQObject = qtcore_Smoke->isDerivedFrom(   m_smoke, 
+                                                        m_methodRef.classId,
+                                                        Global::QObjectClassId.smoke,
+                                                        Global::QObjectClassId.index );
         if (isQObject) {
             m_instance = new SmokeQObject::Instance();
             QObject * obj = static_cast<QObject*>(m_smoke->cast(    m_stack[0].s_class, 

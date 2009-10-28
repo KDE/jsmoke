@@ -1,3 +1,11 @@
+2009-10-28  Richard Dale  <richard.j.dale@gmail.com>
+
+* Use individual smoke libraries for qtcore, qtgui and qtnetwork instead of the
+single qt smoke file with everything. The next thing to do is to split up the 
+project into individual qtscript plugins for each smoke library.
+* A javascript regular expression can be provided as an argument everywhere a
+QRegExp is expected.
+
 2009-10-27  Richard Dale  <richard.j.dale@gmail.com>
 
 * Enums are now marshalled to and from Qt.Enum instances. The Qt.Enum has

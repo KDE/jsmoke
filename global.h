@@ -42,8 +42,8 @@ namespace QtScriptSmoke {
     }
 
     namespace Global {
-        extern Binding binding;
-        
+        extern Q_DECL_EXPORT QHash<Smoke*, Module> modules;
+                
         extern QtScriptSmoke::Object * Object;
         extern QtScriptSmoke::SmokeQObject * SmokeQObject;
         

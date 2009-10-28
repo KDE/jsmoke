@@ -38,7 +38,6 @@ class RunQtScriptSmoke : public QObject
         void output();
     private:
         QByteArray m_script;
-        static QScriptValue includeQtClass(QScriptContext *context, QScriptEngine* engine);
 };
 
 #endif // qtscript-smoke_H

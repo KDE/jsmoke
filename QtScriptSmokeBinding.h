@@ -21,7 +21,7 @@
 #ifndef QTSCRIPTSMOKEBINDING_H
 #define QTSCRIPTSMOKEBINDING_H
 
-#include <smoke/qt_smoke.h>
+#include <smoke.h>
 
 namespace QtScriptSmoke {
     
@@ -33,6 +33,11 @@ class Binding : public SmokeBinding
         virtual char* className(Smoke::Index classId);
         virtual bool callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract = false);
         virtual void deleted(Smoke::Index classId, void* obj);
+};
+
+struct Module {
+    const char *name;
+    Binding *binding;
 };
 
 }

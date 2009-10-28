@@ -24,7 +24,7 @@
 #include "QtScriptSmokeBinding.h"
 #include "methodcall.h"
 
-#include <smoke/qt_smoke.h>
+#include <smoke/qtcore_smoke.h>
 
 #include <QtDebug>
 #include <QScriptContext>
@@ -43,7 +43,7 @@ namespace QtScriptSmoke {
 MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * object )
     : QScriptClass( engine )
     , m_className( className )
-    , m_classId( qt_Smoke->findClass(className.constData()) )
+    , m_classId( qtcore_Smoke->findClass(className.constData()) )
     , m_object( object )
 { }
 
@@ -121,7 +121,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
 
-    QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, constructorContext, constructorContext->engine());
+    QtScriptSmoke::MethodCall methodCall(classId.smoke, matches[0].first.index, constructorContext, constructorContext->engine());
     methodCall.next();
     engine->popContext();
     return engine->undefinedValue();
@@ -192,7 +192,7 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
         
         QScriptValue proto = context->engine()->newObject(object()); 
         context->setThisObject(proto);
-        QtScriptSmoke::MethodCall methodCall(qt_Smoke, matches[0].first.index, context, context->engine());
+        QtScriptSmoke::MethodCall methodCall(m_classId.smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
         context->setThisObject(*(methodCall.var()));
         return QVariant();
