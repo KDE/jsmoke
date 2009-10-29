@@ -323,7 +323,6 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 matches[i].first.index, 
                 matches[i].second);
         }
-        qWarning("");
     }
     
     return matches;    

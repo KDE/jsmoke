@@ -102,6 +102,29 @@ static QScriptValue QtEnum_ctor(QScriptContext* context, QScriptEngine* engine)
      return object;
 }
 
+static QScriptValue Debug_trace(QScriptContext* context, QScriptEngine* engine)
+{
+    QtScriptSmoke::Debug::DoDebug = context->argument(0).toUInt32();
+    return engine->undefinedValue();
+}
+
+static QScriptValue Debug_ctor(QScriptContext* context, QScriptEngine* engine)
+{
+    QScriptValue object = engine->newObject();
+    object.setPrototype(context->callee().property("prototype"));
+     
+    object.setProperty("None", 0);
+    object.setProperty("Ambiguous", 1);
+    object.setProperty("Properties", 2);
+    object.setProperty("Calls", 4);
+    object.setProperty("GC", 8);
+    object.setProperty("Virtual", 16);
+    object.setProperty("Verbose", 32);
+    
+    object.setProperty("trace", engine->newFunction(Debug_trace), QScriptValue::PropertySetter);
+    return object;
+}
+
 void
 initializeClasses(QScriptEngine * engine, Smoke * smoke)
 {
@@ -125,11 +148,6 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         
         QScriptValue classValue = engine->newObject(klass);
         engine->globalObject().setProperty(QString(smoke->classes[i].className), classValue);
-  
-        if (qstrcmp(smoke->classes[i].className, "Qt") == 0) {
-            QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
-            classValue.setProperty("Enum", QtScriptSmoke::Global::QtEnum);
-        }
     }
 }
 
@@ -141,15 +159,15 @@ RunQtScriptSmoke::output()
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QtScriptSmoke::Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
     
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Ambiguous;
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Properties;
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Calls;
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::GC;
-    // QtScriptSmoke::Debug::DoDebug |= QtScriptSmoke::Debug::Virtual;
-  
     initializeClasses(engine, qtcore_Smoke);
     initializeClasses(engine, qtgui_Smoke);
     initializeClasses(engine, qtnetwork_Smoke);
+    
+    QScriptValue QtClass = engine->globalObject().property(QString("Qt"));
+    QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
+    QtClass.setProperty("Enum", QtScriptSmoke::Global::QtEnum);            
+    QtClass.setProperty("Debug", engine->newFunction(Debug_ctor).call());
+
     QScriptValue app = QtScriptSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QApplication"), qApp);
     engine->globalObject().setProperty("qApp", app);
             

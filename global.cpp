@@ -22,7 +22,7 @@
 
 namespace QtScriptSmoke {
     namespace Debug {
-        int DoDebug = 0;
+        uint DoDebug = 0;
     }
     
     namespace Global {

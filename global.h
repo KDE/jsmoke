@@ -27,7 +27,7 @@
 namespace QtScriptSmoke {
     namespace Debug {
         
-        extern Q_DECL_EXPORT int DoDebug;
+        extern Q_DECL_EXPORT uint DoDebug;
 
         enum QtDebugChannel {
             None = 0x00,

@@ -191,11 +191,7 @@ SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & na
     SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
     QByteArray propertyName(name.toString().toLatin1());
 
-    if (    propertyName == "metaObject"
-            || propertyName == "minimumSizeHint"
-            || propertyName == "maximumSizeHint"
-            || propertyName == "sizeHint" ) 
-    {
+    if (propertyName == "metaObject") {
         return QScriptValue::ReadOnly;
     }
     
@@ -229,6 +225,7 @@ QScriptClass::QueryFlags
 SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
     SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
+
     if (name.toString() == QLatin1String("metaObject")) {
         return QScriptClass::HandlesReadAccess;
     }

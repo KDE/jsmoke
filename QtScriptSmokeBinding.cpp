@@ -44,11 +44,26 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
 {
     QScriptValue * obj = Global::getScriptValue(ptr);
     if (obj == 0) {
+        if ((Debug::DoDebug & Debug::Virtual) != 0) {
+            qWarning("Cannot find object for virtual method %p -> %p", ptr, obj);
+        }
+        
         return false;
     }
     
-    Object::Instance * instance = Object::Instance::get(*obj);
+    QByteArray methodName(smoke->methodNames[smoke->methods[method].name]);
 
+    if (    methodName == "metaObject"
+            || methodName == "qt_metacast"
+            || methodName == "qt_metacall"
+            || methodName == "minimumSizeHint"
+            || methodName == "maximumSizeHint"
+            || methodName == "x11Event" 
+            || methodName == "sizeHint" ) 
+    {
+         return false;
+    }
+    
     if ((Debug::DoDebug & Debug::Virtual) != 0) {
         Smoke::ModuleIndex methodId = { smoke, method };
         
@@ -58,26 +73,26 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
                     smoke->classes[smoke->methods[method].classId].className,
                     methodToString(methodId).toLatin1().constData() );
     }
-
+    
+    Object::Instance * instance = Object::Instance::get(*obj);
     if (instance == 0) {
         if ((Debug::DoDebug & Debug::Virtual) != 0) {
-            qWarning("Cannot find object for virtual method %p -> %p", ptr, obj);
+            qWarning("Cannot find instance for virtual method %p -> %p", ptr, obj);
         }
         
         return false;
     }
     
     // If the virtual method hasn't been overriden, return false and just call the C++ one.
-    const char *methodName = smoke->methodNames[smoke->methods[method].name];
     if (obj->propertyFlags(methodName) != 0) {
         return false;
     }
     
     if ((Debug::DoDebug & Debug::Virtual) != 0) {
-        qWarning("Method '%s' overriden", methodName);
+        qWarning("Method '%s' overriden", methodName.constData());
     }
     
-    QScriptValue function = obj->property(methodName); 
+    QScriptValue function = obj->property(QString(methodName)); 
     VirtualMethodCall methodCall(smoke, method, args, *obj, function);
     methodCall.next();
     return true;

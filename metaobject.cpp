@@ -80,8 +80,12 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
     
     if (    name.toString() == QLatin1String("prototype")
             || name.toString() == QLatin1String("toString")
-            || name.toString() == QLatin1String("valueOf")
-            || name.toString() == QLatin1String("Enum") )
+            || name.toString() == QLatin1String("valueOf") )
+    {
+        return 0;
+    } else if ( m_className == "Qt" 
+                && (    name.toString() == QLatin1String("Debug") 
+                        || name.toString() == QLatin1String("Enum") ) ) 
     {
         return 0;
     } else {
