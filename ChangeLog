@@ -1,3 +1,23 @@
+2009-10-29  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added various sort of debug tracing that can be turned on from scripts by
+setting the Qt.Debug.trace property. For example:
+
+    Qt.Debug.trace = Qt.Debug.Properties | Qt.Debug.GC;
+    var path = QDir.currentPath();
+    Qt.Debug.trace = Qt.Debug.None;
+
+Will turn on property and garbage collection tracing before method call, and 
+setting the trace property to 'Qt.Debug.None' turns everything off. The options
+can be combined by or'ing them together. Possible values are:
+
+    Qt.Debug.None
+    Qt.Debug.Ambiguous
+    Qt.Debug.Properties
+    Qt.Debug.Calls
+    Qt.Debug.GC
+    Qt.Debug.Virtual
+
 2009-10-28  Richard Dale  <richard.j.dale@gmail.com>
 
 * Use individual smoke libraries for qtcore, qtgui and qtnetwork instead of the
