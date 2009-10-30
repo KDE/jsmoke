@@ -8,6 +8,8 @@ call tracing:
 
 Trace: QPen.QPen([object QBrush:0x08ec3ef0], 1, 1, 0, 0) => [object QPen:0x08ecab58]
 
+* Added some missing QList and QVector marshallers for nested classes
+
 2009-10-29  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added various sort of debug tracing that can be turned on from scripts by

@@ -39,6 +39,7 @@
 #include <QtCore/QVector>
 
 #include <QtGui/QAbstractButton>
+#include <QtGui/QAbstractTextDocumentLayout>
 #include <QtGui/QColor>
 #include <QtGui/QDockWidget>
 #include <QtGui/QGraphicsItem>
@@ -53,7 +54,9 @@
 #include <QtGui/QStandardItem>
 #include <QtGui/QTableWidgetSelectionRange>
 #include <QtGui/QTextBlock>
+#include <QtGui/QTextEdit>
 #include <QtGui/QTextFormat>
+#include <QtGui/QTextLayout>
 #include <QtGui/QTextLength>
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QUndoStack>
@@ -77,11 +80,10 @@
 #include "SmokeQtScriptUtils.h"
 #include "marshallmacros.h"
 
-Q_DECLARE_METATYPE(QLocale::Country)
-Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QFileInfo)
 Q_DECLARE_METATYPE(QHostAddress)
 Q_DECLARE_METATYPE(QImageTextKeyLang)
+Q_DECLARE_METATYPE(QLocale::Country)
 Q_DECLARE_METATYPE(QModelIndex)
 Q_DECLARE_METATYPE(QNetworkAddressEntry)
 Q_DECLARE_METATYPE(QNetworkInterface)
@@ -93,6 +95,9 @@ Q_DECLARE_METATYPE(QSslCipher)
 Q_DECLARE_METATYPE(QSslError)
 Q_DECLARE_METATYPE(QTableWidgetSelectionRange)
 Q_DECLARE_METATYPE(QTextBlock)
+Q_DECLARE_METATYPE(QTextEdit::ExtraSelection)
+Q_DECLARE_METATYPE(QTextLayout::FormatRange)
+Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QXmlStreamEntityDeclaration)
 Q_DECLARE_METATYPE(QXmlStreamNamespaceDeclaration)
 Q_DECLARE_METATYPE(QXmlStreamNotationDeclaration)
@@ -109,21 +114,22 @@ Q_DECLARE_METATYPE(QTableWidgetItem*)
 Q_DECLARE_METATYPE(QTextFrame*)
 Q_DECLARE_METATYPE(QTreeWidgetItem*)
 Q_DECLARE_METATYPE(QUndoStack*)
+Q_DECLARE_METATYPE(QAbstractTextDocumentLayout::Selection)
 
-Q_DECLARE_METATYPE(QList<QLocale::Country>)
 Q_DECLARE_METATYPE(QList<int>)
-Q_DECLARE_METATYPE(QList<qreal>)
 Q_DECLARE_METATYPE(QList<QByteArray>)                                                                                                              
 Q_DECLARE_METATYPE(QList<QFileInfo>)                                                                                                              
 Q_DECLARE_METATYPE(QList<QHostAddress>)                                                                                                          
 Q_DECLARE_METATYPE(QList<QImageTextKeyLang>)                                                                                                       
 Q_DECLARE_METATYPE(QList<QKeySequence>)
+Q_DECLARE_METATYPE(QList<QLocale::Country>)
 Q_DECLARE_METATYPE(QList<QModelIndex>)
 Q_DECLARE_METATYPE(QList<QNetworkAddressEntry>)
 Q_DECLARE_METATYPE(QList<QNetworkInterface>)
 Q_DECLARE_METATYPE(QList<QNetworkProxy>)
 Q_DECLARE_METATYPE(QList<QPolygonF>)
 Q_DECLARE_METATYPE(QList<QPrinterInfo>)
+Q_DECLARE_METATYPE(QList<qreal>)
 Q_DECLARE_METATYPE(QList<QRectF>)
 Q_DECLARE_METATYPE(QList<QSize>)
 Q_DECLARE_METATYPE(QList<QSslCertificate>)
@@ -131,6 +137,8 @@ Q_DECLARE_METATYPE(QList<QSslCipher>)
 Q_DECLARE_METATYPE(QList<QSslError>)
 Q_DECLARE_METATYPE(QList<QTableWidgetSelectionRange>)
 Q_DECLARE_METATYPE(QList<QTextBlock>)
+Q_DECLARE_METATYPE(QList<QTextEdit::ExtraSelection>)
+Q_DECLARE_METATYPE(QList<QTextLayout::FormatRange>)
 Q_DECLARE_METATYPE(QList<QUrl>)
 Q_DECLARE_METATYPE(QList<QVariant>)
 
@@ -150,21 +158,22 @@ Q_DECLARE_METATYPE(QList<QTreeWidgetItem*>)
 Q_DECLARE_METATYPE(QList<QUndoStack*>)
 Q_DECLARE_METATYPE(QList<QWidget*>)
 
+Q_DECLARE_METATYPE(QVector<QAbstractTextDocumentLayout::Selection>)
 Q_DECLARE_METATYPE(QVector<QColor>)
 Q_DECLARE_METATYPE(QVector<QLine>)
 Q_DECLARE_METATYPE(QVector<QLineF>)
 Q_DECLARE_METATYPE(QVector<QPoint>)
 Q_DECLARE_METATYPE(QVector<QPointF>)
+Q_DECLARE_METATYPE(QVector<qreal>)
 Q_DECLARE_METATYPE(QVector<QRect>)
 Q_DECLARE_METATYPE(QVector<QRectF>)
 Q_DECLARE_METATYPE(QVector<QTextFormat>)
 Q_DECLARE_METATYPE(QVector<QTextLength>)
 Q_DECLARE_METATYPE(QVector<QVariant>)
-Q_DECLARE_METATYPE(QVector<unsigned int>)
-Q_DECLARE_METATYPE(QVector<qreal>)
 Q_DECLARE_METATYPE(QVector<QXmlStreamEntityDeclaration>)
 Q_DECLARE_METATYPE(QVector<QXmlStreamNamespaceDeclaration>)
 Q_DECLARE_METATYPE(QVector<QXmlStreamNotationDeclaration>)
+Q_DECLARE_METATYPE(QVector<unsigned int>)
 
 namespace QtScriptSmoke {
 
@@ -717,7 +726,6 @@ static void marshall_QULongLong(Marshall *m) {
 
 DEF_CONTAINER_MARSHALLER(QStringList, QStringList)
 
-DEF_CONTAINER_MARSHALLER(QListQReal, QList<qreal>)
 DEF_CONTAINER_MARSHALLER(QListInt, QList<int>)
 DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)                                                                                                             
 DEF_CONTAINER_MARSHALLER(QListQFileInfo, QList<QFileInfo>)                                                                                                               
@@ -731,6 +739,7 @@ DEF_CONTAINER_MARSHALLER(QListQNetworkInterface, QList<QNetworkInterface>)
 DEF_CONTAINER_MARSHALLER(QListQNetworkProxy, QList<QNetworkProxy>)
 DEF_CONTAINER_MARSHALLER(QListQPolygonF, QList<QPolygonF>)
 DEF_CONTAINER_MARSHALLER(QListQPrinterInfo, QList<QPrinterInfo>)
+DEF_CONTAINER_MARSHALLER(QListQReal, QList<qreal>)
 DEF_CONTAINER_MARSHALLER(QListQRectF, QList<QRectF>)
 DEF_CONTAINER_MARSHALLER(QListQSize, QList<QSize>)
 DEF_CONTAINER_MARSHALLER(QListQSslCertificate, QList<QSslCertificate>)
@@ -738,6 +747,8 @@ DEF_CONTAINER_MARSHALLER(QListQSslCipher, QList<QSslCipher>)
 DEF_CONTAINER_MARSHALLER(QListQSslError, QList<QSslError>)
 DEF_CONTAINER_MARSHALLER(QListQTableWidgetSelectionRange, QList<QTableWidgetSelectionRange>)
 DEF_CONTAINER_MARSHALLER(QListQTextBlock, QList<QTextBlock>)
+DEF_CONTAINER_MARSHALLER(QListQTextEditExtraSelection, QList<QTextEdit::ExtraSelection>)
+DEF_CONTAINER_MARSHALLER(QListQTextLayoutFormatRange, QList<QTextLayout::FormatRange>)
 DEF_CONTAINER_MARSHALLER(QListQUrl, QList<QUrl>)
 DEF_CONTAINER_MARSHALLER(QListQVariant, QList<QVariant>)
 
@@ -757,21 +768,22 @@ DEF_CONTAINER_MARSHALLER(QListQTreeWidgetItem, QList<QTreeWidgetItem*>)
 DEF_CONTAINER_MARSHALLER(QListQUndoStack, QList<QUndoStack*>)
 DEF_CONTAINER_MARSHALLER(QListQWidget, QList<QWidget*>)
 
-DEF_CONTAINER_MARSHALLER(QVectorQReal, QVector<qreal>)
-DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
+DEF_CONTAINER_MARSHALLER(QVectorQAbstractTextDocumentLayoutSelection, QVector<QAbstractTextDocumentLayout::Selection>)
 DEF_CONTAINER_MARSHALLER(QVectorQColor, QVector<QColor>)
-DEF_CONTAINER_MARSHALLER(QVectorQLine, QVector<QLine>)
 DEF_CONTAINER_MARSHALLER(QVectorQLineF, QVector<QLineF>)
-DEF_CONTAINER_MARSHALLER(QVectorQPoint, QVector<QPoint>)
+DEF_CONTAINER_MARSHALLER(QVectorQLine, QVector<QLine>)
 DEF_CONTAINER_MARSHALLER(QVectorQPointF, QVector<QPointF>)
-DEF_CONTAINER_MARSHALLER(QVectorQRect, QVector<QRect>)
+DEF_CONTAINER_MARSHALLER(QVectorQPoint, QVector<QPoint>)
+DEF_CONTAINER_MARSHALLER(QVectorQReal, QVector<qreal>)
 DEF_CONTAINER_MARSHALLER(QVectorQRectF, QVector<QRectF>)
+DEF_CONTAINER_MARSHALLER(QVectorQRect, QVector<QRect>)
 DEF_CONTAINER_MARSHALLER(QVectorQTextFormat, QVector<QTextFormat>)
 DEF_CONTAINER_MARSHALLER(QVectorQTextLength, QVector<QTextLength>)
 DEF_CONTAINER_MARSHALLER(QVectorQVariant, QVector<QVariant>)
 DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamEntityDeclaration, QVector<QXmlStreamEntityDeclaration>)
 DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNamespaceDeclaration, QVector<QXmlStreamNamespaceDeclaration>)
 DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNotationDeclaration, QVector<QXmlStreamNotationDeclaration>)
+DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
 
 TypeHandler Handlers[] = {
     { "char*", marshall_CString },
@@ -828,8 +840,12 @@ TypeHandler Handlers[] = {
     { "QList<QTableWidgetItem*>&", marshall_QListQTableWidgetItem },
     { "QList<QTableWidgetSelectionRange>&", marshall_QListQTableWidgetSelectionRange },
     { "QList<QTextBlock>&", marshall_QListQTextBlock },
+    { "QList<QTextEdit::ExtraSelection>", marshall_QListQTextEditExtraSelection },
+    { "QList<QTextEdit::ExtraSelection>&", marshall_QListQTextEditExtraSelection },
     { "QList<QTextFrame*>", marshall_QListQTextFrame },
     { "QList<QTextFrame*>&", marshall_QListQTextFrame },
+    { "QList<QTextLayout::FormatRange>", marshall_QListQTextLayoutFormatRange },
+    { "QList<QTextLayout::FormatRange>&", marshall_QListQTextLayoutFormatRange },
     { "QList<QTextOption::Tab>", marshall_QListEnum },
     { "QList<QTextOption::Tab>&", marshall_QListEnum },
     { "QList<QTreeWidgetItem*>", marshall_QListQTreeWidgetItem },
@@ -840,7 +856,7 @@ TypeHandler Handlers[] = {
     { "QList<QVariant>&", marshall_QListQVariant },
     { "QList<QWidget*>", marshall_QListQWidget },
     { "QList<QWidget*>&", marshall_QListQWidget },
-    { "QList<QWizard::WizardButton>&", marshall_QListEnum },    
+    { "QList<QWizard::WizardButton>&", marshall_QListEnum },     
     { "QListView::Flow", marshall_QListEnum },
     { "QListView::LayoutMode", marshall_QListEnum },
     { "QListView::Movement", marshall_QListEnum },
@@ -858,6 +874,8 @@ TypeHandler Handlers[] = {
     { "qulonglong&", marshall_QULongLong },
     { "QVector<double>", marshall_QVectorQReal },
     { "QVector<double>&", marshall_QVectorQReal },
+    { "QVector<QAbstractTextDocumentLayout::Selection>", marshall_QVectorQAbstractTextDocumentLayoutSelection },
+    { "QVector<QAbstractTextDocumentLayout::Selection>&", marshall_QVectorQAbstractTextDocumentLayoutSelection },
     { "QVector<QColor>", marshall_QVectorQColor },
     { "QVector<QLineF>&", marshall_QVectorQLineF },
     { "QVector<QLine>&", marshall_QVectorQLine },
@@ -923,6 +941,7 @@ void registerTypes(QScriptEngine * engine) {
     qScriptRegisterSequenceMetaType<QVector<unsigned int> >(engine); 
     qScriptRegisterSequenceMetaType<QVector<qreal> >(engine); 
     
+    qScriptSmokeRegisterSequenceMetaType<QVector<QAbstractTextDocumentLayout::Selection> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QColor> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QLine> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QLineF> >(engine);
@@ -936,7 +955,7 @@ void registerTypes(QScriptEngine * engine) {
     qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamEntityDeclaration> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNamespaceDeclaration> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNotationDeclaration> >(engine);
-
+    
     qScriptSmokeRegisterSequenceMetaType<QList<QByteArray> >(engine);                                                                                                            
     qScriptSmokeRegisterSequenceMetaType<QList<QFileInfo> >(engine);                                                                                                              
     qScriptSmokeRegisterSequenceMetaType<QList<QHostAddress> >(engine);                                                                                                            
@@ -956,6 +975,8 @@ void registerTypes(QScriptEngine * engine) {
     qScriptSmokeRegisterSequenceMetaType<QList<QSslError> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QTableWidgetSelectionRange> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QTextBlock> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTextEdit::ExtraSelection> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTextLayout::FormatRange> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QUrl> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QVariant> >(engine);
     
