@@ -35,6 +35,7 @@ namespace QtScriptSmoke
     QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
     QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
     QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
+    QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
     void * constructCopy(Object::Instance *instance);
     QVariant valueToVariant(const QScriptValue& value);
     QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant);

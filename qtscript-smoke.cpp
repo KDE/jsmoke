@@ -76,6 +76,11 @@ RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
 RunQtScriptSmoke::~RunQtScriptSmoke()
 {}
 
+static QScriptValue QtEnum_toString(QScriptContext* context, QScriptEngine* engine)
+{
+    return context->thisObject().property("value").toString();
+}
+
 static QScriptValue QtEnum_valueOf(QScriptContext* context, QScriptEngine* engine)
 {
     return context->thisObject().property("value");
@@ -99,6 +104,7 @@ static QScriptValue QtEnum_ctor(QScriptContext* context, QScriptEngine* engine)
      object.setProperty("value", context->argument(0));
      object.setProperty("typeName", context->argument(1));
      object.setProperty("valueOf", engine->newFunction(QtEnum_valueOf));
+     object.setProperty("toString", engine->newFunction(QtEnum_toString));
      return object;
 }
 
@@ -114,7 +120,7 @@ static QScriptValue Debug_ctor(QScriptContext* context, QScriptEngine* engine)
     object.setPrototype(context->callee().property("prototype"));
      
     object.setProperty("None", 0);
-    object.setProperty("Ambiguous", 1);
+    object.setProperty("MethodMatches", 1);
     object.setProperty("Properties", 2);
     object.setProperty("Calls", 4);
     object.setProperty("GC", 8);
@@ -130,24 +136,35 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
 {
     for (int i = 1; i <= smoke->numClasses; i++) {
         // printf("className: %s\n", qt_Smoke->classes[i].className);
-        
+        QByteArray className(smoke->classes[i].className);        
         QScriptClass * klass;
+        
         if (smoke->isDerivedFrom(   smoke, 
                                     i,
                                     QtScriptSmoke::Global::QObjectClassId.smoke,
                                     QtScriptSmoke::Global::QObjectClassId.index ) )
         {
             klass = new QtScriptSmoke::MetaObject(  engine, 
-                                                    smoke->classes[i].className, 
+                                                    className, 
                                                     QtScriptSmoke::Global::SmokeQObject );
         } else {
             klass = new QtScriptSmoke::MetaObject(  engine, 
-                                                    smoke->classes[i].className, 
+                                                    className, 
                                                     QtScriptSmoke::Global::Object );
         }
         
-        QScriptValue classValue = engine->newObject(klass);
-        engine->globalObject().setProperty(QString(smoke->classes[i].className), classValue);
+        if (className.contains("::")) {
+            QStringList components = QString(className).split("::");
+            QScriptValue outerClass = engine->globalObject().property(components[0]);
+            
+            for (int component = 1; component < components.length() - 1; ++component) {
+                outerClass = outerClass.property(components[component]);
+            }
+            
+            outerClass.setProperty(components.last(), engine->newObject(klass));
+        } else {
+            engine->globalObject().setProperty(QString(className), engine->newObject(klass));
+        }
     }
 }
 
@@ -159,6 +176,7 @@ RunQtScriptSmoke::output()
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QtScriptSmoke::Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
     
+    // QtScriptSmoke::Debug::DoDebug = QtScriptSmoke::Debug::Properties;
     initializeClasses(engine, qtcore_Smoke);
     initializeClasses(engine, qtgui_Smoke);
     initializeClasses(engine, qtnetwork_Smoke);

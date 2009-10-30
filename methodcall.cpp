@@ -26,6 +26,7 @@
 
 #include "smoke/qtcore_smoke.h"
 
+#include <QtCore/QStringList>
 #include <QtScript/QScriptEngine>
 
 namespace QtScriptSmoke {
@@ -130,6 +131,20 @@ void MethodCall::callMethod()
     } else {
         m_returnValue = m_engine->undefinedValue();
         QtScriptSmoke::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
+    }
+    
+    if ((Debug::DoDebug & Debug::Calls) != 0) {
+        QStringList args;
+        foreach (QScriptValue arg, m_valueList) {
+            args << arg.toString();
+        }
+        
+        QScriptValue result = (m_methodRef.flags & Smoke::mf_ctor) != 0 ? m_context->thisObject() : m_returnValue;
+        qWarning(   "Trace: %s.%s(%s) => %s", 
+                    m_smoke->className(m_methodRef.classId),
+                    m_smoke->methodNames[m_methodRef.name], 
+                    args.join(", ").toLatin1().constData(),
+                    result.toString().toLatin1().constData() );
     }
 }
 

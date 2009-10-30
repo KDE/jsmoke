@@ -37,6 +37,10 @@ inline bool operator==(const Smoke::ModuleIndex& a, const Smoke::ModuleIndex& b)
     return a.index == b.index && a.smoke == b.smoke;
 }
 
+inline bool operator!=(const Smoke::ModuleIndex& a, const Smoke::ModuleIndex& b) {
+    return a.index != b.index || a.smoke != b.smoke;
+}
+
 class SmokeType {
     Smoke::Type *m_type;        // derived from _smoke and _id, but cached
     Smoke *m_smoke;

@@ -126,25 +126,12 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
 {
     if ((Debug::DoDebug & Debug::Properties) != 0) {
         Object::Instance * instance = Object::Instance::get(object);
-        qWarning("Object::queryProperty(%p->%s::%s, 0x%2.2x, %d)", 
+        qWarning("Object::queryProperty(%p->%s.%s, 0x%2.2x, %d)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  name.toString().toLatin1().constData(), 
                  (uint) flags, 
                  *id);
-    }
-        
-    if (name.toString() == QLatin1String("toString")) {
-        Object::Instance * instance = Object::Instance::get(object);
-        Smoke::ModuleIndex methodId = instance->classId.smoke->findMethod(  instance->classId.smoke->classes[instance->classId.index].className, 
-                                                                            "toString" );
-        if (methodId.index == 0) {
-            // TODO: Implement a function to pretty print the value of a smoke instance
-            return 0;
-        } else {
-            // If there is a C++ toString() method, call that
-            return QScriptClass::HandlesReadAccess;
-        }
     }
     
     if( name.toString() == QLatin1String("valueOf") )
@@ -160,11 +147,20 @@ Object::property(const QScriptValue& object, const QScriptString& name, uint id)
 {
     if ((Debug::DoDebug & Debug::Properties) != 0) {
         Object::Instance * instance = Object::Instance::get(object);
-        qWarning("Object::property(%p->%s::%s, %d)", 
+        qWarning("Object::property(%p->%s.%s, %d)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  name.toString().toLatin1().constData(), 
                  id);
+    }
+    
+    if (name.toString() == QLatin1String("toString")) {
+        Object::Instance * instance = Object::Instance::get(object);
+        Smoke::ModuleIndex methodId = instance->classId.smoke->findMethod(  instance->classId.smoke->classes[instance->classId.index].className, 
+                                                                            "toString" );
+        if (methodId.index == 0) {
+            return engine()->newFunction(instanceToString);
+        }
     }
     
     QString nameStr = name;
@@ -196,7 +192,7 @@ SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & na
     }
     
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("SmokeQObject::propertyFlags(%p->%s::%s, %d)", 
+        qWarning("SmokeQObject::propertyFlags(%p->%s.%s, %d)", 
                 instance->value,
                 instance->classId.smoke->classes[instance->classId.index].className,
                 name.toString().toLatin1().constData(), 
@@ -231,7 +227,7 @@ SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& nam
     }
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("SmokeQObject::queryProperty(%p->%s::%s, 0x%2.2x, %d)", 
+        qWarning("SmokeQObject::queryProperty(%p->%s.%s, 0x%2.2x, %d)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  name.toString().toLatin1().constData(), 
@@ -260,7 +256,7 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
         Object::Instance * instance = Object::Instance::get(object);
-        qWarning("SmokeQObject::property(%p->%s::%s, %d)", 
+        qWarning("SmokeQObject::property(%p->%s.%s, %d)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  propertyName.constData(), 
@@ -327,7 +323,7 @@ SmokeQObject::setProperty(QScriptValue& object, const QScriptString& name, uint 
     QByteArray propertyName(name.toString().toLatin1());
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("SmokeQObject::setProperty(%p->%s::%s, %d, %s)", 
+        qWarning("SmokeQObject::setProperty(%p->%s.%s, %d, %s)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  propertyName.constData(), 

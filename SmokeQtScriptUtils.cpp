@@ -164,6 +164,10 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     }
     
     if (methodIds.count() == 0) {
+        if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
+            qWarning("No method matches for %s()", methodName.constData());
+        }
+        
         return matches;
     }
     
@@ -280,6 +284,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     if ((argFlags & Smoke::t_class) != 0) {
                         Object::Instance * instance = Object::Instance::get(actual);
                         Smoke::ModuleIndex classId = qtcore_Smoke->findClass(argType);
+
                         if (instance->classId == classId) {
                         } else if ( qtcore_Smoke->isDerivedFrom(    instance->classId.smoke, 
                                                                     instance->classId.index,
@@ -295,7 +300,9 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     }
                 } else if (actual.isVariant()) {
                 } else if (actual.isArray()) {
-                    if (argType.contains("QVector") || argType.contains("QList")) {
+                    if (    argType.contains("QVector") 
+                            || argType.contains("QList")
+                            || argType.contains("QStringList")) {
                     } else {
                         matchDistance += 10;
                     }
@@ -315,8 +322,8 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         }
     }
 
-    if ((Debug::DoDebug & Debug::Ambiguous) != 0) {
-        qWarning("Method metches:");
+    if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
+        qWarning("Method matches for %s():", methodName.constData());
         for (int i = 0; i < matches.count(); i++) {
             qWarning("    %s index: %d matchDistance: %d", 
                 methodToString(matches[i].first).toLatin1().constData(),
@@ -376,8 +383,19 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     return *(methodCall.var());
 }
 
+QScriptValue 
+instanceToString(QScriptContext* context, QScriptEngine* engine)
+{
+    Object::Instance * instance = Object::Instance::get(context->thisObject());
+    Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
+    QString str = QString("[object %1:0x%2]")
+        .arg(QString(klass.className).replace("::", "."))
+        .arg(reinterpret_cast<ulong long>(instance->value), 8, 16, QLatin1Char('0'));
+    return QScriptValue(engine, str);
+}
+
 void *
-constructCopy(Object::Instance *instance)
+constructCopy(Object::Instance* instance)
 {
     Smoke * smoke = instance->classId.smoke;
     const char *className = smoke->className(instance->classId.index);
