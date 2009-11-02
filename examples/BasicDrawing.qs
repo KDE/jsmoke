@@ -135,8 +135,8 @@ RenderArea.prototype.paintEvent = function(/* event */)
                 painter.scale(0.6, 0.9);
                 painter.translate(-50, -50);
             }
-
-            switch (this.shape) {
+            
+            switch (this.shape.toInt()) {
             case RenderArea.Line:
                 painter.drawLine(rect.bottomLeft(), rect.topRight());
                 break;
@@ -171,9 +171,7 @@ RenderArea.prototype.paintEvent = function(/* event */)
                 painter.drawPath(path);
                 break;
             case RenderArea.Text:
-                // ### overload issue
                 painter.drawText(rect, Qt.AlignCenter, tr("Qt by\nTrolltech"));
-                // painter.drawText(rect.x, rect.y, rect.width, rect.height, Qt.AlignCenter, tr("Qt by\nTrolltech"), undefined);
                 break;
             case RenderArea.Pixmap:
                 painter.drawPixmap(10, 10, this.pixmap);
@@ -197,7 +195,6 @@ function Window(parent)
     this.renderArea = new RenderArea();
 
     this.shapeComboBox = new QComboBox();
-    var icon = new QIcon(); // ### working around addItem() overload issue
     this.shapeComboBox.addItem(tr("Polygon"), new QVariant(RenderArea.Polygon));
     this.shapeComboBox.addItem(tr("Rectangle"), new QVariant(RenderArea.Rect));
     this.shapeComboBox.addItem(tr("Rounded Rectangle"), new QVariant(RenderArea.RoundedRect));
