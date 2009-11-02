@@ -45,7 +45,8 @@ MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Obje
     , m_className( className )
     , m_classId( qtcore_Smoke->findClass(className.constData()) )
     , m_object( object )
-{ }
+{ 
+}
 
 MetaObject::~MetaObject()
 {  }
@@ -59,14 +60,14 @@ MetaObject::prototype() const
 }
 
 QScriptValue::PropertyFlags 
-MetaObject::propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id )
+MetaObject::propertyFlags(const QScriptValue& object, const QScriptString& name, uint id)
 {
     // qDebug() << "MetaObject::propertyFlags(" << name << "," << id << ")";
     return QScriptValue::ReadOnly;
 }
 
 QScriptClass::QueryFlags
-MetaObject::queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id )
+MetaObject::queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id)
 {
     QByteArray propertyName(name.toString().toLatin1());
     
@@ -80,11 +81,12 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
 
     // qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
     
-    if (    propertyName == "prototype"
-            || propertyName == "toString"
-            || propertyName == "valueOf" )
-    {
+    if (propertyName == "prototype") {
         return 0;
+    } else if (propertyName == "valueOf") {
+        return 0;
+    } else if (propertyName == "toString") {
+        return QScriptClass::HandlesReadAccess;
     } else if ( m_className == "Qt" 
                 && (    propertyName == "Debug"
                         || propertyName == "Enum" ) ) 
@@ -107,8 +109,8 @@ MetaObject::queryProperty( const QScriptValue & object, const QScriptString & na
 QScriptValue 
 callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 {
-    QScriptClass * cls = context->thisObject().scriptClass();
-    Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
+    MetaObject * metaObject = static_cast<MetaObject*>(context->thisObject().scriptClass());
+    Smoke::ModuleIndex classId = metaObject->classId();
     
     QScriptContext * constructorContext = engine->pushContext();
     constructorContext->setThisObject(context->argument(0));
@@ -136,26 +138,28 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 }
 
 QScriptValue
-MetaObject::property ( const QScriptValue & object, const QScriptString & name, uint id )
+MetaObject::property(const QScriptValue& object, const QScriptString & name, uint id)
 {
-    // qDebug() << "MetaObject::property(" << name << "," << id << ")";
+    QByteArray propertyName(name.toString().toLatin1());
+    
     if ((Debug::DoDebug & Debug::Properties) != 0) {
         qWarning("MetaObject::property(%s.%s, %d)", 
                  m_className.constData(),
-                 name.toString().toLatin1().constData(), 
+                 propertyName.constData(), 
                  id);
     }
 
-    if (name.toString() == QLatin1String("prototype")) {
+    if (propertyName == "prototype") {
         qDebug() << "its asking for the prototype";
-        //return m_proto;
         return engine()->newObject();
-    } else if (name.toString() == QLatin1String("call")) {
+    } else if (propertyName == "toString") {
+        return QScriptValue(engine(), QString(m_className).replace("::", "."));
+    } else if (propertyName == "call") {
         return engine()->newFunction(callFunctionInvocation);
     } else {
         // Look for enums and if found, return the value directly
         Smoke::Class & klass = m_classId.smoke->classes[m_classId.index];
-        Smoke::ModuleIndex methodId = m_classId.smoke->findMethod(klass.className, name.toString().toLatin1().constData());
+        Smoke::ModuleIndex methodId = m_classId.smoke->findMethod(klass.className, propertyName);
         if (methodId.index != 0) {
             Smoke::Index ix = methodId.smoke->methodMaps[methodId.index].method;
             if (ix > 0 && (m_classId.smoke->methods[ix].flags & Smoke::mf_enum) != 0) {
@@ -172,28 +176,20 @@ MetaObject::property ( const QScriptValue & object, const QScriptString & name, 
 }
 
 QVariant
-MetaObject::extension( QScriptClass::Extension extension, const QVariant& argument )
+MetaObject::extension(QScriptClass::Extension extension, const QVariant& argument)
 {
-    if( extension == Callable )
-    {
-        //I tried the following ninjutsu, but the functionName is blank
-        //QScriptContextInfo cInfo( context );
-        //QByteArray classNameByteArray = cInfo.functionName().toLatin1();
-        //const char* className = classNameByteArray.constData();
-        //qDebug() << "we find the classname to be" << className
-
+    if (extension == Callable) {
         QScriptContext* context = argument.value<QScriptContext*>();        
-        // qDebug() << "constructor?" << context->isCalledAsConstructor() << context->backtrace();        
         QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
 
         if (matches.count() == 0) {
             QString message = QString("overloaded %1() constructor not resolved").arg(m_className.constData());
             context->setThisObject(context->throwError(QScriptContext::TypeError, message));
-            return 15;
+            return QVariant();
         } else if (matches.count() > 1 && matches[0].second == matches[1].second) {
             QString message = QString("overloaded %1() constructor not resolved").arg(m_className.constData());
             context->setThisObject(context->throwError(QScriptContext::TypeError, message));
-            return 15;
+            return QVariant();
         } else {
             // Good, found a single best match in matches[0]
         }
@@ -204,14 +200,22 @@ MetaObject::extension( QScriptClass::Extension extension, const QVariant& argume
         methodCall.next();
         context->setThisObject(*(methodCall.var()));
         return QVariant();
+    } else if (extension == HasInstance) {
+        QScriptValueList args = argument.value<QScriptValueList>();  
+        MetaObject * scriptClass = static_cast<MetaObject*>(args[0].scriptClass());
+        Object::Instance * instance = Object::Instance::get(args[1]);
+        bool result = qtcore_Smoke->isDerivedFrom(  instance->classId.smoke, 
+                                                    instance->classId.index,
+                                                    scriptClass->m_classId.smoke,
+                                                    scriptClass->m_classId.index );
+        return QVariant(result);
     }
 }
 
 bool
-MetaObject::supportsExtension( QScriptClass::Extension extension ) const
+MetaObject::supportsExtension(QScriptClass::Extension extension) const
 {
-        if( extension == Callable )
-            return true;
+    return extension == Callable || extension == HasInstance;
 }
 
 QString

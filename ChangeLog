@@ -1,3 +1,28 @@
+2009-11-02  Richard Dale  <richard.j.dale@gmail.com>
+
+* Setting QObject properties now works correctly. The initial approach of using
+QScriptClass::setProperty() didn't work for classes which were subclassed.
+Instead SmokeQObject::propertyFlags() returns QScriptValue::PropertyGetter and 
+QScriptValue::PropertySettergetter for QObject properties, then getter and
+setter functions are returned by SmokeQObject::property().
+* Fixed bug when calling methods as the smoke module corresponding to the
+instance was being passed, and not the smoke module corresponding to the method
+call.
+* When resolving overloaded methods with enum arguments, make 'uint' types the
+second most important after an actual match on the enum type itself.
+* Added support for the HasInstance extension so that 'instanceof' now works 
+correctly with the smoke classes. For instance:
+
+    print(dialog instanceof MyWidget); // returns true
+    print(dialog instanceof QWidget); // returns true
+    print(dialog instanceof Object); // returns true
+
+Will all return true when MyWidget is a subclass of QWidget
+* When the full signature of a signal is specified, such as 'activated(int)' 
+is it used to find a match.
+* Added the BasicDrawing.qs example, which runs fine, but doesn't yet draw 
+anything.
+
 2009-10-30  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added support for nested classes such as QPainterPath::Element

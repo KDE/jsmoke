@@ -31,7 +31,7 @@ function AnalogClock(parent) {
     timer.timeout.connect(this, this.update);
     timer.start(1000);
 
-    this.setWindowTitle("Analog Clock");
+    this.windowTitle = "Analog Clock";
     this.resize(200, 200);
 }
 

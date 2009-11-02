@@ -117,29 +117,38 @@ void Object::Instance::set(QScriptValue &object, Object::Instance * instance)
 QScriptValue::PropertyFlags 
 Object::propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id )
 {
-    // qDebug() << "Object::propertyFlags(" << name << "," << id << ")";
-    return QScriptValue::ReadOnly;
+    return QScriptValue::ReadOnly | QScriptValue::Undeletable | QScriptValue::SkipInEnumeration;
 }
 
 QScriptClass::QueryFlags
 Object::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
 {
+    QByteArray propertyName(name.toString().toLatin1());
+
     if ((Debug::DoDebug & Debug::Properties) != 0) {
         Object::Instance * instance = Object::Instance::get(object);
         qWarning("Object::queryProperty(%p->%s.%s, 0x%2.2x, %d)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
-                 name.toString().toLatin1().constData(), 
+                 propertyName.constData(), 
                  (uint) flags, 
                  *id);
     }
-    
-    if( name.toString() == QLatin1String("valueOf") )
-        return 0;
 
+    if (    propertyName == "toLocaleString" 
+            || propertyName == "valueOf" 
+            || propertyName == "hasOwnProperty" 
+            || propertyName == "isPrototypeOf" 
+            || propertyName == "propertyIsEnumerable" 
+            || propertyName == "__defineGetter__" 
+            || propertyName == "__defineSetter__" ) 
+    {
+        return 0;
+    }
+    
     // We don't handle write access because a script can override a virtual
     // method by overwriting a property with a custom function.
-    return QScriptClass::HandlesReadAccess;
+    return flags & QScriptClass::HandlesReadAccess;
 }
 
 QScriptValue
@@ -181,24 +190,35 @@ SmokeQObject::SmokeQObject(QScriptEngine* engine)
 
 SmokeQObject::~SmokeQObject() { }
 
+static const uint ReadQProperty = QScriptValue::UserRange + 0x00010000;
+static const uint WriteQProperty = QScriptValue::UserRange + 0x00020000;
+
 QScriptValue::PropertyFlags 
 SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & name, uint id)
 {
     SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
     QByteArray propertyName(name.toString().toLatin1());
 
+    if (instance == 0 || instance->value == 0) {
+        return 0;
+    }
+        
     if (propertyName == "metaObject") {
         return QScriptValue::ReadOnly;
     }
     
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("SmokeQObject::propertyFlags(%p->%s.%s, %d)", 
+        qWarning("SmokeQObject::propertyFlags(%p->%s.%s, 0x%8.8x)", 
                 instance->value,
                 instance->classId.smoke->classes[instance->classId.index].className,
                 name.toString().toLatin1().constData(), 
                 id);
     }
-
+    
+    if (id != 0) {
+        return QScriptValue::PropertyFlags(id);
+    }
+    
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
                                                                                 instance->classId.index, 
                                                                                 Global::QObjectClassId.index ) );
@@ -207,7 +227,17 @@ SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & na
     while (meta != 0) {
         for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
             if (propertyName == meta->property(i).name()) {
-                return 0;
+                if (meta->property(i).isWritable()) {
+                    return  QScriptValue::Undeletable 
+                            | QScriptValue::SkipInEnumeration
+                            | QScriptValue::PropertyGetter
+                            | QScriptValue::PropertySetter;
+                } else {
+                    return  QScriptValue::ReadOnly 
+                            | QScriptValue::Undeletable 
+                            | QScriptValue::SkipInEnumeration
+                            | QScriptValue::PropertyGetter;
+                }
             }
         }
         
@@ -218,7 +248,7 @@ SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & na
 }
 
 QScriptClass::QueryFlags
-SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags flags, uint* id)
+SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& name, QScriptClass::QueryFlags queryFlags, uint* id)
 {
     SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
 
@@ -227,107 +257,62 @@ SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& nam
     }
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("SmokeQObject::queryProperty(%p->%s.%s, 0x%2.2x, %d)", 
+        qWarning("SmokeQObject::queryProperty(%p->%s.%s, 0x%2.2x, 0x%8.8x)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  name.toString().toLatin1().constData(), 
-                 (uint) flags, 
+                 (uint) queryFlags, 
                  *id);
     }
 
-    if (    (flags & QScriptClass::HandlesWriteAccess) != 0 
-            && propertyFlags(object, name, *id) == 0 ) 
+    uint flags = propertyFlags(object, name, *id);
+    
+    if (    (queryFlags & QScriptClass::HandlesWriteAccess) != 0
+            && (flags & QScriptValue::PropertySetter) != 0 ) 
     {
-#ifdef WE_UNDERSTAND_H9W_THE_HELL_TO_GET_PROPERTY_SETTERS_WORKING
-        return QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess;
-#else
-        return QScriptClass::HandlesReadAccess;
-#endif
+        *id = flags | WriteQProperty;
+        return queryFlags & (QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess);
+    } else if ( (queryFlags & QScriptClass::HandlesReadAccess) != 0
+                && (flags & QScriptValue::PropertyGetter) != 0 )
+    {
+        *id = flags | ReadQProperty;
+        return queryFlags & QScriptClass::HandlesReadAccess;
     }
 
-    return Object::queryProperty(object, name, flags, id);
+    return Object::queryProperty(object, name, queryFlags, id);
 }
 
-QScriptValue
-SmokeQObject::property(const QScriptValue& object, const QScriptString& name, uint id)
+static QScriptValue 
+getQProperty(QScriptContext* context, QScriptEngine* engine)
 {
-    SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
-    QByteArray propertyName(name.toString().toLatin1());
+    QByteArray propertyName = context->callee().data().toString().toLatin1();
+    Object::Instance * instance = Object::Instance::get(context->thisObject());
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        Object::Instance * instance = Object::Instance::get(object);
-        qWarning("SmokeQObject::property(%p->%s.%s, %d)", 
+        qWarning("getQObjectProperty(%p->%s.%s)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
-                 propertyName.constData(), 
-                 id);
+                 propertyName.constData() );
     }
-    
+
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
                                                                                 instance->classId.index, 
                                                                                 Global::QObjectClassId.index ) );
-    const QMetaObject * meta = qobject->metaObject();
-    
-    while (meta != 0) {
-        for (int i = meta->methodOffset(); i < meta->methodCount(); ++i) {
-            if (meta->method(i).methodType() == QMetaMethod::Signal) {
-                QByteArray signalName(meta->method(i).signature());
-                signalName = signalName.mid(0, signalName.indexOf('('));
-                
-                if (signalName == propertyName) {
-                    // qDebug() << "Matched a property with signal name" << signalName;
-                    /*
-                        FIXME: This nearly works. but If a string is used as a target it doesn't work
-                        timer.timeout.connect(this, "update()");   // Doesn't work
-                        timer.timeout.connect(this, this.update);  // Works
-                    */
-                    return instance->qobject.property(name);
-                }
-            }
-        }
-        
-        meta = meta->superClass();
-    }
-    
-    meta = qobject->metaObject();
-    while (meta != 0) {
-        for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
-            if (propertyName == meta->property(i).name()) {
-                QScriptValue thisObject = object.engine()->currentContext()->thisObject();
-                SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(thisObject));
-                if (instance != 0) {
-                    qobject = static_cast<QObject*>(instance->classId.smoke->cast(  instance->value, 
-                                                                                    instance->classId.index, 
-                                                                                    Global::QObjectClassId.index ) );
-                }
-                
-                return valueFromVariant(engine(), qobject->property(propertyName));
-            }
-        }
-        
-        meta = meta->superClass();
-    }
-
-    return Object::property(object, name, id);
+    return valueFromVariant(engine, qobject->property(propertyName));
 }
 
-void 
-SmokeQObject::setProperty(QScriptValue& object, const QScriptString& name, uint id, const QScriptValue& value)
+static QScriptValue 
+setQProperty(QScriptContext* context, QScriptEngine* engine)
 {
-    QScriptValue thisObject = object.engine()->currentContext()->thisObject();
-    SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(thisObject));
-    if (instance == 0) {
-        instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
-    }
-    
-    QByteArray propertyName(name.toString().toLatin1());
+    QByteArray propertyName = context->callee().data().toString().toLatin1();
+    Object::Instance * instance = Object::Instance::get(context->thisObject());
+    QScriptValue value = context->argument(0);
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("SmokeQObject::setProperty(%p->%s.%s, %d, %s)", 
+        qWarning("setQProperty(%p->%s.%s = %s)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  propertyName.constData(), 
-                 id,
                  value.toString().toLatin1().constData() );
     }
 
@@ -335,7 +320,68 @@ SmokeQObject::setProperty(QScriptValue& object, const QScriptString& name, uint 
                                                                                 instance->classId.index, 
                                                                                 Global::QObjectClassId.index ) );
     qobject->setProperty(propertyName, valueToVariant(value));
-    return;
+    return value;
+}
+
+QScriptValue
+SmokeQObject::property(const QScriptValue& object, const QScriptString& name, uint id)
+{
+    SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
+    if (instance == 0 || instance->value == 0) {
+        return 0;
+    }
+    
+    QByteArray propertyName(name.toString().toLatin1());
+
+    if ((Debug::DoDebug & Debug::Properties) != 0) {
+        Object::Instance * instance = Object::Instance::get(object);
+        qWarning("SmokeQObject::property(%p->%s.%s, 0x%8.8x)", 
+                 instance->value,
+                 instance->classId.smoke->classes[instance->classId.index].className,
+                 propertyName.constData(), 
+                 id);
+    }
+    
+    if ((id & ReadQProperty) == ReadQProperty) {
+        QScriptValue fn = engine()->newFunction(getQProperty);
+        fn.setData(QScriptValue(QString(propertyName)));
+        return fn;
+    }
+    
+    if ((id & WriteQProperty) == WriteQProperty) {
+        QScriptValue fn = engine()->newFunction(setQProperty);
+        fn.setData(QScriptValue(QString(propertyName)));
+        return fn;
+    }
+   
+    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
+                                                                                instance->classId.index, 
+                                                                                Global::QObjectClassId.index ) );
+    bool fullSignalSignature = propertyName.contains("(");
+    const QMetaObject * meta = qobject->metaObject();
+    
+    while (meta != 0) {
+        for (int i = meta->methodOffset(); i < meta->methodCount(); ++i) {
+            if (meta->method(i).methodType() == QMetaMethod::Signal) {
+                if (fullSignalSignature) {
+                    if (propertyName == meta->method(i).signature()) {
+                        return instance->qobject.property(name);
+                    }
+                } else {
+                    QByteArray signalName(meta->method(i).signature());                                                           
+                    signalName = signalName.mid(0, signalName.indexOf('('));                                                      
+                                                                                                                                            
+                    if (signalName == propertyName) {
+                        return instance->qobject.property(name);
+                    }
+                }
+            }
+        }
+        
+        meta = meta->superClass();
+    }
+
+    return Object::property(object, name, id);
 }
 
 QString

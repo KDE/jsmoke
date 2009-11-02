@@ -52,10 +52,10 @@ class Object : public QScriptClass
             Smoke::ModuleIndex classId;
         };
 
-        virtual QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
-        virtual QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
-        virtual QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
-        virtual QString name() const;
+        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
+        QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
+        QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
+        QString name() const;
 };
 
 class SmokeQObject : public Object 
@@ -72,11 +72,10 @@ class SmokeQObject : public Object
             QScriptValue qobject;
         };
         
-        virtual QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
-        virtual QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
-        virtual QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
-        virtual void setProperty(QScriptValue & object, const QScriptString& name, uint id, const QScriptValue& value);
-        virtual QString name() const;
+        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
+        QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
+        QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
+        QString name() const;
 };
 
 }

@@ -134,14 +134,9 @@ static QScriptValue Debug_ctor(QScriptContext* context, QScriptEngine* engine)
 void
 initializeClasses(QScriptEngine * engine, Smoke * smoke)
 {
-    for (int i = 1; i <= smoke->numTypes; i++) {
-        printf("%s\n", smoke->types[i].name == 0 ? "void" : smoke->types[i].name);
-    }
-    
     for (int i = 1; i <= smoke->numClasses; i++) {
-        // printf("className: %s\n", qt_Smoke->classes[i].className);
         QByteArray className(smoke->classes[i].className);        
-        QScriptClass * klass;
+        QScriptClass * klass = 0;
         
         if (smoke->isDerivedFrom(   smoke, 
                                     i,

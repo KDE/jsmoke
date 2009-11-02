@@ -244,14 +244,16 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                             matchDistance += 10;
                         }
                         break;
+                    case Smoke::t_uint:
+                        matchDistance += 1;
+                        break;                    
+                    case Smoke::t_int:
+                        matchDistance += 2;
+                        break;                    
                     case Smoke::t_long:
                     case Smoke::t_ulong:
                         matchDistance += 3;
                         break;
-                    case Smoke::t_int:
-                    case Smoke::t_uint:
-                        matchDistance += 4;
-                        break;                    
                     default:
                         matchDistance += 10;
                         break;
@@ -325,8 +327,9 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
         qWarning("Method matches for %s():", methodName.constData());
         for (int i = 0; i < matches.count(); i++) {
-            qWarning("    %s index: %d matchDistance: %d", 
+            qWarning("    %s module: %s index: %d matchDistance: %d", 
                 methodToString(matches[i].first).toLatin1().constData(),
+                matches[i].first.smoke->moduleName(), 
                 matches[i].first.index, 
                 matches[i].second);
         }
@@ -354,7 +357,7 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
     
-    QtScriptSmoke::MethodCall methodCall(classId.smoke, matches[0].first.index, context, engine);
+    QtScriptSmoke::MethodCall methodCall(matches[0].first.smoke, matches[0].first.index, context, engine);
     methodCall.next();
     return *(methodCall.var());
 }
@@ -378,7 +381,7 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
     
-    QtScriptSmoke::MethodCall methodCall(instance->classId.smoke, matches[0].first.index, context, engine);
+    QtScriptSmoke::MethodCall methodCall(matches[0].first.smoke, matches[0].first.index, context, engine);
     methodCall.next();
     return *(methodCall.var());
 }
@@ -390,7 +393,7 @@ instanceToString(QScriptContext* context, QScriptEngine* engine)
     Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
     QString str = QString("[object %1:0x%2]")
         .arg(QString(klass.className).replace("::", "."))
-        .arg(reinterpret_cast<ulong long>(instance->value), 8, 16, QLatin1Char('0'));
+        .arg(reinterpret_cast<ulong>(instance->value), 8, 16, QLatin1Char('0'));
     return QScriptValue(engine, str);
 }
 

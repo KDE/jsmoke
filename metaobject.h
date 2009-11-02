@@ -55,5 +55,6 @@ class MetaObject : public QScriptClass
 }
 
 Q_DECLARE_METATYPE( QScriptContext* )
+Q_DECLARE_METATYPE( QScriptValueList )
 
 #endif
