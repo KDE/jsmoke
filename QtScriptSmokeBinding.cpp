@@ -59,6 +59,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
             || methodName == "minimumSizeHint"
             || methodName == "maximumSizeHint"
             || methodName == "x11Event" 
+            || methodName == "contentsMargins" 
             || methodName == "sizeHint" ) 
     {
          return false;
