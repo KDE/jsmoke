@@ -29,7 +29,7 @@ function RenderArea(parent)
 {
     QWidget.call(this, parent);
 
-    this.shape = RenderArea.Polygon;
+    this.shape = new QVariant(RenderArea.Polygon);
     this.antialiased = false;
     this.transformed = false;
     this.pen = new QPen();
@@ -99,11 +99,10 @@ RenderArea.prototype.setTransformed = function(transformed)
 RenderArea.prototype.paintEvent = function(/* event */)
 {
     if (RenderArea.points == undefined) {
-        RenderArea.points = new QPolygon();
-        RenderArea.points.append(new QPoint(10, 80));
-        RenderArea.points.append(new QPoint(20, 10));
-        RenderArea.points.append(new QPoint(80, 30));
-        RenderArea.points.append(new QPoint(90, 70));
+        RenderArea.points = new QPolygon([  new QPoint(10, 80),
+                                            new QPoint(20, 10),
+                                            new QPoint(80, 30),
+                                            new QPoint(90, 70) ] );
     }
 
     var rect = new QRect(10, 20, 80, 60);
@@ -179,7 +178,6 @@ RenderArea.prototype.paintEvent = function(/* event */)
             painter.restore();
         }
     }
-
     painter.setPen(this.palette.dark().color());
     painter.setBrush(Qt.NoBrush);
     painter.drawRect(0, 0, this.width - 1, this.height - 1);
