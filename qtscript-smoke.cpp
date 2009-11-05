@@ -175,7 +175,6 @@ RunQtScriptSmoke::output()
     QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
     QtScriptSmoke::Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
     
-    // QtScriptSmoke::Debug::DoDebug = QtScriptSmoke::Debug::Properties;
     initializeClasses(engine, qtcore_Smoke);
     initializeClasses(engine, qtgui_Smoke);
     initializeClasses(engine, qtnetwork_Smoke);
@@ -184,6 +183,10 @@ RunQtScriptSmoke::output()
     QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
     QtClass.setProperty("Enum", QtScriptSmoke::Global::QtEnum);            
     QtClass.setProperty("Debug", engine->newFunction(Debug_ctor).call());
+
+    QScriptValue QVariantClass = engine->globalObject().property(QString("QVariant"));
+    QVariantClass.setProperty("fromValue", engine->newFunction(QtScriptSmoke::QVariant_fromValue));
+    QVariantClass.property("prototype").setProperty("valueOf", engine->newFunction(QtScriptSmoke::QVariant_valueOf));
 
     QScriptValue app = QtScriptSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QApplication"), qApp);
     engine->globalObject().setProperty("qApp", app);

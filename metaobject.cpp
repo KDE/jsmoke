@@ -46,6 +46,9 @@ MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Obje
     , m_classId( qtcore_Smoke->findClass(className.constData()) )
     , m_object( object )
 { 
+    m_proto = engine->newObject();
+    QScriptValue global = engine->globalObject();
+    m_proto.setProperty("prototype", global.property("Object").property("prototype"));
 }
 
 MetaObject::~MetaObject()
@@ -54,15 +57,13 @@ MetaObject::~MetaObject()
 QScriptValue
 MetaObject::prototype() const
 {
-    //this fn is called, but i'm pretty sure this function doesn't 
-    //do anything, due to the Callable extension
-    return QScriptValue();
+    return m_proto;
 }
 
 QScriptValue::PropertyFlags 
 MetaObject::propertyFlags(const QScriptValue& object, const QScriptString& name, uint id)
 {
-    // qDebug() << "MetaObject::propertyFlags(" << name << "," << id << ")";
+    // qDebug() << "MetaObject::propertyFlags(" << m_className << name << "," << id << ")";
     return QScriptValue::ReadOnly;
 }
 
@@ -83,13 +84,16 @@ MetaObject::queryProperty(const QScriptValue& object, const QScriptString& name,
     
     if (propertyName == "prototype") {
         return 0;
-    } else if (propertyName == "valueOf") {
-        return 0;
+//        return QScriptClass::HandlesReadAccess;
     } else if (propertyName == "toString") {
         return QScriptClass::HandlesReadAccess;
     } else if ( m_className == "Qt" 
                 && (    propertyName == "Debug"
                         || propertyName == "Enum" ) ) 
+    {
+        return 0;
+    } else if ( m_className == "QVariant" 
+                && (propertyName == "fromValue" || propertyName == "valueOf") )
     {
         return 0;
     } else if (qtcore_Smoke->findClass(m_className + "::" + propertyName) != qtcore_Smoke->NullModuleIndex) {
@@ -150,8 +154,7 @@ MetaObject::property(const QScriptValue& object, const QScriptString & name, uin
     }
 
     if (propertyName == "prototype") {
-        qDebug() << "its asking for the prototype";
-        return engine()->newObject();
+        return m_proto;
     } else if (propertyName == "toString") {
         return QScriptValue(engine(), QString(m_className).replace("::", "."));
     } else if (propertyName == "call") {

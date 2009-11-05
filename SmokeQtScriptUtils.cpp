@@ -165,7 +165,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     
     if (methodIds.count() == 0) {
         if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
-            qWarning("No method matches for %s()", methodName.constData());
+            qWarning("No method matches for %s.%s()", klass.className, methodName.constData());
         }
         
         return matches;
@@ -325,7 +325,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     }
 
     if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
-        qWarning("Method matches for %s():", methodName.constData());
+        qWarning("Method matches for %s.%s():", klass.className, methodName.constData());
         for (int i = 0; i < matches.count(); i++) {
             qWarning("    %s module: %s index: %d matchDistance: %d", 
                 methodToString(matches[i].first).toLatin1().constData(),
@@ -481,7 +481,7 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
     QScriptValue result;
     const void * ptr = variant.data();
     int type = variant.userType();
-    
+
     // check if it's one of the types we know
     switch (QMetaType::Type(type)) {
     case QMetaType::Void:
@@ -577,5 +577,29 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
     
     return result;
 }
- 
+
+QScriptValue QVariant_valueOf(QScriptContext* context, QScriptEngine* engine)
+{
+    printf("In QVariant_valueOf\n");
+    Object::Instance * instance = Object::Instance::get(context->thisObject());
+    QVariant * variant = static_cast<QVariant*>(instance->value);
+    printf("QVariant_value() instance->value: %p typeName: %s userType: %d className: %s\n", 
+           instance->value, variant->typeName(), variant->userType(), 
+           instance->classId.smoke->classes[instance->classId.index].className);
+    if (variant->typeName() == 0) {
+        return engine->undefinedValue();
+    }
+    
+    return QtScriptSmoke::valueFromVariant(engine, *variant);
+}
+
+QScriptValue QVariant_fromValue(QScriptContext* context, QScriptEngine* engine)
+{
+    QScriptValue value = context->argument(0);
+    QVariant variant = QtScriptSmoke::valueToVariant(value);
+    QVariant * copy = new QVariant(variant);
+    QScriptValue result = QtScriptSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QVariant"), copy);
+    return result;
+}
+
 }

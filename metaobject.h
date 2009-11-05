@@ -50,6 +50,7 @@ class MetaObject : public QScriptClass
         QByteArray m_className;
         Smoke::ModuleIndex m_classId;
         Object* m_object;
+        QScriptValue m_proto;
 };
 
 }

@@ -47,7 +47,8 @@ namespace QtScriptSmoke {
 
 Object::Object( QScriptEngine* engine )
     : QScriptClass( engine )
-{   }
+{
+}
 
 
 Object::~Object()
@@ -135,6 +136,10 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
                  *id);
     }
 
+//    if (propertyName == "valueOf") {
+//        return QScriptClass::HandlesReadAccess;
+//    }
+    
     if (    propertyName == "toLocaleString" 
             || propertyName == "valueOf" 
             || propertyName == "hasOwnProperty" 

@@ -1,3 +1,17 @@
+2009-11-05  Richard Dale  <richard.j.dale@gmail.com>
+
+* Rename virtual method callbacks which are also properties, such as sizeHint()
+and call them getSizeHint() etc instead.
+* Added the CalendarWidget.qs example
+* Added QVariant.valueOf() which converts a QVariant to the value it contains.
+At the moment this is wrongly called for all Smoke classes, and not just
+QVariant though, and so there is a but to be fixed in setting up the prototype
+chain.
+* Added QVariant.fromValue() to create a QVariant from types such as QColor
+which don't have a constructors.
+* Fixed bug in marshalling JavaScript dates to Qt C++ date types
+* Create a prototype instance for the MetaData QScriptClass classes.
+
 2009-11-02  Richard Dale  <richard.j.dale@gmail.com>
 
 * Setting QObject properties now works correctly. The initial approach of using

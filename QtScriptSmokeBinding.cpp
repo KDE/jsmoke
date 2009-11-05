@@ -56,13 +56,19 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     if (    methodName == "metaObject"
             || methodName == "qt_metacast"
             || methodName == "qt_metacall"
-            || methodName == "minimumSizeHint"
+            || methodName == "x11Event" )
+    {
+         return false;
+    }
+    
+    if (    methodName == "minimumSizeHint"
             || methodName == "maximumSizeHint"
-            || methodName == "x11Event" 
             || methodName == "contentsMargins" 
             || methodName == "sizeHint" ) 
     {
-         return false;
+         // The names of these virtual methods are also QObject properties, and
+         // so rename them getXXXX() to workround the name clash
+         methodName = "get" + methodName.mid(0, 1).toUpper() + methodName.mid(1);
     }
     
     if ((Debug::DoDebug & Debug::Virtual) != 0) {

@@ -462,18 +462,13 @@ static void marshall_basetype(Marshall *m)
             }
             
             if (value.isDate()) {
-                if (    m->type().classId() == QtScriptSmoke::Global::QDateClassId.index
-                        && m->type().smoke() == QtScriptSmoke::Global::QDateClassId.smoke ) 
-                {
+                Smoke::ModuleIndex classId = qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className);
+                if (classId == QtScriptSmoke::Global::QDateClassId) {
                     m->item().s_class = new QDate(value.toDateTime().date());
-                } else if ( m->type().classId() == QtScriptSmoke::Global::QDateTimeClassId.index
-                            && m->type().smoke() == QtScriptSmoke::Global::QDateTimeClassId.smoke ) 
-                {
-                    m->item().s_class = new QDateTime(value.toDateTime());
-                } else if ( m->type().classId() == QtScriptSmoke::Global::QTimeClassId.index
-                            && m->type().smoke() == QtScriptSmoke::Global::QTimeClassId.smoke ) 
-                {
-                    m->item().s_class = new QTime(value.toDateTime().time());
+                } else if (classId == QtScriptSmoke::Global::QDateTimeClassId) {
+                     m->item().s_class = new QDateTime(value.toDateTime());
+                } else if (classId == QtScriptSmoke::Global::QTimeClassId) {
+                     m->item().s_class = new QTime(value.toDateTime().time());
                 } else {
                     m->item().s_class = 0;
                 }
