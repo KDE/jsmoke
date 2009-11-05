@@ -11,6 +11,7 @@ chain.
 which don't have a constructors.
 * Fixed bug in marshalling JavaScript dates to Qt C++ date types
 * Create a prototype instance for the MetaData QScriptClass classes.
+* Added the CollidingMice.qs example
 
 2009-11-02  Richard Dale  <richard.j.dale@gmail.com>
 
