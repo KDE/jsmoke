@@ -6,6 +6,8 @@ being initialized correctly
 smoke library for the class of the item was being set to the smoke module of
 the method being called, rather than the smoke module of the item itself.
 * Added some more examples.
+* Added a 'bool*' marshaller, however it value is still immutable and doesn't
+get changed after the method call.
 
 2009-11-05  Richard Dale  <richard.j.dale@gmail.com>
 

@@ -601,6 +601,29 @@ static void marshall_QString(Marshall *m) {
     }
 }
 
+static void marshall_BoolPtr(Marshall *m) {
+    switch(m->action()) {            
+    case Marshall::FromQScriptValue:
+    {
+        m->item().s_voidp = new bool;
+        *static_cast<bool*>(m->item().s_voidp) = (*(m->var())).toBool();
+        m->next();
+        delete static_cast<bool*>(m->item().s_voidp);
+        break;
+    }
+ 
+    case Marshall::ToQScriptValue:
+    {
+        *(m->var()) = QScriptValue(m->engine(), *static_cast<bool*>(m->item().s_voidp));
+        break;
+    }
+    
+    default:
+        m->unsupported();
+        break;
+    }
+}
+
 static void marshall_CString(Marshall *m) {
     switch(m->action()) {
     case Marshall::FromQScriptValue:
@@ -780,6 +803,7 @@ DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNotationDeclaration, QVector<QXmlStrea
 DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
 
 TypeHandler Handlers[] = {
+    { "bool*", marshall_BoolPtr },
     { "char*", marshall_CString },
     { "QList<int>", marshall_QListInt },
     { "QList<int>*", marshall_QListInt },
