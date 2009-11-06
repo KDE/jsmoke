@@ -1,3 +1,12 @@
+2009-11-06  Richard Dale  <richard.j.dale@gmail.com>
+
+* The binding for virtual method callbacks for the QtNetwork module wasn't
+being initialized correctly
+* When a C++ type was being marhalled to a QtScript value and wrapped, the
+smoke library for the class of the item was being set to the smoke module of
+the method being called, rather than the smoke module of the item itself.
+* Added some more examples.
+
 2009-11-05  Richard Dale  <richard.j.dale@gmail.com>
 
 * Rename virtual method callbacks which are also properties, such as sizeHint()

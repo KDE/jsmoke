@@ -523,8 +523,7 @@ static void marshall_basetype(Marshall *m)
             }
             
             Object::Instance * instance = new Object::Instance();
-            instance->classId.smoke = m->smoke();
-            instance->classId.index = m->type().classId();
+            instance->classId = qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className);
             instance->value = ptr;
             
             if (m->type().isConst() && m->type().isRef()) {

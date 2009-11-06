@@ -60,7 +60,7 @@ RunQtScriptSmoke::RunQtScriptSmoke(const QByteArray& script) : m_script(script)
         init_qtnetwork_Smoke();
     }
 
-    QtScriptSmoke::Module qtnetwork_module = { "qtnetwork", new QtScriptSmoke::Binding(qtgui_Smoke) };
+    QtScriptSmoke::Module qtnetwork_module = { "qtnetwork", new QtScriptSmoke::Binding(qtnetwork_Smoke) };
     QtScriptSmoke::Global::modules[qtnetwork_Smoke] = qtnetwork_module;
 
     QtScriptSmoke::installHandlers(QtScriptSmoke::Handlers);
