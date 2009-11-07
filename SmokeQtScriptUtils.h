@@ -39,6 +39,4 @@ namespace QtScriptSmoke
     void * constructCopy(Object::Instance *instance);
     QVariant valueToVariant(const QScriptValue& value);
     QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant);
-    QScriptValue QVariant_valueOf(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue QVariant_fromValue(QScriptContext* context, QScriptEngine* engine);
 }

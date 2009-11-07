@@ -342,6 +342,7 @@ QScriptValue
 callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
+    printf("nameFn: %s\n", nameFn.toLatin1().constData());
     QScriptClass * cls = context->thisObject().scriptClass();
     Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, nameFn.toLatin1(), context);
@@ -575,30 +576,6 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
         break;
     }
     
-    return result;
-}
-
-QScriptValue QVariant_valueOf(QScriptContext* context, QScriptEngine* engine)
-{
-    printf("In QVariant_valueOf\n");
-    Object::Instance * instance = Object::Instance::get(context->thisObject());
-    QVariant * variant = static_cast<QVariant*>(instance->value);
-    printf("QVariant_value() instance->value: %p typeName: %s userType: %d className: %s\n", 
-           instance->value, variant->typeName(), variant->userType(), 
-           instance->classId.smoke->classes[instance->classId.index].className);
-    if (variant->typeName() == 0) {
-        return engine->undefinedValue();
-    }
-    
-    return QtScriptSmoke::valueFromVariant(engine, *variant);
-}
-
-QScriptValue QVariant_fromValue(QScriptContext* context, QScriptEngine* engine)
-{
-    QScriptValue value = context->argument(0);
-    QVariant variant = QtScriptSmoke::valueToVariant(value);
-    QVariant * copy = new QVariant(variant);
-    QScriptValue result = QtScriptSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QVariant"), copy);
     return result;
 }
 
