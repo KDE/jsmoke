@@ -1,3 +1,8 @@
+2009-11-09  Richard Dale  <richard.j.dale@gmail.com>
+
+* If the QVariant_valueOf() function fails it should return the thisObject for
+the current context.
+
 2009-11-06  Richard Dale  <richard.j.dale@gmail.com>
 
 * The binding for virtual method callbacks for the QtNetwork module wasn't

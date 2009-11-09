@@ -465,13 +465,16 @@ constructCopy(Object::Instance* instance)
 
 QVariant valueToVariant(const QScriptValue& value)
 {
-    if (!Object::Instance::isSmokeObject(value)) {
+    if (Object::Instance::isSmokeObject(value)) {
+        Object::Instance * instance = Object::Instance::get(value);
+        Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
+        return QVariant(QMetaType::type(klass.className), instance->value);
+    } else if (value.instanceOf(QtScriptSmoke::Global::QtEnum)) {
+        return QVariant(value.property("value").toUInt32());
+    } else {
         return value.toVariant();
     }
     
-    Object::Instance * instance = Object::Instance::get(value);
-    Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
-    return QVariant(QMetaType::type(klass.className), instance->value);
 }
 
 /*
