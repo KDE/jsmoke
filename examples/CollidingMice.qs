@@ -49,8 +49,6 @@ function Mouse(parent) {
                             Math.random()*256);
     this.rotate(Math.random()*360);
 
-    // FIXME: the following line crashes
-    // var timer = new QTimer(this);
     var timer = new QTimer();
     timer.singleShot = false;
     timer.timeout.connect(this, function() { this.move(); });
