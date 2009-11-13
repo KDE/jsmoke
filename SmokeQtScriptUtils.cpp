@@ -342,7 +342,6 @@ QScriptValue
 callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
-    printf("nameFn: %s\n", nameFn.toLatin1().constData());
     QScriptClass * cls = context->thisObject().scriptClass();
     Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
     QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, nameFn.toLatin1(), context);

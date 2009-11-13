@@ -136,13 +136,13 @@ QVariant_valueOf(QScriptContext* context, QScriptEngine* engine)
 {
     QtScriptSmoke::Object::Instance * instance = QtScriptSmoke::Object::Instance::get(context->thisObject());
     QVariant * variant = static_cast<QVariant*>(instance->value);
-//    printf("QVariant_value() instance->value: %p typeName: %s userType: %d className: %s\n", 
-//           instance->value, variant->typeName(), variant->userType(), 
-//           instance->classId.smoke->classes[instance->classId.index].className);
+    // printf("QVariant_value() instance->value: %p typeName: %s userType: %d className: %s\n", 
+    //       instance->value, variant->typeName(), variant->userType(), 
+    //       instance->classId.smoke->classes[instance->classId.index].className);
     if (QByteArray(instance->classId.smoke->classes[instance->classId.index].className) != "QVariant"
         || variant->typeName() == 0 ) 
     {
-        return engine->undefinedValue();
+        return context->thisObject();
     }
     
     return QtScriptSmoke::valueFromVariant(engine, *variant);
