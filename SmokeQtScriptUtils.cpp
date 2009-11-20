@@ -200,11 +200,19 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
             const char *tname = method.smoke->types[methodRef.ret].name;            
             int matchDistance = 0;
             
+            // If a method is overloaded only on const-ness, prefer the
+            // non-const version
+            if ((methodRef.flags & Smoke::mf_const) != 0) {
+                matchDistance += 1;
+            }
+            
             for (int i = 0; i < methodRef.numArgs; i++) {
                 QScriptValue actual = context->argument(i);
                 ushort argFlags = method.smoke->types[method.smoke->argumentList[methodRef.args+i]].flags;
-                QByteArray argType(method.smoke->types[method.smoke->argumentList[methodRef.args+i]].name);
-                argType.replace("const ", "").replace("&", "").replace("*", "");
+                QByteArray fullArgType(method.smoke->types[method.smoke->argumentList[methodRef.args+i]].name);
+                fullArgType.replace("const ", "");
+                QByteArray argType(fullArgType);
+                argType.replace("&", "").replace("*", "");
                 
                 if (actual.isNumber()) {
                     switch (argFlags & Smoke::tf_elem) {
@@ -260,6 +268,10 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     }
                 } else if (actual.isString()) {
                     if (argType == "QString") {
+                    } else if (fullArgType == "char*" || fullArgType == "unsigned char*") {
+                        matchDistance += 1;
+                    } else if (argType == "QChar") {
+                        matchDistance += 2;
                     } else {
                         matchDistance += 10;
                     }

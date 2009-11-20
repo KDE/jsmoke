@@ -805,6 +805,7 @@ DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
 TypeHandler Handlers[] = {
     { "bool*", marshall_BoolPtr },
     { "char*", marshall_CString },
+    { "unsigned char*", marshall_CString },
     { "QList<int>", marshall_QListInt },
     { "QList<int>*", marshall_QListInt },
     { "QList<int>&", marshall_QListInt },
