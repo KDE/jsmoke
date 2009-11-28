@@ -2,6 +2,8 @@ project(qtscript-smoke)
 cmake_minimum_required(VERSION 2.6)
 find_package(Qt4 REQUIRED)
 
+add_subdirectory(tools)
+
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(qtscript-smoke_SRCS qtscript-smoke.cpp 

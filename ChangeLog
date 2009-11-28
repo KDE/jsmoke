@@ -1,3 +1,8 @@
+2009-11-28  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added the 'qsexec' command line tool for running QtScript programs from the
+Qt Labs QtScript bindings project.
+
 2009-11-20  Richard Dale  <richard.j.dale@gmail.com>
 
 * If a method is overloaded only on const-ness, prefer the non-const version
