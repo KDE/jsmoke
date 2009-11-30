@@ -29,7 +29,7 @@
 
 #include "smoke/qtcore_smoke.h"
 
-#include "SmokeQtScriptUtils.h"
+#include "utils.h"
 #include "marshall.h"
 #include "methodcall.h"
 #include "global.h"

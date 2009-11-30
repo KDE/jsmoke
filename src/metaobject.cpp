@@ -21,7 +21,7 @@
 #include "metaobject.h"
 
 #include "object.h"
-#include "QtScriptSmokeBinding.h"
+#include "smokebinding.h"
 #include "methodcall.h"
 
 #include <smoke/qtcore_smoke.h>
@@ -35,7 +35,7 @@
 #include <QScriptString>
 #include <QVariant>
 
-#include "SmokeQtScriptUtils.h"
+#include "utils.h"
 #include "global.h"
 
 namespace QtScriptSmoke {
@@ -198,6 +198,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         }
         
         QScriptValue proto = context->engine()->newObject(object()); 
+
         context->setThisObject(proto);
         QtScriptSmoke::MethodCall methodCall(m_classId.smoke, matches[0].first.index, context, context->engine());
         methodCall.next();

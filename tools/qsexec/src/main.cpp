@@ -26,6 +26,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QStringList>
+#include <QtGui/QApplication>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QSet>
 #include <QtDebug>
@@ -125,6 +126,7 @@ QScriptValue exitInteractiveMode(QScriptContext *context, QScriptEngine *engine)
     stopInteractiveMode = true;
     return engine->undefinedValue();
 }
+
 void interactiveMode(QScriptEngine *engine)
 {
     engine->globalObject().setProperty("quit", engine->newFunction(exitInteractiveMode));
@@ -163,8 +165,10 @@ void interactiveMode(QScriptEngine *engine)
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    QStringList paths = QStringList() << QCoreApplication::applicationDirPath() + "/../../plugins";
+    QApplication app(argc, argv);
+//    QCoreApplication app(argc, argv);
+//    QStringList paths = QStringList() << QCoreApplication::applicationDirPath() + "/../../plugins";
+    QStringList paths = QStringList() << "/usr/lib/qt4/plugins";
     app.setLibraryPaths(paths);
 
     QScriptEngine *engine = new QScriptEngine();

@@ -24,6 +24,7 @@
 
 #include <smoke.h>
 #include "marshall.h"
+#include "metaobject.h"
 
 
 namespace QtScriptSmoke {

@@ -1,3 +1,11 @@
+2009-11-30  Richard Dale  <richard.j.dale@gmail.com>
+
+* The project has been split up into a shared library called 'libjsmokeruntime'
+and qscript plugins called 'jsmokeqtcore', 'jsmokegui' etc under the 
+'bindings' directory.
+* The qsexec tool create a QCoreApplication which doesn't work for GUI apps,
+and so change it to create a QApplication instead.
+
 2009-11-28  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added the 'qsexec' command line tool for running QtScript programs from the

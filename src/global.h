@@ -21,8 +21,11 @@
 #define QTSCRIPT_GLOBAL_H
 
 #include <QtScript/QScriptValue>
+
+#include <smoke.h>
+
 #include "metaobject.h"
-#include "QtScriptSmokeBinding.h"
+#include "smokebinding.h"
 
 namespace QtScriptSmoke {
     namespace Debug {
@@ -67,6 +70,7 @@ namespace QtScriptSmoke {
                                                 
         extern Q_DECL_EXPORT QScriptValue wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr);
 
+        extern void initializeClasses(QScriptEngine * engine, Smoke * smoke);
     }
 }
 

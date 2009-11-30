@@ -20,8 +20,7 @@
 
 #include "methodcall.h"
 #include "methodreturnvalue.h"
-#include "QtScriptSmokeBinding.h"
-#include "qtscript-smoke.h"
+#include "smokebinding.h"
 #include "global.h"
 
 #include "smoke/qtcore_smoke.h"
@@ -105,7 +104,7 @@ void MethodCall::callMethod()
         initializeInstanceStack[1].s_voidp = Global::modules[m_smoke].binding;
         fn(0, m_stack[0].s_class, initializeInstanceStack);
         
-        QScriptValue m_returnValue = m_context->thisObject();
+        m_returnValue = m_context->thisObject();
         
         bool isQObject = qtcore_Smoke->isDerivedFrom(   m_smoke, 
                                                         m_methodRef.classId,

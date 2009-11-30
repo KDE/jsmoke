@@ -20,7 +20,7 @@
 
 #include "object.h"
 
-#include "SmokeQtScriptUtils.h"
+#include "utils.h"
 #include "metaobject.h"
 #include "methodcall.h"
 #include "global.h"

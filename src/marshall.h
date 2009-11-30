@@ -22,14 +22,11 @@
 #ifndef QTSCRIPT_MARSHALL_H
 #define QTSCRIPT_MARSHALL_H
 
-
 #include <qglobal.h>
 #include <QtScript/QScriptEngine>
 
 #include <smoke.h>
 #include "smoke/qtcore_smoke.h"
-
-#include "metaobject.h"
 
 namespace QtScriptSmoke {
 
@@ -137,19 +134,18 @@ public:
     virtual bool cleanup() = 0;
 
     virtual ~Marshall() {}
+    
+    struct TypeHandler {
+        const char *name;
+        Marshall::HandlerFn fn;
+    };
+    
+    static void installHandlers(TypeHandler * handler);
+    static Marshall::HandlerFn getMarshallFn(const SmokeType &type);
 };    
 
-
-struct TypeHandler {
-    const char *name;
-    Marshall::HandlerFn fn;
-};
-
-extern TypeHandler Handlers[];
-
-extern Q_DECL_EXPORT void installHandlers(TypeHandler * handler);
-extern Q_DECL_EXPORT void registerTypes(QScriptEngine * engine);
-extern Q_DECL_EXPORT Marshall::HandlerFn getMarshallFn(const SmokeType &type);
+extern Q_DECL_EXPORT Marshall::TypeHandler Handlers[];
+extern Q_DECL_EXPORT void marshall_QListEnum(Marshall *m);
 
 }
 

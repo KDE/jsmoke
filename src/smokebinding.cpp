@@ -18,14 +18,14 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "QtScriptSmokeBinding.h"
+#include "smokebinding.h"
 
 #include <QtDebug>
 #include <QtScript/QScriptValue>
 
 #include "global.h"
 #include "virtualmethodcall.h"
-#include "SmokeQtScriptUtils.h"
+#include "utils.h"
 
 namespace QtScriptSmoke {
     

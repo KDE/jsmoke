@@ -17,8 +17,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "global.h"
 #include <QtCore/QHash>
+#include <QtCore/QStringList>
+
+#include "global.h"
 
 namespace QtScriptSmoke {
     namespace Debug {
@@ -134,5 +136,42 @@ wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr)
     return obj;
 }
 
+void
+initializeClasses(QScriptEngine * engine, Smoke * smoke)
+{
+    for (int i = 1; i <= smoke->numClasses; i++) {
+        QByteArray className(smoke->classes[i].className);        
+        QScriptClass * klass = 0;
+        
+        if (smoke->isDerivedFrom(   smoke, 
+                                    i,
+                                    QtScriptSmoke::Global::QObjectClassId.smoke,
+                                    QtScriptSmoke::Global::QObjectClassId.index ) )
+        {
+            klass = new QtScriptSmoke::MetaObject(  engine, 
+                                                    className, 
+                                                    QtScriptSmoke::Global::SmokeQObject );
+        } else {
+            klass = new QtScriptSmoke::MetaObject(  engine, 
+                                                    className, 
+                                                    QtScriptSmoke::Global::Object );
+        }
+        
+        if (className.contains("::")) {
+            QStringList components = QString(className).split("::");
+            QScriptValue outerClass = engine->globalObject().property(components[0]);
+            
+            for (int component = 1; component < components.length() - 1; ++component) {
+                outerClass = outerClass.property(components[component]);
+            }
+            
+            outerClass.setProperty(components.last(), engine->newObject(klass));
+        } else {
+            engine->globalObject().setProperty(QString(className), engine->newObject(klass));
+        }
     }
 }
+
+
+    } // namespace Global
+} // namespace QtScriptSmoke
