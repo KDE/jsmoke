@@ -183,7 +183,7 @@ sweepScriptValues()
             
             if (instance->value != 0) {
                 unmapPointer(instance, instance->classId.index, 0);
-                instance->value = 0;
+                instance->finalize();
                 delete obj;
             }
         }
