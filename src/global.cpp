@@ -19,6 +19,10 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QThread>
+#include <QtCore/QCoreApplication>
 
 #include "global.h"
 
@@ -44,12 +48,42 @@ QScriptValue QtEnum;
 
 QHash<Smoke*, Module> modules;
 
+#define QSCRIPT_VALUES_SWEEP_INTERVAL 3
+
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
 Q_GLOBAL_STATIC(QScriptValuesMap, qscriptValues)
+
+static QMutex mutex(QMutex::Recursive);
+
+class FinalizerThread : public QThread
+{
+public:
+    void run()
+    {
+        while (true) {
+            QThread::sleep(QSCRIPT_VALUES_SWEEP_INTERVAL);
+            
+            setTerminationEnabled(false);
+            sweepScriptValues();
+            setTerminationEnabled(true);
+        }
+    }
+};
+
+static FinalizerThread finalizer;
+
+void
+startFinalizerThread()
+{
+    QObject::connect(qApp, SIGNAL(aboutToQuit()), &finalizer, SLOT(terminate()));
+    finalizer.start();
+}
 
 QScriptValue * 
 getScriptValue(void *ptr) 
 {
+    QMutexLocker locker(&mutex);
+
     if (!qscriptValues() || !qscriptValues()->contains(ptr)) {
         if (Debug::DoDebug & Debug::GC) {
             qWarning("QtScriptSmoke::Global::getScriptValue %p -> nil", ptr);
@@ -69,8 +103,10 @@ getScriptValue(void *ptr)
 void 
 unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr) 
 {
+    QMutexLocker locker(&mutex);
     Smoke * smoke = instance->classId.smoke;
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
+    
     if (ptr != lastptr) {
         lastptr = ptr;
         if (qscriptValues() && qscriptValues()->contains(ptr)) {
@@ -100,6 +136,7 @@ unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr)
 void 
 mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId, void *lastptr) 
 {
+    QMutexLocker locker(&mutex);
     Smoke * smoke = instance->classId.smoke;
     void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
      
@@ -123,6 +160,34 @@ mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId
     }
     
     return;
+}
+
+void
+sweepScriptValues()
+{
+    QMutexLocker locker(&mutex);    
+    QMutableHashIterator<void *, QScriptValue *> iter(*(qscriptValues()));
+    
+    while (iter.hasNext()) {
+        iter.next();
+        
+        if (!iter.value()->isValid()) {
+            QScriptValue * obj = iter.value();
+            Object::Instance * instance = Object::Instance::get(*obj);
+
+            if ((Debug::DoDebug & Debug::GC) != 0) {
+                qWarning(   "%p->~%s()", 
+                            instance->value, 
+                            instance->classId.smoke->className(instance->classId.index) );
+            }
+            
+            if (instance->value != 0) {
+                unmapPointer(instance, instance->classId.index, 0);
+                instance->value = 0;
+                delete obj;
+            }
+        }
+    }
 }
 
 QScriptValue 

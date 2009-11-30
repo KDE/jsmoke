@@ -5,6 +5,8 @@ and qscript plugins called 'jsmokeqtcore', 'jsmokegui' etc under the
 'bindings' directory.
 * The qsexec tool create a QCoreApplication which doesn't work for GUI apps,
 and so change it to create a QApplication instead.
+* Added a finalizer thread that periodically sweeps through the scriptValues
+hash (every 3 seconds at present), and clears out any where isValid() is false.
 
 2009-11-28  Richard Dale  <richard.j.dale@gmail.com>
 

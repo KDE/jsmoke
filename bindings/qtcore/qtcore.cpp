@@ -145,5 +145,7 @@ void qtscript_initialize_org_kde_qt_core_bindings(QScriptValue& extensionObject)
     QVariantClass.property("prototype").setProperty("valueOf", engine->newFunction(QVariant_valueOf));
     QtScriptSmoke::registerQtCoreTypes(engine);
     
+    QtScriptSmoke::Global::startFinalizerThread();
+    
     return;
 }

@@ -57,6 +57,8 @@ namespace QtScriptSmoke {
         
         extern QScriptValue QtEnum;
         
+        extern void startFinalizerThread();
+        
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         
         extern Q_DECL_EXPORT void unmapPointer( Object::Instance * instance, 
@@ -67,6 +69,8 @@ namespace QtScriptSmoke {
                                                 Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
+                                                
+        extern void sweepScriptValues();
                                                 
         extern Q_DECL_EXPORT QScriptValue wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr);
 
