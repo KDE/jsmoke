@@ -119,22 +119,27 @@ extern void registerQtCoreTypes(QScriptEngine * engine);
 
 void qtscript_initialize_org_kde_qt_core_bindings(QScriptValue& extensionObject)
 {
-    QScriptEngine* engine = extensionObject.engine();
-    init_qtcore_Smoke();
+static bool initialized = false;
+
+    if (!initialized) {
+        init_qtcore_Smoke();
+        QtScriptSmoke::Module qtcore_module = { "qtcore", new QtScriptSmoke::Binding(qtcore_Smoke) };
+        QtScriptSmoke::Global::modules[qtcore_Smoke] = qtcore_module;    
     
-    QtScriptSmoke::Global::Object = new QtScriptSmoke::Object(engine);
-    QtScriptSmoke::Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
-    QtScriptSmoke::Global::initializeClasses(engine, qtcore_Smoke);
-    
-    QtScriptSmoke::Module qtcore_module = { "qtcore", new QtScriptSmoke::Binding(qtcore_Smoke) };
-    QtScriptSmoke::Global::modules[qtcore_Smoke] = qtcore_module;    
-    QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtCoreHandlers);
-    
-    QtScriptSmoke::Global::QObjectClassId = qtcore_Smoke->idClass("QObject");
-    QtScriptSmoke::Global::QDateClassId = qtcore_Smoke->idClass("QDate");
-    QtScriptSmoke::Global::QDateTimeClassId = qtcore_Smoke->idClass("QDateTime");
-    QtScriptSmoke::Global::QTimeClassId = qtcore_Smoke->idClass("QTime");
+        QtScriptSmoke::Global::QObjectClassId = qtcore_Smoke->idClass("QObject");
+        QtScriptSmoke::Global::QDateClassId = qtcore_Smoke->idClass("QDate");
+        QtScriptSmoke::Global::QDateTimeClassId = qtcore_Smoke->idClass("QDateTime");
+        QtScriptSmoke::Global::QTimeClassId = qtcore_Smoke->idClass("QTime");
+
+        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtCoreHandlers);
         
+        QtScriptSmoke::Global::startFinalizerThread();
+        initialized = true;
+    }
+    
+    QScriptEngine* engine = extensionObject.engine();
+    QtScriptSmoke::Global::initializeClasses(engine, qtcore_Smoke);
+               
     QScriptValue QtClass = engine->globalObject().property(QString("Qt"));
     QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
     QtClass.setProperty("Enum", QtScriptSmoke::Global::QtEnum);            
@@ -144,8 +149,6 @@ void qtscript_initialize_org_kde_qt_core_bindings(QScriptValue& extensionObject)
     QVariantClass.setProperty("fromValue", engine->newFunction(QVariant_fromValue));
     QVariantClass.property("prototype").setProperty("valueOf", engine->newFunction(QVariant_valueOf));
     QtScriptSmoke::registerQtCoreTypes(engine);
-    
-    QtScriptSmoke::Global::startFinalizerThread();
-    
+        
     return;
 }

@@ -113,8 +113,8 @@ void MethodCall::callMethod()
         if (isQObject) {
             m_instance = new SmokeQObject::Instance();
             QObject * obj = static_cast<QObject*>(m_smoke->cast(    m_stack[0].s_class, 
-                                                                        m_methodRef.classId, 
-                                                                        Global::QObjectClassId.index ) );
+                                                                    m_methodRef.classId, 
+                                                                    Global::QObjectClassId.index ) );
             (static_cast<SmokeQObject::Instance*>(m_instance))->qobject = m_engine->newQObject(obj);
         } else {
             m_instance = new Object::Instance();

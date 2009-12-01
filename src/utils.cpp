@@ -581,12 +581,10 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
         break;
     default:
         void * value_ptr = QMetaType::construct(QMetaType::type(variant.typeName()), ptr);
-        Object::Instance * instance = new Object::Instance();
-        instance->classId = qtcore_Smoke->findClass(variant.typeName());
-        instance->value = value_ptr;
-        instance->ownership = QScriptEngine::ScriptOwnership;
-        result = engine->newObject(QtScriptSmoke::Global::Object); 
-        Object::Instance::set(result, instance);
+        result = Global::wrapInstance(  engine, 
+                                        qtcore_Smoke->findClass(variant.typeName()), 
+                                        value_ptr,
+                                        QScriptEngine::ScriptOwnership );
         break;
     }
     

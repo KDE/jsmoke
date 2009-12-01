@@ -1,3 +1,10 @@
+2009-12-01  Richard Dale  <richard.j.dale@gmail.com>
+
+* Allow the plugin initialization functions to be called more than once, but
+do QScriptEngine specific initialization after the first time.
+* Add the sweepScriptValues() method to the FinalizationThread class
+* Improved the Global::wrapInstance() method
+
 2009-11-30  Richard Dale  <richard.j.dale@gmail.com>
 
 * The project has been split up into a shared library called 'libjsmokeruntime'

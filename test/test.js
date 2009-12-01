@@ -1,3 +1,6 @@
+qs.script.importExtension("jsmoke.qtcore");
+qs.script.importExtension("jsmoke.qtgui");
+
 var path = QDir.currentPath();
 print("path: " + path);
 
@@ -28,3 +31,4 @@ dialog.show();
 hidden = dialog.isHidden();
 print("hidden: " + hidden);
 
+QCoreApplication.instance().exec();

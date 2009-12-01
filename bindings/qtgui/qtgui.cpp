@@ -32,12 +32,18 @@ extern void registerQtGuiTypes(QScriptEngine * engine);
 
 void qtscript_initialize_org_kde_qt_gui_bindings(QScriptValue& extensionObject)
 {
+static bool initialized = false;
+
+    if (!initialized) {
+        init_qtgui_Smoke();
+        QtScriptSmoke::Module qtgui_module = { "qtgui", new QtScriptSmoke::Binding(qtgui_Smoke) };
+        QtScriptSmoke::Global::modules[qtgui_Smoke] = qtgui_module;    
+        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtGuiHandlers);
+        initialized = true;
+    }
+    
     QScriptEngine* engine = extensionObject.engine();
-    init_qtgui_Smoke();
     QtScriptSmoke::Global::initializeClasses(engine, qtgui_Smoke);
-    QtScriptSmoke::Module qtgui_module = { "qtgui", new QtScriptSmoke::Binding(qtgui_Smoke) };
-    QtScriptSmoke::Global::modules[qtgui_Smoke] = qtgui_module;    
-    QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtGuiHandlers);
     QtScriptSmoke::registerQtGuiTypes(engine);
     
     return;

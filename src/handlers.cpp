@@ -378,21 +378,22 @@ static void marshall_basetype(Marshall *m)
                 return ;
             }
             
-            Object::Instance * instance = new Object::Instance();
-            instance->classId = qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className);
-            instance->value = ptr;
+            QScriptValue obj = Global::wrapInstance(  m->engine(), 
+                                        qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className), 
+                                        ptr,
+                                        QScriptEngine::QtOwnership );
             
             if (m->type().isConst() && m->type().isRef()) {
+                Object::Instance * instance = Object::Instance::get(obj);
                 ptr = constructCopy(instance);
 
                 if (ptr != 0) {
                     instance->value = ptr;
                     instance->ownership = QScriptEngine::ScriptOwnership;
+                    Global::mapPointer(new QScriptValue(obj), instance, instance->classId.index, 0);
                 }
             }
-            
-            QScriptValue obj = m->engine()->newObject(QtScriptSmoke::Global::Object); 
-            Object::Instance::set(obj, instance);
+
             *(m->var()) = obj;
             break;
         }

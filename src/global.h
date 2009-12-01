@@ -46,9 +46,6 @@ namespace QtScriptSmoke {
 
     namespace Global {
         extern Q_DECL_EXPORT QHash<Smoke*, Module> modules;
-                
-        extern QtScriptSmoke::Object * Object;
-        extern QtScriptSmoke::SmokeQObject * SmokeQObject;
         
         extern Smoke::ModuleIndex QObjectClassId;
         extern Smoke::ModuleIndex QDateClassId;
@@ -57,7 +54,7 @@ namespace QtScriptSmoke {
         
         extern QScriptValue QtEnum;
         
-        extern void startFinalizerThread();
+        extern Q_DECL_EXPORT void startFinalizerThread();
         
         extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
         
@@ -69,12 +66,13 @@ namespace QtScriptSmoke {
                                                 Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
-                                                
-        extern void sweepScriptValues();
-                                                
-        extern Q_DECL_EXPORT QScriptValue wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr);
+                                                                                                
+        extern Q_DECL_EXPORT QScriptValue wrapInstance( QScriptEngine * engine, 
+                                                        Smoke::ModuleIndex classId, 
+                                                        void * ptr,
+                                                        QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 
-        extern void initializeClasses(QScriptEngine * engine, Smoke * smoke);
+        extern Q_DECL_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
     }
 }
 

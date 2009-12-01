@@ -32,12 +32,18 @@ extern void registerQtNetworkTypes(QScriptEngine * engine);
 
 void qtscript_initialize_org_kde_qt_network_bindings(QScriptValue& extensionObject)
 {
+static bool initialized = false;
+
+    if (!initialized) {
+        init_qtnetwork_Smoke();
+        QtScriptSmoke::Module qtnetwork_module = { "qtnetwork", new QtScriptSmoke::Binding(qtnetwork_Smoke) };
+        QtScriptSmoke::Global::modules[qtnetwork_Smoke] = qtnetwork_module;    
+        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtNetworkHandlers);
+        initialized = true;
+    }
+    
     QScriptEngine* engine = extensionObject.engine();
-    init_qtnetwork_Smoke();
     QtScriptSmoke::Global::initializeClasses(engine, qtnetwork_Smoke);
-    QtScriptSmoke::Module qtnetwork_module = { "qtnetwork", new QtScriptSmoke::Binding(qtnetwork_Smoke) };
-    QtScriptSmoke::Global::modules[qtnetwork_Smoke] = qtnetwork_module;    
-    QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtNetworkHandlers);
     QtScriptSmoke::registerQtNetworkTypes(engine);
     
     return;

@@ -25,6 +25,7 @@
 #include <QtCore/QCoreApplication>
 
 #include "global.h"
+#include "smoke/qtcore_smoke.h"
 
 namespace QtScriptSmoke {
     namespace Debug {
@@ -34,10 +35,8 @@ namespace QtScriptSmoke {
     namespace Global {
 
         
-QtScriptSmoke::Object * Object = 0;
-QtScriptSmoke::SmokeQObject * SmokeQObject = 0;
-
-QtScriptSmoke::Binding binding;
+static QtScriptSmoke::Object * Object = 0;
+static QtScriptSmoke::SmokeQObject * SmokeQObject = 0;
 
 Smoke::ModuleIndex QObjectClassId;
 Smoke::ModuleIndex QDateClassId;
@@ -48,36 +47,10 @@ QScriptValue QtEnum;
 
 QHash<Smoke*, Module> modules;
 
-#define QSCRIPT_VALUES_SWEEP_INTERVAL 3
-
 typedef QHash<void *, QScriptValue *> QScriptValuesMap;
 Q_GLOBAL_STATIC(QScriptValuesMap, qscriptValues)
 
 static QMutex mutex(QMutex::Recursive);
-
-class FinalizerThread : public QThread
-{
-public:
-    void run()
-    {
-        while (true) {
-            QThread::sleep(QSCRIPT_VALUES_SWEEP_INTERVAL);
-            
-            setTerminationEnabled(false);
-            sweepScriptValues();
-            setTerminationEnabled(true);
-        }
-    }
-};
-
-static FinalizerThread finalizer;
-
-void
-startFinalizerThread()
-{
-    QObject::connect(qApp, SIGNAL(aboutToQuit()), &finalizer, SLOT(terminate()));
-    finalizer.start();
-}
 
 QScriptValue * 
 getScriptValue(void *ptr) 
@@ -162,64 +135,119 @@ mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId
     return;
 }
 
-void
-sweepScriptValues()
-{
-    QMutexLocker locker(&mutex);    
-    QMutableHashIterator<void *, QScriptValue *> iter(*(qscriptValues()));
-    
-    while (iter.hasNext()) {
-        iter.next();
-        
-        if (!iter.value()->isValid()) {
-            QScriptValue * obj = iter.value();
-            Object::Instance * instance = Object::Instance::get(*obj);
 
-            if ((Debug::DoDebug & Debug::GC) != 0) {
-                qWarning(   "%p->~%s()", 
-                            instance->value, 
-                            instance->classId.smoke->className(instance->classId.index) );
-            }
-            
-            if (instance->value != 0) {
-                unmapPointer(instance, instance->classId.index, 0);
-                instance->finalize();
-                delete obj;
-            }
+
+class FinalizerThread : public QThread
+{
+public:
+    static const int ScriptValuesSweepInterval = 5;
+    
+    void run()
+    {
+        while (true) {
+            setTerminationEnabled(true);
+            QThread::sleep(ScriptValuesSweepInterval);                        
+            sweepScriptValues();
         }
     }
+    
+    void sweepScriptValues()
+    {
+        QMutexLocker locker(&mutex);    
+        QMutableHashIterator<void *, QScriptValue *> iter(*(qscriptValues()));
+        
+        while (iter.hasNext()) {
+            iter.next();
+            
+            if (!iter.value()->isValid()) {
+                setTerminationEnabled(false);               
+                qWarning("Found an invalid script value: %s", iter.value()->toString().toLatin1().constData());
+                Object::Instance * instance = Object::Instance::get(*(iter.value()));
+
+                if ((Debug::DoDebug & Debug::GC) != 0) {
+                    qWarning(   "%p->~%s()", 
+                                instance->value, 
+                                instance->classId.smoke->className(instance->classId.index) );
+                }
+                
+                if (instance->value != 0) {
+                    unmapPointer(instance, instance->classId.index, 0);
+                    instance->finalize();
+                }
+                
+                delete iter.value();
+                setTerminationEnabled(true);
+           }
+        }
+    }
+
+};
+
+static FinalizerThread finalizer;
+
+void
+startFinalizerThread()
+{
+    QObject::connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), &finalizer, SLOT(terminate()));
+    finalizer.start();
 }
 
 QScriptValue 
-wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr)
+wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QScriptEngine::ValueOwnership ownership)
 {
-    Object::Instance * instance = new Object::Instance();
+    Object::Instance * instance = 0;
+    bool isQObject = qtcore_Smoke->isDerivedFrom(   classId.smoke, 
+                                                    classId.index,
+                                                    Global::QObjectClassId.smoke,
+                                                    Global::QObjectClassId.index );
+
+    if (isQObject) {
+        instance = new SmokeQObject::Instance();
+        QObject * obj = static_cast<QObject*>(classId.smoke->cast(  ptr, 
+                                                                    classId.index, 
+                                                                    Global::QObjectClassId.index ) );
+        (static_cast<SmokeQObject::Instance*>(instance))->qobject = engine->newQObject(obj);
+    } else {
+        instance = new Object::Instance();
+    }
+
     instance->classId = classId;
     instance->value = ptr;
-    QScriptValue obj = engine->newObject(QtScriptSmoke::Global::Object); 
+    instance->ownership = ownership;
+    QScriptValue obj = engine->newObject(isQObject ? Global::SmokeQObject : Global::Object); 
     Object::Instance::set(obj, instance);
+    
+    if (ownership != QScriptEngine::QtOwnership) {
+        mapPointer(new QScriptValue(obj), instance, instance->classId.index, 0);
+    }
+    
     return obj;
 }
 
 void
 initializeClasses(QScriptEngine * engine, Smoke * smoke)
 {
+    if (Global::Object == 0) {
+        Global::Object = new QtScriptSmoke::Object(engine);
+        Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
+    }
+    
     for (int i = 1; i <= smoke->numClasses; i++) {
         QByteArray className(smoke->classes[i].className);        
         QScriptClass * klass = 0;
         
         if (smoke->isDerivedFrom(   smoke, 
                                     i,
-                                    QtScriptSmoke::Global::QObjectClassId.smoke,
-                                    QtScriptSmoke::Global::QObjectClassId.index ) )
+                                    Global::QObjectClassId.smoke,
+                                    Global::QObjectClassId.index ) )
         {
             klass = new QtScriptSmoke::MetaObject(  engine, 
                                                     className, 
-                                                    QtScriptSmoke::Global::SmokeQObject );
+                                                    Global::SmokeQObject );
         } else {
             klass = new QtScriptSmoke::MetaObject(  engine, 
                                                     className, 
-                                                    QtScriptSmoke::Global::Object );
+                                                    Global::Object );
         }
         
         if (className.contains("::")) {

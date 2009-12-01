@@ -21,6 +21,9 @@
 **
 ****************************************************************************/
 
+qs.script.importExtension("jsmoke.qtcore");
+qs.script.importExtension("jsmoke.qtgui");
+
 function AnalogClock(parent) {
     QWidget.call(this, parent);
 
@@ -95,4 +98,4 @@ AnalogClock.minuteHand = new QPolygon([new QPoint(7, 8),
 var clock = new AnalogClock();
 clock.show();
 
-// QCoreApplication.exec();
+QCoreApplication.exec();
