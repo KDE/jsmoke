@@ -1,0 +1,6 @@
+02/12/2009
+
+* The version of the qtwebkit smoke library in kdebindings links against 
+libsmokeqt, but this webkit plugin needs a version that links against
+the newer libsmokeqtcore, libsmokeqtgui etc. This patch fixes the build
+in kdebindings/smoke/qtwebkit for now. 

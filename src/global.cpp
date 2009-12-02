@@ -145,7 +145,7 @@ public:
     void run()
     {
         while (true) {
-            setTerminationEnabled(true);
+//            setTerminationEnabled(true);
             QThread::sleep(ScriptValuesSweepInterval);                        
             sweepScriptValues();
         }
@@ -160,7 +160,7 @@ public:
             iter.next();
             
             if (!iter.value()->isValid()) {
-                setTerminationEnabled(false);               
+//                setTerminationEnabled(false);               
                 qWarning("Found an invalid script value: %s", iter.value()->toString().toLatin1().constData());
                 Object::Instance * instance = Object::Instance::get(*(iter.value()));
 
@@ -176,7 +176,7 @@ public:
                 }
                 
                 delete iter.value();
-                setTerminationEnabled(true);
+//                setTerminationEnabled(true);
            }
         }
     }

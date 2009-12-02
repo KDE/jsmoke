@@ -1,3 +1,9 @@
+2009-12-02  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added plugins for the QtDBus, QtSvg and QtWebKit modules. The current version
+of the QtWebKit smoke library in kdebindings needs a small patch to work with
+the plugin - the patch is in the qtwebkit directory.
+
 2009-12-01  Richard Dale  <richard.j.dale@gmail.com>
 
 * Allow the plugin initialization functions to be called more than once, but
@@ -8,8 +14,8 @@ do QScriptEngine specific initialization after the first time.
 2009-11-30  Richard Dale  <richard.j.dale@gmail.com>
 
 * The project has been split up into a shared library called 'libjsmokeruntime'
-and qscript plugins called 'jsmokeqtcore', 'jsmokegui' etc under the 
-'bindings' directory.
+and qscript plugins called 'jsmokeqtcore', 'jsmokegui' etc. The plugins are 
+under the 'bindings' directory.
 * The qsexec tool create a QCoreApplication which doesn't work for GUI apps,
 and so change it to create a QApplication instead.
 * Added a finalizer thread that periodically sweeps through the scriptValues
