@@ -6,6 +6,9 @@ the plugin - the patch is in the qtwebkit directory.
 * Renamed the 'qsexec' tool as 'jsmokeapp' and made it load the jsmoke.qtcore
 and jsmoke.qtgui plugins. Added another tool 'jsmokecoreapp' which just loads
 the jsmoke.qtcore plugin.
+* Use atexit() to trap app termination, and then call terminate() and wait() 
+on the finalizer thread to avoid 'QThread: Destroyed while thread is still 
+running' messages.
 
 2009-12-01  Richard Dale  <richard.j.dale@gmail.com>
 

@@ -17,6 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <stdlib.h>
+
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
 #include <QtCore/QMutex>
@@ -145,7 +147,7 @@ public:
     void run()
     {
         while (true) {
-//            setTerminationEnabled(true);
+            setTerminationEnabled(true);
             QThread::sleep(ScriptValuesSweepInterval);                        
             sweepScriptValues();
         }
@@ -160,7 +162,7 @@ public:
             iter.next();
             
             if (!iter.value()->isValid()) {
-//                setTerminationEnabled(false);               
+                setTerminationEnabled(false);               
                 qWarning("Found an invalid script value: %s", iter.value()->toString().toLatin1().constData());
                 Object::Instance * instance = Object::Instance::get(*(iter.value()));
 
@@ -176,7 +178,7 @@ public:
                 }
                 
                 delete iter.value();
-//                setTerminationEnabled(true);
+                setTerminationEnabled(true);
            }
         }
     }
@@ -186,10 +188,19 @@ public:
 static FinalizerThread finalizer;
 
 void
+terminateFinalizerThread()
+{
+    finalizer.terminate();
+    finalizer.wait();
+    return;
+}
+
+void
 startFinalizerThread()
 {
-    QObject::connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), &finalizer, SLOT(terminate()));
+    atexit(terminateFinalizerThread);
     finalizer.start();
+    return;
 }
 
 QScriptValue 
