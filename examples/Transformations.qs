@@ -264,4 +264,4 @@ Window.prototype.shapeSelected = function(index)
 
 var win = new Window();
 win.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

@@ -1,1 +1,1 @@
-add_subdirectory(qsexec)
+add_subdirectory(jsmokeapp)

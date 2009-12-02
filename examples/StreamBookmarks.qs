@@ -358,4 +358,4 @@ MainWindow.prototype.createMenus = function()
 var mainWin = new MainWindow();
 mainWin.show();
 mainWin.open();
-// QCoreApplication.exec();
+QCoreApplication.exec();

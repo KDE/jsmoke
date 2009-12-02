@@ -377,4 +377,4 @@ Window.prototype.brushChanged = function()
 
 var win = new Window();
 win.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

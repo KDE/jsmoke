@@ -155,4 +155,4 @@ Screenshot.prototype.updateScreenshotLabel = function() {
 var screenshot = new Screenshot(null);
 
 screenshot.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

@@ -217,4 +217,4 @@ CollidingMice.MOUSE_COUNT = 7;
 
 var collidingMice = new CollidingMice(null);
 collidingMice.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

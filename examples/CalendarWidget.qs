@@ -374,4 +374,4 @@ CalendarWidget.prototype.createColorComboBox = function() {
 var calendarWidget = new CalendarWidget(null);
 calendarWidget.show();
 
-// QCoreApplication.exec();
+QCoreApplication.exec();

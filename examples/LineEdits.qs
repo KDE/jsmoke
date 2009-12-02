@@ -213,4 +213,4 @@ Window.prototype.accessChanged = function(index) {
 var win = new Window(null);
 win.show();
 
-// QCoreApplication.exec();
+QCoreApplication.exec();

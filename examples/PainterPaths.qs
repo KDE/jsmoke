@@ -309,4 +309,4 @@ Window.prototype.currentItemData = function(comboBox)
 
 var win = new Window();
 win.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

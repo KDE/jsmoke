@@ -153,4 +153,4 @@ ImageComposer.prototype.imagePos = function(image)
 
 var composer = new ImageComposer();
 composer.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

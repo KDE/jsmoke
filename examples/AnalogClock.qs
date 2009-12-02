@@ -21,8 +21,6 @@
 **
 ****************************************************************************/
 
-qs.script.importExtension("jsmoke.qtcore");
-qs.script.importExtension("jsmoke.qtgui");
 
 function AnalogClock(parent) {
     QWidget.call(this, parent);

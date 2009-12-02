@@ -158,4 +158,4 @@ RSSListing.prototype.itemActivated = function(item)
 
 var rsslisting = new RSSListing();
 rsslisting.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

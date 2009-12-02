@@ -140,4 +140,4 @@ Window.prototype.createLabel = function(text)
 
 var win = new Window();
 win.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

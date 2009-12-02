@@ -107,4 +107,4 @@ Dialog.prototype = new QDialog();
 
 var dialog = new Dialog();
 dialog.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

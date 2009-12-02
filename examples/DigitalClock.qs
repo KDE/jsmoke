@@ -56,4 +56,4 @@ DigitalClock.prototype.showTime = function()
 
 var clock = new DigitalClock();
 clock.show();
-// QCoreApplication.exec();
+QCoreApplication.exec();

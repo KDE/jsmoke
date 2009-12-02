@@ -3,6 +3,9 @@
 * Added plugins for the QtDBus, QtSvg and QtWebKit modules. The current version
 of the QtWebKit smoke library in kdebindings needs a small patch to work with
 the plugin - the patch is in the qtwebkit directory.
+* Renamed the 'qsexec' tool as 'jsmokeapp' and made it load the jsmoke.qtcore
+and jsmoke.qtgui plugins. Added another tool 'jsmokecoreapp' which just loads
+the jsmoke.qtcore plugin.
 
 2009-12-01  Richard Dale  <richard.j.dale@gmail.com>
 
