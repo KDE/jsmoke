@@ -23,13 +23,14 @@
 #include <QtWebKit/QWebSecurityOrigin>
 #include <QtWebKit/QWebFrame>
 #include <QtWebKit/QWebHistory>
+#include <QtWebKit/QWebPluginFactory>
 
 #include "marshall.h"
 #include "global.h"
 #include "marshallmacros.h"
 
-// Q_DECLARE_METATYPE(QWebDatabase)
-// Q_DECLARE_METATYPE(QList<QWebDatabase>)
+Q_DECLARE_METATYPE(QWebPluginFactory::Plugin)
+Q_DECLARE_METATYPE(QList<QWebPluginFactory::Plugin>)
 // Q_DECLARE_METATYPE(QWebSecurityOrigin)
 // Q_DECLARE_METATYPE(QList<QWebSecurityOrigin>)
 Q_DECLARE_METATYPE(QWebFrame*)
@@ -40,12 +41,13 @@ Q_DECLARE_METATYPE(QList<QWebFrame*>)
 namespace QtScriptSmoke {
    
 DEF_CONTAINER_MARSHALLER(QListQWebFrame, QList<QWebFrame*>)
-// DEF_CONTAINER_MARSHALLER(QListQWebHistoryItem, QList<QWebHistoryItem>)
+DEF_CONTAINER_MARSHALLER(QListQWebPluginFactoryPlugin, QList<QWebPluginFactory::Plugin>)
 
 Marshall::TypeHandler QtWebKitHandlers[] = {
 //    { "QList<QWebDatabase>", marshall_QListQWebDatabase },
 //    { "QList<QWebSecurityOrigin>", marshall_QListQWebSecurityOrigin },
     { "QList<QWebFrame*>", marshall_QListQWebFrame },
+    { "QList<QWebPluginFactory::Plugin>", marshall_QListQWebPluginFactoryPlugin },
 //    { "QList<QWebHistoryItem>", marshall_QWebHistoryItemList },
     
     { 0, 0 }
@@ -54,7 +56,7 @@ Marshall::TypeHandler QtWebKitHandlers[] = {
 void registerQtWebKitTypes(QScriptEngine * engine) 
 {   
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QWebFrame*> >(engine);
-//    qScriptSmokeRegisterSequenceMetaType<QList<QWebHistoryItem> >(engine);    
+    qScriptSmokeRegisterSequenceMetaType<QList<QWebPluginFactory::Plugin> >(engine);    
 //    qScriptSmokeRegisterSequenceMetaType<QList<QWebDatabase >(engine);    
 //    qScriptSmokeRegisterSequenceMetaType<QList<QWebSecurityOrigin> >(engine);    
  
