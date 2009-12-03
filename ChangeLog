@@ -1,3 +1,8 @@
+2009-12-03  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added plugins for the QtSql, QtXml, QtXmlPatterns, QtUiTools and QtOpenGL 
+modules
+
 2009-12-02  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added plugins for the QtDBus, QtSvg and QtWebKit modules. The current version

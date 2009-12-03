@@ -1,7 +1,11 @@
 add_subdirectory(qtcore)
 add_subdirectory(qtdbus)
-add_subdirectory(qtnetwork)
 add_subdirectory(qtgui)
+add_subdirectory(qtnetwork)
+add_subdirectory(qtopengl)
+add_subdirectory(qtsql)
 add_subdirectory(qtsvg)
+add_subdirectory(qtuitools)
 add_subdirectory(qtwebkit)
-
+add_subdirectory(qtxml)
+add_subdirectory(qtxmlpatterns)

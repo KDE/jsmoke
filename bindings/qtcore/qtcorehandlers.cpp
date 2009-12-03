@@ -39,6 +39,9 @@
 #include <QtCore/QUrl>
 #include <QtCore/QVariant>
 #include <QtCore/QVector>
+#include <QtCore/QXmlStreamEntityDeclaration>
+#include <QtCore/QXmlStreamNamespaceDeclaration>
+#include <QtCore/QXmlStreamNotationDeclaration>
 
 #include <global.h>
 #include <marshall.h>
@@ -48,6 +51,9 @@ Q_DECLARE_METATYPE(QFileInfo)
 Q_DECLARE_METATYPE(QLocale::Country)
 Q_DECLARE_METATYPE(QModelIndex)
 Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(QXmlStreamEntityDeclaration)
+Q_DECLARE_METATYPE(QXmlStreamNamespaceDeclaration)
+Q_DECLARE_METATYPE(QXmlStreamNotationDeclaration)
 
 Q_DECLARE_METATYPE(QList<int>)
 Q_DECLARE_METATYPE(QList<QByteArray>)                                                                                                              
@@ -70,6 +76,9 @@ Q_DECLARE_METATYPE(QVector<qreal>)
 Q_DECLARE_METATYPE(QVector<QRect>)
 Q_DECLARE_METATYPE(QVector<QRectF>)
 Q_DECLARE_METATYPE(QVector<QVariant>)
+Q_DECLARE_METATYPE(QVector<QXmlStreamEntityDeclaration>)
+Q_DECLARE_METATYPE(QVector<QXmlStreamNamespaceDeclaration>)
+Q_DECLARE_METATYPE(QVector<QXmlStreamNotationDeclaration>)
 Q_DECLARE_METATYPE(QVector<unsigned int>)
 
 namespace QtScriptSmoke {
@@ -255,6 +264,9 @@ DEF_CONTAINER_MARSHALLER(QVectorQReal, QVector<qreal>)
 DEF_CONTAINER_MARSHALLER(QVectorQRectF, QVector<QRectF>)
 DEF_CONTAINER_MARSHALLER(QVectorQRect, QVector<QRect>)
 DEF_CONTAINER_MARSHALLER(QVectorQVariant, QVector<QVariant>)
+DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamEntityDeclaration, QVector<QXmlStreamEntityDeclaration>)
+DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNamespaceDeclaration, QVector<QXmlStreamNamespaceDeclaration>)
+DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNotationDeclaration, QVector<QXmlStreamNotationDeclaration>)
 DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
 
 Marshall::TypeHandler QtCoreHandlers[] = {
@@ -299,6 +311,12 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QVector<QRect>", marshall_QVectorQRect },
     { "QVector<QRect>&", marshall_QVectorQRect },
     { "QVector<QVariant>&", marshall_QVectorQVariant },
+    { "QVector<QXmlStreamEntityDeclaration>", marshall_QVectorQXmlStreamEntityDeclaration },
+    { "QVector<QXmlStreamEntityDeclaration>&", marshall_QVectorQXmlStreamEntityDeclaration },
+    { "QVector<QXmlStreamNamespaceDeclaration>", marshall_QVectorQXmlStreamNamespaceDeclaration },
+    { "QVector<QXmlStreamNamespaceDeclaration>&", marshall_QVectorQXmlStreamNamespaceDeclaration },
+    { "QVector<QXmlStreamNotationDeclaration>", marshall_QVectorQXmlStreamNotationDeclaration },
+    { "QVector<QXmlStreamNotationDeclaration>&", marshall_QVectorQXmlStreamNotationDeclaration },
     { "QVector<unsigned int>", marshall_QVectorUInt },
     { "QVector<unsigned int>&", marshall_QVectorUInt },
     
@@ -328,6 +346,9 @@ void registerQtCoreTypes(QScriptEngine * engine)
     qScriptSmokeRegisterSequenceMetaType<QList<QSize> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QUrl> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QVariant> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamEntityDeclaration> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNamespaceDeclaration> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNotationDeclaration> >(engine);
     
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QObject*> >(engine);
 }

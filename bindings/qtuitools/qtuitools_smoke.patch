@@ -1,0 +1,27 @@
+Index: smokeconfig.xml
+===================================================================
+--- smokeconfig.xml	(revision 1057528)
++++ smokeconfig.xml	(working copy)
+@@ -1,7 +1,8 @@
+ <config>
+     <moduleName>qtuitools</moduleName>
+     <parentModules>
+-        <module>qt</module>
++        <module>qtcore</module>
++        <module>qtgui</module>
+     </parentModules>
+     <parts>1</parts>
+     <scalarTypes>
+Index: CMakeLists.txt
+===================================================================
+--- CMakeLists.txt	(revision 1057528)
++++ CMakeLists.txt	(working copy)
+@@ -22,7 +22,7 @@
+ ENDIF(CMAKE_CXX_FLAGS MATCHES "-fvisibility")
+ add_library(smokeqtuitools SHARED ${smokeqtuitools_LIB_SRCS})
+ 
+-target_link_libraries(smokeqtuitools smokeqt ${QT_QTCORE_LIBRARY} ${QT_QTUITOOLS_LIBRARY} ${QT_QTGUI_LIBRARY})
++target_link_libraries(smokeqtuitools smokeqtcore smokeqtgui ${QT_QTCORE_LIBRARY} ${QT_QTUITOOLS_LIBRARY} ${QT_QTGUI_LIBRARY})
+ 
+ set_target_properties(smokeqtuitools PROPERTIES VERSION 2.1.0 SOVERSION 3 )
+ 
