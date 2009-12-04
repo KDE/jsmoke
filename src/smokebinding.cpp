@@ -42,15 +42,6 @@ char* Binding::className(Smoke::Index classId)
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
 bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
 {
-    QScriptValue * obj = Global::getScriptValue(ptr);
-    if (obj == 0) {
-        if ((Debug::DoDebug & Debug::Virtual) != 0) {
-            qWarning("Cannot find object for virtual method %p -> %p", ptr, obj);
-        }
-        
-        return false;
-    }
-    
     QByteArray methodName(smoke->methodNames[smoke->methods[method].name]);
 
     if (    methodName == "metaObject"
@@ -71,9 +62,24 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
          methodName = "get" + methodName.mid(0, 1).toUpper() + methodName.mid(1);
     }
     
-    if ((Debug::DoDebug & Debug::Virtual) != 0) {
-        Smoke::ModuleIndex methodId = { smoke, method };
+    QScriptValue * obj = Global::getScriptValue(ptr);
+    if (obj == 0) {
+        if ((Debug::DoDebug & Debug::Virtual) != 0) {
+            Smoke::ModuleIndex methodId = { smoke, method };
+            qWarning(   "module: %s Cannot find object for virtual method %p->%s::%s -> %p", 
+                        smoke->moduleName(),
+                        ptr,
+                        smoke->classes[smoke->methods[method].classId].className,
+                        methodToString(methodId).toLatin1().constData(),
+                        obj );
+        }
         
+        return false;
+    }
+    
+    
+    if ((Debug::DoDebug & Debug::Virtual) != 0) {
+        Smoke::ModuleIndex methodId = { smoke, method };        
         qWarning(   "module: %s virtual %p->%s::%s called", 
                     smoke->moduleName(),
                     ptr,
@@ -84,7 +90,13 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     Object::Instance * instance = Object::Instance::get(*obj);
     if (instance == 0) {
         if ((Debug::DoDebug & Debug::Virtual) != 0) {
-            qWarning("Cannot find instance for virtual method %p -> %p", ptr, obj);
+            Smoke::ModuleIndex methodId = { smoke, method };        
+            qWarning(   "module: %s Cannot find instance for virtual method %p->%s::%s -> %p", 
+                        smoke->moduleName(),
+                        ptr,
+                        smoke->classes[smoke->methods[method].classId].className,
+                        methodToString(methodId).toLatin1().constData(),
+                        obj );
         }
         
         return false;

@@ -11,7 +11,7 @@ Qt.Debug.trace = Qt.Debug.None;
 
 var date = new Date();
 
-Qt.Debug.trace = Qt.Debug.Ambiguous | Qt.Debug.GC;
+Qt.Debug.trace = Qt.Debug.MethodMatches | Qt.Debug.GC;
 
 var datetime = new QDateTime(date);
 print("day: " + datetime.date().day());
@@ -22,7 +22,7 @@ layout = new QHBoxLayout();
 layout.addWidget( new QLabel("hello") );
 layout.addWidget( new QLabel("world") );
 
-Qt.Debug.trace = Qt.Debug.Virtual;
+Qt.Debug.trace = Qt.Debug.Virtual | Qt.Debug.Calls;
 
 dialog = new QWidget();
 dialog.setLayout( layout );
@@ -44,4 +44,6 @@ Qt.Debug.trace = Qt.Debug.None;
 
 hidden = dialog.isHidden();
 print("hidden: " + hidden);
+
+QCoreApplication.instance().exec();
 

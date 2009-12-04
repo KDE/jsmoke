@@ -1,3 +1,8 @@
+2009-12-04  Richard Dale  <richard.j.dale@gmail.com>
+
+* Improved the debug logging for the Qt.Debug.MethodMatches and Qt.Debug.Calls
+options by adding the filename and line number.
+
 2009-12-03  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added plugins for the QtSql, QtXml, QtXmlPatterns, QtUiTools and QtOpenGL 

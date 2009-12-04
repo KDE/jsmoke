@@ -1,5 +1,4 @@
-qs.script.importExtension("jsmoke.qtcore");
-qs.script.importExtension("jsmoke.qtgui");
+Qt.Debug.trace = Qt.Debug.Calls;
 
 var path = QDir.currentPath();
 print("path: " + path);

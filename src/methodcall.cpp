@@ -27,6 +27,7 @@
 
 #include <QtCore/QStringList>
 #include <QtScript/QScriptEngine>
+#include <QtScript/QScriptContextInfo>
 
 namespace QtScriptSmoke {
 
@@ -39,7 +40,7 @@ MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * conte
     m_instance = QtScriptSmoke::Object::Instance::get(m_target); 
     m_args = m_smoke->argumentList + m_methodRef.args;
     m_stack = new Smoke::StackItem[m_methodRef.numArgs + 1];
-    
+
     // More thought needed - this is maybe a bit less efficient
     // than it oould be..
     for (int count = 0; count < m_methodRef.numArgs; count++) {
@@ -138,8 +139,11 @@ void MethodCall::callMethod()
             args << arg.toString();
         }
         
+        QScriptContextInfo contextInfo(m_context->parentContext());
         QScriptValue result = (m_methodRef.flags & Smoke::mf_ctor) != 0 ? m_context->thisObject() : m_returnValue;
-        qWarning(   "Trace: %s.%s(%s) => %s", 
+        qWarning(   "Trace@%s:%d %s.%s(%s) => %s",
+                    contextInfo.fileName().toLatin1().constData(),
+                    contextInfo.lineNumber(),
                     m_smoke->className(m_methodRef.classId),
                     m_smoke->methodNames[m_methodRef.name], 
                     args.join(", ").toLatin1().constData(),

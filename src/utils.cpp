@@ -25,6 +25,7 @@
 #include <QtCore/QRegExp>
 
 #include <QtScript/QScriptContext>
+#include <QtScript/QScriptContextInfo>
 #include <QtScript/QScriptValue>
 
 #include "smoke/qtcore_smoke.h"
@@ -165,7 +166,12 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     
     if (methodIds.count() == 0) {
         if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
-            qWarning("No method matches for %s.%s()", klass.className, methodName.constData());
+            QScriptContextInfo contextInfo(context->parentContext());
+            qWarning(   "Method matches@%s:%d for %s.%s(): No matches", 
+                        contextInfo.fileName().toLatin1().constData(),
+                        contextInfo.lineNumber(),
+                        klass.className,
+                        methodName.constData());
         }
         
         return matches;
@@ -337,7 +343,12 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     }
 
     if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
-        qWarning("Method matches for %s.%s():", klass.className, methodName.constData());
+        QScriptContextInfo contextInfo(context->parentContext());
+        qWarning(   "Method matches@%s:%d for %s.%s():", 
+                    contextInfo.fileName().toLatin1().constData(),
+                    contextInfo.lineNumber(),
+                    klass.className, 
+                    methodName.constData());
         for (int i = 0; i < matches.count(); i++) {
             qWarning("    %s module: %s index: %d matchDistance: %d", 
                 methodToString(matches[i].first).toLatin1().constData(),
