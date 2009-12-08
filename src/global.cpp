@@ -163,16 +163,16 @@ public:
             
             if (!iter.value()->isValid()) {
                 setTerminationEnabled(false);               
-                qWarning("Found an invalid script value: %s", iter.value()->toString().toLatin1().constData());
+                qWarning("Found an invalid script value: %p", iter.value());
                 Object::Instance * instance = Object::Instance::get(*(iter.value()));
-
-                if ((Debug::DoDebug & Debug::GC) != 0) {
-                    qWarning(   "%p->~%s()", 
-                                instance->value, 
-                                instance->classId.smoke->className(instance->classId.index) );
-                }
-                
+               
                 if (instance->value != 0) {
+                    if ((Debug::DoDebug & Debug::GC) != 0) {
+                        qWarning(   "%p->~%s()", 
+                                    instance->value, 
+                                    instance->classId.smoke->className(instance->classId.index) );
+                    }
+                    
                     unmapPointer(instance, instance->classId.index, 0);
                     instance->finalize();
                 }
@@ -244,6 +244,10 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
     }
     
     for (int i = 1; i <= smoke->numClasses; i++) {
+        if (smoke->classes[i].external) {
+            continue;
+        }
+        
         QByteArray className(smoke->classes[i].className);        
         QScriptClass * klass = 0;
         

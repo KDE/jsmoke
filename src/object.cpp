@@ -339,32 +339,47 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
     QByteArray propertyName(name.toString().toLatin1());
 
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        Object::Instance * instance = Object::Instance::get(object);
         qWarning("SmokeQObject::property(%p->%s.%s, 0x%8.8x)", 
                  instance->value,
                  instance->classId.smoke->classes[instance->classId.index].className,
                  propertyName.constData(), 
                  id);
     }
-    
-    if ((id & ReadQProperty) == ReadQProperty) {
-        QScriptValue fn = engine()->newFunction(getQProperty);
-        fn.setData(QScriptValue(QString(propertyName)));
-        return fn;
-    }
-    
-    if ((id & WriteQProperty) == WriteQProperty) {
-        QScriptValue fn = engine()->newFunction(setQProperty);
-        fn.setData(QScriptValue(QString(propertyName)));
-        return fn;
-    }
+
    
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
                                                                                 instance->classId.index, 
                                                                                 Global::QObjectClassId.index ) );
+
+    if ((id & ReadQProperty) == ReadQProperty) {
+#if QT_VERSION >= 0x40600
+        return valueFromVariant(engine(), qobject->property(propertyName));
+#else
+        QScriptValue fn = engine()->newFunction(getQProperty);
+        fn.setData(QScriptValue(QString(propertyName)));
+        return fn;
+#endif
+    }
+    
+    if ((id & WriteQProperty) == WriteQProperty) {
+#if QT_VERSION >= 0x40600
+        // This actually never gets called with Qt 4.6, but if it was this is probably
+        // what the code should do to be consistent with the read property behaviour 
+        // above
+        QScriptValue value = engine()->currentContext()->argument(0);
+        qWarning("Setting property: %s value: %s", propertyName.constData(), value.toString().toLatin1().constData());
+        qobject->setProperty(propertyName, valueToVariant(value));
+        return value;
+#else
+        QScriptValue fn = engine()->newFunction(setQProperty);
+        fn.setData(QScriptValue(QString(propertyName)));
+        return fn;
+#endif
+    }
+
     bool fullSignalSignature = propertyName.contains("(");
     const QMetaObject * meta = qobject->metaObject();
-    
+
     while (meta != 0) {
         for (int i = meta->methodOffset(); i < meta->methodCount(); ++i) {
             if (meta->method(i).methodType() == QMetaMethod::Signal) {

@@ -1,3 +1,12 @@
+2009-12-08  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a QtMultimedia plugin, and plugins for most of the kdelibs libraries
+* Made the code work with Qt 4.6 more or less. Setting QObject properties still
+doesn't work though as the behaviour of the QScriptClass::property() method
+seems to have changed.
+* The Global::initializeClasses() method was wrongly including classes that
+were external to the current module, and they are now skipped.
+
 2009-12-04  Richard Dale  <richard.j.dale@gmail.com>
 
 * Improved the debug logging for the Qt.Debug.MethodMatches and Qt.Debug.Calls

@@ -118,7 +118,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     
     QScriptContext * constructorContext = engine->pushContext();
     constructorContext->setThisObject(context->argument(0));
-    
+
     QScriptValue args = context->argumentsObject();
     args.property("shift").call(args);
     constructorContext->activationObject().setProperty("arguments", args);
@@ -182,7 +182,7 @@ QVariant
 MetaObject::extension(QScriptClass::Extension extension, const QVariant& argument)
 {
     if (extension == Callable) {
-        QScriptContext* context = argument.value<QScriptContext*>();        
+        QScriptContext *context = qvariant_cast<QScriptContext*>(argument);
         QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
 
         if (matches.count() == 0) {
@@ -197,11 +197,12 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
             // Good, found a single best match in matches[0]
         }
         
-        QScriptValue proto = context->engine()->newObject(object()); 
+        context->thisObject().setScriptClass(object());
 
-        context->setThisObject(proto);
         QtScriptSmoke::MethodCall methodCall(m_classId.smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
+        
+        // Set the 'this object' in case an exception has been thrown in the method call
         context->setThisObject(*(methodCall.var()));
         return QVariant();
     } else if (extension == HasInstance) {

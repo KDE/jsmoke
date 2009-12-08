@@ -111,6 +111,7 @@ void MethodCall::callMethod()
                                                         m_methodRef.classId,
                                                         Global::QObjectClassId.smoke,
                                                         Global::QObjectClassId.index );
+
         if (isQObject) {
             m_instance = new SmokeQObject::Instance();
             QObject * obj = static_cast<QObject*>(m_smoke->cast(    m_stack[0].s_class, 
@@ -140,14 +141,13 @@ void MethodCall::callMethod()
         }
         
         QScriptContextInfo contextInfo(m_context->parentContext());
-        QScriptValue result = (m_methodRef.flags & Smoke::mf_ctor) != 0 ? m_context->thisObject() : m_returnValue;
         qWarning(   "Trace@%s:%d %s.%s(%s) => %s",
                     contextInfo.fileName().toLatin1().constData(),
                     contextInfo.lineNumber(),
                     m_smoke->className(m_methodRef.classId),
                     m_smoke->methodNames[m_methodRef.name], 
                     args.join(", ").toLatin1().constData(),
-                    result.toString().toLatin1().constData() );
+                    m_returnValue.toString().toLatin1().constData() );
     }
 }
 
