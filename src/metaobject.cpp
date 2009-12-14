@@ -207,6 +207,8 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         bool result = qtcore_Smoke->isDerivedFrom(instance->classId, scriptClass->m_classId);
         return QVariant(result);
     }
+    
+    return QVariant();
 }
 
 bool
