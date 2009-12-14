@@ -39,70 +39,8 @@
 #include "global.h"
 
 namespace QtScriptSmoke {
-
-MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * object )
-    : QScriptClass( engine )
-    , m_className( className )
-    , m_classId( qtcore_Smoke->findClass(className.constData()) )
-    , m_object( object )
-{ 
-    m_proto = engine->newObject();
-    QScriptValue global = engine->globalObject();
-    m_proto.setProperty("prototype", global.property("Object").property("prototype"));
-}
-
-MetaObject::~MetaObject()
-{  }
-
-QScriptValue
-MetaObject::prototype() const
-{
-    return m_proto;
-}
-
-QScriptValue::PropertyFlags 
-MetaObject::propertyFlags(const QScriptValue& object, const QScriptString& name, uint id)
-{
-    // qDebug() << "MetaObject::propertyFlags(" << m_className << name << "," << id << ")";
-    return QScriptValue::ReadOnly;
-}
-
-QScriptClass::QueryFlags
-MetaObject::queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id)
-{
-    QByteArray propertyName(name.toString().toLatin1());
     
-    if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("MetaObject::queryProperty(%s.%s, 0x%2.2x, %d)", 
-                 m_className.constData(),
-                 propertyName.constData(), 
-                 (uint) flags, 
-                 *id);
-    }
-
-    // qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
     
-    if (propertyName == "prototype") {
-        return 0;
-//        return QScriptClass::HandlesReadAccess;
-    } else if (propertyName == "toString") {
-        return QScriptClass::HandlesReadAccess;
-    } else if ( m_className == "Qt" 
-                && (    propertyName == "Debug"
-                        || propertyName == "Enum" ) ) 
-    {
-        return 0;
-    } else if ( m_className == "QVariant" 
-                && (propertyName == "fromValue" || propertyName == "valueOf") )
-    {
-        return 0;
-    } else if (qtcore_Smoke->findClass(m_className + "::" + propertyName) != qtcore_Smoke->NullModuleIndex) {
-        return 0;
-    } else {
-        return QScriptClass::HandlesReadAccess; 
-    }
-}
-
 // This will be called for any call() invocation, not just something like 
 // QWidget.call(this, parent); which is what the code below is trying to do.
 //
@@ -110,7 +48,7 @@ MetaObject::queryProperty(const QScriptValue& object, const QScriptString& name,
 // argument of the call. Then create a new arguments object without that first arg,
 // and call the 'QWidget' constructor. Whether it is successfully doing that isn't
 // obvious...
-QScriptValue 
+static QScriptValue 
 callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 {
     MetaObject * metaObject = static_cast<MetaObject*>(context->thisObject().scriptClass());
@@ -139,6 +77,62 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     methodCall.next();
     engine->popContext();
     return engine->undefinedValue();
+}
+
+MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * object )
+    : QScriptClass( engine )
+    , m_className( className )
+    , m_classId( qtcore_Smoke->findClass(className.constData()) )
+    , m_object( object )
+{ 
+    m_proto = engine->newObject();
+}
+
+MetaObject::~MetaObject()
+{  }
+
+QScriptValue
+MetaObject::prototype() const
+{
+    return m_proto;
+}
+
+QScriptValue::PropertyFlags 
+MetaObject::propertyFlags(const QScriptValue& object, const QScriptString& name, uint id)
+{
+    // qDebug() << "MetaObject::propertyFlags(" << m_className << name << "," << id << ")";
+    return  QScriptValue::Undeletable 
+            | QScriptValue::SkipInEnumeration;
+//            | QScriptValue::ReadOnly;
+}
+
+QScriptClass::QueryFlags
+MetaObject::queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id)
+{
+    QByteArray propertyName(name.toString().toLatin1());
+    
+    if ((Debug::DoDebug & Debug::Properties) != 0) {
+        qWarning("MetaObject::queryProperty(%s.%s, 0x%2.2x, %d)", 
+                 m_className.constData(),
+                 propertyName.constData(), 
+                 (uint) flags, 
+                 *id);
+    }
+
+    // qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
+    
+    if (propertyName == "prototype") {
+        return flags & (QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess);
+    } else if ( m_className == "Qt" 
+                && (    propertyName == "Debug"
+                        || propertyName == "Enum" ) ) 
+    {
+        return 0;
+    } else if (qtcore_Smoke->findClass(m_className + "::" + propertyName) != qtcore_Smoke->NullModuleIndex) {
+        return 0;
+    } else {
+        return QScriptClass::HandlesReadAccess; 
+    }
 }
 
 QScriptValue
@@ -198,6 +192,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         }
         
         context->thisObject().setScriptClass(object());
+        context->thisObject().setProperty("prototype", m_proto);
 
         QtScriptSmoke::MethodCall methodCall(m_classId.smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
@@ -209,10 +204,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         QScriptValueList args = argument.value<QScriptValueList>();  
         MetaObject * scriptClass = static_cast<MetaObject*>(args[0].scriptClass());
         Object::Instance * instance = Object::Instance::get(args[1]);
-        bool result = qtcore_Smoke->isDerivedFrom(  instance->classId.smoke, 
-                                                    instance->classId.index,
-                                                    scriptClass->m_classId.smoke,
-                                                    scriptClass->m_classId.index );
+        bool result = qtcore_Smoke->isDerivedFrom(instance->classId, scriptClass->m_classId);
         return QVariant(result);
     }
 }

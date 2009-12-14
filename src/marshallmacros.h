@@ -105,23 +105,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
 inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, Smoke::ModuleIndex classId)
 {
     QtScriptSmoke::Object::Instance * instance = QtScriptSmoke::Object::Instance::get(item);
-    void * ptr = instance->value;
-    
-    if (instance->classId.smoke == classId.smoke) {
-        if (instance->classId.index != classId.index) {
-            ptr = instance->classId.smoke->cast(ptr, instance->classId.index, classId.index);
-        }
-    } else {
-        // If the containers's class and the instance's class are in different smoke modules
-        // then we need to convert them both to be class ids in the instance's module in
-        // order to do the cast
-        const Smoke::Class &klass = classId.smoke->classes[classId.index];
-        ptr = instance->classId.smoke->cast(    ptr, 
-                                                instance->classId.index, 
-                                                instance->classId.smoke->idClass(klass.className, true).index );            
-    }
-    
-    return ptr;
+    return instance->classId.smoke->cast(instance->value, instance->classId, classId);
 }
 
 template <class Container>

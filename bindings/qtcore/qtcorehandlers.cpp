@@ -288,6 +288,7 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<QRectF>&", marshall_QListQRectF },
     { "QList<QSize>&", marshall_QListQSize },
     { "QList<QUrl>&", marshall_QListQUrl },
+    { "QList<QVariant>", marshall_QListQVariant },
     { "QList<QVariant>&", marshall_QListQVariant },
     { "qlonglong", marshall_QLongLong },
     { "qlonglong&", marshall_QLongLong },

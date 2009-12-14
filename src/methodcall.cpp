@@ -83,19 +83,9 @@ void MethodCall::callMethod()
     void *ptr = 0;
 
     if (m_instance != 0 && m_instance->value != 0) {
-        if (m_instance->classId.smoke == m_smoke) {
-            ptr = m_instance->classId.smoke->cast(  m_instance->value,
-                                                    m_instance->classId.index,
-                                                    m_methodRef.classId );
-        } else {
-            // If the method's class and the instance's class are in different smoke modules
-            // then we need to convert them both to be class ids in the instance's module in
-            // order to do the cast
-            const Smoke::Class &cl = m_smoke->classes[m_methodRef.classId];
-            ptr = m_instance->classId.smoke->cast(  m_instance->value,
-                                                    m_instance->classId.index,
-                                                    m_instance->classId.smoke->idClass(cl.className, true).index );
-        }
+        ptr = m_instance->classId.smoke->cast(  m_instance->value, 
+                                                m_instance->classId, 
+                                                Smoke::ModuleIndex(m_smoke, m_methodRef.classId) );
     }
     
     (*fn)(m_methodRef.method, ptr, m_stack);
@@ -107,16 +97,14 @@ void MethodCall::callMethod()
         
         m_returnValue = m_context->thisObject();
         
-        bool isQObject = qtcore_Smoke->isDerivedFrom(   m_smoke, 
-                                                        m_methodRef.classId,
-                                                        Global::QObjectClassId.smoke,
-                                                        Global::QObjectClassId.index );
+        bool isQObject = qtcore_Smoke->isDerivedFrom(   Smoke::ModuleIndex(m_smoke, m_methodRef.classId),
+                                                        Global::QObjectClassId );
 
         if (isQObject) {
             m_instance = new SmokeQObject::Instance();
             QObject * obj = static_cast<QObject*>(m_smoke->cast(    m_stack[0].s_class, 
-                                                                    m_methodRef.classId, 
-                                                                    Global::QObjectClassId.index ) );
+                                                                    Smoke::ModuleIndex(m_smoke, m_methodRef.classId),
+                                                                    Global::QObjectClassId ) );
             (static_cast<SmokeQObject::Instance*>(m_instance))->qobject = m_engine->newQObject(obj);
         } else {
             m_instance = new Object::Instance();

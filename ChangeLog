@@ -1,3 +1,19 @@
+2009-12-14  Richard Dale  <richard.j.dale@gmail.com>
+
+* Fixed bug in the way prototypes were being set up for newly created 
+instances. This meant the a custom method QVariant.valueOf() was replacing the
+one in the global object (oops!), but now it only is called for QVariant 
+instances. It is now possible to correctly add custom methods to any class,
+which is quite important.
+* Used some of the improved methods in the smoke.h header to make the code 
+tidier.
+* Add a 'qs.system.argv' property with QCoreApplication::arguments(), to match
+the existing 'qt.system.env' property.
+* Added some code to resolve classnames better. For instance, if an argument to
+a method is 'QEvent', then the type of the event can be used to get a more
+accurate class name. Similary the QMetaObject::className() can be used for 
+QObjects. Needs a bit more work to complete though, so not being used yet.
+
 2009-12-08  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a QtMultimedia plugin, and plugins for most of the kdelibs libraries

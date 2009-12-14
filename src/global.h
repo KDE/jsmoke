@@ -51,6 +51,8 @@ namespace QtScriptSmoke {
         extern Smoke::ModuleIndex QDateClassId;
         extern Smoke::ModuleIndex QDateTimeClassId;
         extern Smoke::ModuleIndex QTimeClassId;
+        extern Smoke::ModuleIndex QEventClassId;
+        extern Smoke::ModuleIndex QGraphicsItemClassId;
         
         extern QScriptValue QtEnum;
         
@@ -72,6 +74,7 @@ namespace QtScriptSmoke {
                                                         void * ptr,
                                                         QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 
+        extern Q_DECL_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
         extern Q_DECL_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
     }
 }

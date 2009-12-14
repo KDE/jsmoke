@@ -65,7 +65,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     QScriptValue * obj = Global::getScriptValue(ptr);
     if (obj == 0) {
         if ((Debug::DoDebug & Debug::Virtual) != 0) {
-            Smoke::ModuleIndex methodId = { smoke, method };
+            Smoke::ModuleIndex methodId(smoke, method);
             qWarning(   "module: %s Cannot find object for virtual method %p->%s::%s -> %p", 
                         smoke->moduleName(),
                         ptr,
@@ -79,7 +79,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     
     
     if ((Debug::DoDebug & Debug::Virtual) != 0) {
-        Smoke::ModuleIndex methodId = { smoke, method };        
+        Smoke::ModuleIndex methodId(smoke, method);        
         qWarning(   "module: %s virtual %p->%s::%s called", 
                     smoke->moduleName(),
                     ptr,
@@ -90,7 +90,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     Object::Instance * instance = Object::Instance::get(*obj);
     if (instance == 0) {
         if ((Debug::DoDebug & Debug::Virtual) != 0) {
-            Smoke::ModuleIndex methodId = { smoke, method };        
+            Smoke::ModuleIndex methodId(smoke, method);        
             qWarning(   "module: %s Cannot find instance for virtual method %p->%s::%s -> %p", 
                         smoke->moduleName(),
                         ptr,

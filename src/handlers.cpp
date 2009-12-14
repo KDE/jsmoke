@@ -347,17 +347,9 @@ static void marshall_basetype(Marshall *m)
                 ptr = constructCopy(instance);
             }
             
-            if (instance->classId.smoke == m->smoke()) {
-                ptr = instance->classId.smoke->cast(ptr, instance->classId.index, m->type().classId() );
-            } else {
-                // If the method's class and the instance's class are in different smoke modules
-                // then we need to convert them both to be class ids in the instance's module in
-                // order to do the cast
-                const Smoke::Class &klass = m->smoke()->classes[m->type().classId()];
-                ptr = instance->classId.smoke->cast(    ptr, 
-                                                        instance->classId.index, 
-                                                        instance->classId.smoke->idClass(klass.className, true).index );            
-            }
+            ptr = instance->classId.smoke->cast(    ptr, 
+                                                    instance->classId, 
+                                                    Smoke::ModuleIndex(m->smoke(), m->type().classId()) );
             
             m->item().s_class = ptr;
             break;

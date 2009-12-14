@@ -306,11 +306,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                         Smoke::ModuleIndex classId = qtcore_Smoke->findClass(argType);
 
                         if (instance->classId == classId) {
-                        } else if ( qtcore_Smoke->isDerivedFrom(    instance->classId.smoke, 
-                                                                    instance->classId.index,
-                                                                    classId.smoke,
-                                                                    classId.index ) )
-                        {
+                        } else if (qtcore_Smoke->isDerivedFrom(instance->classId, classId)) {
                             matchDistance += 1;
                         } else {
                             matchDistance += 10;

@@ -44,6 +44,8 @@ Smoke::ModuleIndex QObjectClassId;
 Smoke::ModuleIndex QDateClassId;
 Smoke::ModuleIndex QDateTimeClassId;
 Smoke::ModuleIndex QTimeClassId;
+Smoke::ModuleIndex QEventClassId;
+Smoke::ModuleIndex QGraphicsItemClassId;
 
 QScriptValue QtEnum;
 
@@ -207,17 +209,12 @@ QScriptValue
 wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QScriptEngine::ValueOwnership ownership)
 {
     Object::Instance * instance = 0;
-    bool isQObject = qtcore_Smoke->isDerivedFrom(   classId.smoke, 
-                                                    classId.index,
-                                                    Global::QObjectClassId.smoke,
-                                                    Global::QObjectClassId.index );
+    bool isQObject = qtcore_Smoke->isDerivedFrom(classId, Global::QObjectClassId);
 
     if (isQObject) {
         instance = new SmokeQObject::Instance();
-        QObject * obj = static_cast<QObject*>(classId.smoke->cast(  ptr, 
-                                                                    classId.index, 
-                                                                    Global::QObjectClassId.index ) );
-        (static_cast<SmokeQObject::Instance*>(instance))->qobject = engine->newQObject(obj);
+        QObject * qobject = static_cast<QObject*>(classId.smoke->cast(ptr, classId, Global::QObjectClassId));
+        static_cast<SmokeQObject::Instance*>(instance)->qobject = engine->newQObject(qobject);
     } else {
         instance = new Object::Instance();
     }
@@ -233,6 +230,14 @@ wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QSc
     }
     
     return obj;
+}
+
+static QList<QPair<Smoke::ModuleIndex, Object::TypeResolver> > typeResolvers;
+
+void 
+registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver typeResolver)
+{
+    typeResolvers << QPair<Smoke::ModuleIndex, Object::TypeResolver>(baseClass, typeResolver);
 }
 
 void
@@ -251,18 +256,10 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         QByteArray className(smoke->classes[i].className);        
         QScriptClass * klass = 0;
         
-        if (smoke->isDerivedFrom(   smoke, 
-                                    i,
-                                    Global::QObjectClassId.smoke,
-                                    Global::QObjectClassId.index ) )
-        {
-            klass = new QtScriptSmoke::MetaObject(  engine, 
-                                                    className, 
-                                                    Global::SmokeQObject );
+        if (smoke->isDerivedFrom(Smoke::ModuleIndex(smoke, i), Global::QObjectClassId)) {
+            klass = new QtScriptSmoke::MetaObject(engine, className, Global::SmokeQObject);
         } else {
-            klass = new QtScriptSmoke::MetaObject(  engine, 
-                                                    className, 
-                                                    Global::Object );
+            klass = new QtScriptSmoke::MetaObject(engine, className, Global::Object);
         }
         
         if (className.contains("::")) {

@@ -17,6 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QtGui/QGraphicsItem>
+
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptEngine>
 
@@ -24,6 +26,48 @@
 #include <marshall.h>
 
 #include <smoke/qtgui_smoke.h>
+
+static void
+qgraphicsitemTypeResolver(QtScriptSmoke::Object::Instance * instance)
+{
+    Smoke * smoke = instance->classId.smoke;    
+    QGraphicsItem * item = static_cast<QGraphicsItem*>( smoke->cast(    instance->value, 
+                                                                        instance->classId,
+                                                                        QtScriptSmoke::Global::QGraphicsItemClassId ) );
+    switch (item->type()) {
+    case 1:
+        instance->classId = smoke->findClass("QGraphicsItem");
+        break;
+    case 2:
+        instance->classId = smoke->findClass("QGraphicsPathItem");
+        break;
+    case 3:
+        instance->classId = smoke->findClass("QGraphicsRectItem");
+    case 4:
+        instance->classId = smoke->findClass("QGraphicsEllipseItem");
+        break;
+    case 5:
+        instance->classId = smoke->findClass("QGraphicsPolygonItem");
+        break;
+    case 6:
+        instance->classId = smoke->findClass("QGraphicsLineItem");
+        break;
+    case 7:
+        instance->classId = smoke->findClass("QGraphicsItem");
+        break;
+    case 8:
+        instance->classId = smoke->findClass("QGraphicsTextItem");
+        break;
+    case 9:
+        instance->classId = smoke->findClass("QGraphicsSimpleTextItem");
+        break;
+    case 10:
+        instance->classId = smoke->findClass("QGraphicsItemGroup");
+        break;
+    }
+    
+    return;
+}
 
 namespace QtScriptSmoke {
 extern Marshall::TypeHandler QtGuiHandlers[];
@@ -38,7 +82,10 @@ static bool initialized = false;
         init_qtgui_Smoke();
         QtScriptSmoke::Module qtgui_module = { "qtgui", new QtScriptSmoke::Binding(qtgui_Smoke) };
         QtScriptSmoke::Global::modules[qtgui_Smoke] = qtgui_module;    
+        QtScriptSmoke::Global::QGraphicsItemClassId = qtcore_Smoke->idClass("QGraphicsItem");
         QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtGuiHandlers);
+        QtScriptSmoke::Global::registerTypeResolver(    QtScriptSmoke::Global::QGraphicsItemClassId, 
+                                                        qgraphicsitemTypeResolver );
         initialized = true;
     }
     

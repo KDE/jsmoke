@@ -135,15 +135,12 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
                  (uint) flags, 
                  *id);
     }
-
-//    if (propertyName == "valueOf") {
-//        return QScriptClass::HandlesReadAccess;
-//    }
     
     if (    propertyName == "toLocaleString" 
             || propertyName == "valueOf" 
             || propertyName == "hasOwnProperty" 
             || propertyName == "isPrototypeOf" 
+            || propertyName == "prototype" 
             || propertyName == "propertyIsEnumerable" 
             || propertyName == "__defineGetter__" 
             || propertyName == "__defineSetter__" ) 
@@ -178,8 +175,8 @@ Object::property(const QScriptValue& object, const QScriptString& name, uint id)
     }
     
     QString nameStr = name;
-    QScriptValue fn = engine()->newFunction( callSmokeMethod );
-    fn.setData( QScriptValue( name ) );
+    QScriptValue fn = engine()->newFunction(callSmokeMethod);
+    fn.setData(QScriptValue(name));
     return fn;
 }
 
@@ -225,8 +222,8 @@ SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & na
     }
     
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId.index, 
-                                                                                Global::QObjectClassId.index ) );
+                                                                                instance->classId, 
+                                                                                Global::QObjectClassId ) );
                                                                                
     const QMetaObject * meta = qobject->metaObject();
     while (meta != 0) {
@@ -301,8 +298,8 @@ getQProperty(QScriptContext* context, QScriptEngine* engine)
     }
 
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId.index, 
-                                                                                Global::QObjectClassId.index ) );
+                                                                                instance->classId, 
+                                                                                Global::QObjectClassId ) );
     return valueFromVariant(engine, qobject->property(propertyName));
 }
 
@@ -322,11 +319,12 @@ setQProperty(QScriptContext* context, QScriptEngine* engine)
     }
 
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId.index, 
-                                                                                Global::QObjectClassId.index ) );
+                                                                                instance->classId, 
+                                                                                Global::QObjectClassId ) );
     qobject->setProperty(propertyName, valueToVariant(value));
     return value;
 }
+
 
 QScriptValue
 SmokeQObject::property(const QScriptValue& object, const QScriptString& name, uint id)
@@ -348,11 +346,14 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
 
    
     QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId.index, 
-                                                                                Global::QObjectClassId.index ) );
+                                                                                instance->classId, 
+                                                                                Global::QObjectClassId ) );
 
     if ((id & ReadQProperty) == ReadQProperty) {
 #if QT_VERSION >= 0x40600
+        // Although propertyFlags() returns 'PropertyGetter', the value is ignored
+        // by Qt 4.6.0. Hence, instead of returning a property accessor function,
+        // just return the value directly.
         return valueFromVariant(engine(), qobject->property(propertyName));
 #else
         QScriptValue fn = engine()->newFunction(getQProperty);
@@ -362,19 +363,9 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
     }
     
     if ((id & WriteQProperty) == WriteQProperty) {
-#if QT_VERSION >= 0x40600
-        // This actually never gets called with Qt 4.6, but if it was this is probably
-        // what the code should do to be consistent with the read property behaviour 
-        // above
-        QScriptValue value = engine()->currentContext()->argument(0);
-        qWarning("Setting property: %s value: %s", propertyName.constData(), value.toString().toLatin1().constData());
-        qobject->setProperty(propertyName, valueToVariant(value));
-        return value;
-#else
         QScriptValue fn = engine()->newFunction(setQProperty);
         fn.setData(QScriptValue(QString(propertyName)));
         return fn;
-#endif
     }
 
     bool fullSignalSignature = propertyName.contains("(");
@@ -402,6 +393,37 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
     }
 
     return Object::property(object, name, id);
+}
+
+/*
+    This only gets called with Qt 4.6.0 as the propertyFlags() value of 'PropertySetter'
+    is ignored. Qt 4.5 correctly calls the setQProperty() function instead
+ */
+void
+SmokeQObject::setProperty(QScriptValue & object, const QScriptString & name, uint id, const QScriptValue & value)
+{
+    SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
+    if (instance == 0 || instance->value == 0) {
+        return;
+    }
+    
+    QByteArray propertyName(name.toString().toLatin1());
+
+    if ((Debug::DoDebug & Debug::Properties) != 0) {
+        qWarning("SmokeQObject::setProperty(%p->%s.%s, 0x%8.8x, %s)", 
+                 instance->value,
+                 instance->classId.smoke->classes[instance->classId.index].className,
+                 propertyName.constData(), 
+                 id,
+                 value.toString().toLatin1().constData() );
+    }
+
+   
+    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
+                                                                                instance->classId, 
+                                                                                Global::QObjectClassId ) );
+    qobject->setProperty(propertyName, valueToVariant(value));
+    return;
 }
 
 QString
