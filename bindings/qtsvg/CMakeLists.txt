@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES} ${SMOKE_INCLUDE_DIR})
 
 set(jsmokeqtsvg_LIB_SRCS plugin.cpp qtsvg.cpp qtsvghandlers.cpp)
 
@@ -8,7 +8,7 @@ target_link_libraries(  jsmokeqtsvg
                             ${QT_QTGUI_LIBRARY} 
                             ${QT_QTSVG_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
-                            smokeqtcore 
+                            ${SMOKE_QTCORE_LIBRARY} 
                             smokeqtgui 
                             smokeqtsvg 
                             jsmokeruntime )

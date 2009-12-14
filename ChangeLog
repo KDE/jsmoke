@@ -15,6 +15,9 @@ accurate class name. Similary the QMetaObject::className() can be used for
 QObjects. Needs a bit more work to complete though, so not being used yet.
 * Added missing source in tools/jsmokeapp/src - thanks to Simon St James for 
 pointing out they were missing.
+* Added a FindQtSmoke.cmake script in cmake/modules and some initial support
+for finding the smoke libs and include files. SMOKE_QTCORE_LIBRARY and 
+SMOKE_INCLUDE_DIR are set, but the rest of the smoke libs should added too.
 
 2009-12-08  Richard Dale  <richard.j.dale@gmail.com>
 

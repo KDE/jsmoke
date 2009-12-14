@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES} ${SMOKE_INCLUDE_DIR})
 
 set(jsmokekfile_LIB_SRCS plugin.cpp kfile.cpp kfilehandlers.cpp)
 
@@ -7,7 +7,7 @@ target_link_libraries(  jsmokekfile
                             ${QT_QTCORE_LIBRARY} 
                             ${QT_QTGUI_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
-                            smokeqtcore 
+                            ${SMOKE_QTCORE_LIBRARY} 
                             smokekfile 
                             jsmokeruntime )
 

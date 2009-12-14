@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES} ${SMOKE_INCLUDE_DIR})
 
 set(jsmokeqtsql_LIB_SRCS plugin.cpp qtsql.cpp qtsqlhandlers.cpp)
 
@@ -7,7 +7,7 @@ target_link_libraries(  jsmokeqtsql
                             ${QT_QTCORE_LIBRARY} 
                             ${QT_QTSQL_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
-                            smokeqtcore 
+                            ${SMOKE_QTCORE_LIBRARY} 
                             smokeqtsql 
                             jsmokeruntime )
 

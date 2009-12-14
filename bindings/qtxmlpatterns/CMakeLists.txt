@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES} ${SMOKE_INCLUDE_DIR})
 
 set(jsmokeqtxmlpatterns_LIB_SRCS plugin.cpp qtxmlpatterns.cpp qtxmlpatternshandlers.cpp)
 
@@ -7,7 +7,7 @@ target_link_libraries(  jsmokeqtxmlpatterns
                             ${QT_QTCORE_LIBRARY} 
                             ${QT_QTXMLPATTERNS_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
-                            smokeqtcore 
+                            ${SMOKE_QTCORE_LIBRARY} 
                             smokeqtxmlpatterns 
                             jsmokeruntime )
 

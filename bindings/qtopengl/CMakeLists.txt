@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR}/src ${QT_INCLUDES} ${SMOKE_INCLUDE_DIR})
 
 set(jsmokeqtopengl_LIB_SRCS plugin.cpp qtopengl.cpp qtopenglhandlers.cpp)
 
@@ -8,7 +8,7 @@ target_link_libraries(  jsmokeqtopengl
                             ${QT_QTGUI_LIBRARY} 
                             ${QT_QTOPENGL_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
-                            smokeqtcore 
+                            ${SMOKE_QTCORE_LIBRARY} 
                             smokeqtgui 
                             smokeqtopengl 
                             jsmokeruntime )
