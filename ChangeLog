@@ -13,6 +13,8 @@ the existing 'qt.system.env' property.
 a method is 'QEvent', then the type of the event can be used to get a more
 accurate class name. Similary the QMetaObject::className() can be used for 
 QObjects. Needs a bit more work to complete though, so not being used yet.
+* Added missing source in tools/jsmokeapp/src - thanks to Simon St James for 
+pointing out they were missing.
 
 2009-12-08  Richard Dale  <richard.j.dale@gmail.com>
 
