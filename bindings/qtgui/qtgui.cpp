@@ -28,12 +28,12 @@
 #include <smoke/qtgui_smoke.h>
 
 static void
-qgraphicsitemTypeResolver(QtScriptSmoke::Object::Instance * instance)
+qgraphicsitemTypeResolver(JSmoke::Object::Instance * instance)
 {
     Smoke * smoke = instance->classId.smoke;    
     QGraphicsItem * item = static_cast<QGraphicsItem*>( smoke->cast(    instance->value, 
                                                                         instance->classId,
-                                                                        QtScriptSmoke::Global::QGraphicsItemClassId ) );
+                                                                        JSmoke::Global::QGraphicsItemClassId ) );
     switch (item->type()) {
     case 1:
         instance->classId = smoke->findClass("QGraphicsItem");
@@ -69,7 +69,7 @@ qgraphicsitemTypeResolver(QtScriptSmoke::Object::Instance * instance)
     return;
 }
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtGuiHandlers[];
 extern void registerQtGuiTypes(QScriptEngine * engine);  
 }
@@ -80,18 +80,18 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtgui_Smoke();
-        QtScriptSmoke::Module qtgui_module = { "qtgui", new QtScriptSmoke::Binding(qtgui_Smoke) };
-        QtScriptSmoke::Global::modules[qtgui_Smoke] = qtgui_module;    
-        QtScriptSmoke::Global::QGraphicsItemClassId = qtcore_Smoke->idClass("QGraphicsItem");
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtGuiHandlers);
-        QtScriptSmoke::Global::registerTypeResolver(    QtScriptSmoke::Global::QGraphicsItemClassId, 
+        JSmoke::Module qtgui_module = { "qtgui", new JSmoke::Binding(qtgui_Smoke) };
+        JSmoke::Global::modules[qtgui_Smoke] = qtgui_module;    
+        JSmoke::Global::QGraphicsItemClassId = qtcore_Smoke->idClass("QGraphicsItem");
+        JSmoke::Marshall::installHandlers(JSmoke::QtGuiHandlers);
+        JSmoke::Global::registerTypeResolver(    JSmoke::Global::QGraphicsItemClassId, 
                                                         qgraphicsitemTypeResolver );
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtgui_Smoke);
-    QtScriptSmoke::registerQtGuiTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtgui_Smoke);
+    JSmoke::registerQtGuiTypes(engine);
     
     return;
 }

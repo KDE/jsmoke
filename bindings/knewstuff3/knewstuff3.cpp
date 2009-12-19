@@ -25,7 +25,7 @@
 
 #include <smoke/knewstuff3_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KNewStuff3Handlers[];
 extern void registerKNewStuff3Types(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_knewstuff3_Smoke();
-        QtScriptSmoke::Module knewstuff3_module = { "knewstuff3", new QtScriptSmoke::Binding(knewstuff3_Smoke) };
-        QtScriptSmoke::Global::modules[knewstuff3_Smoke] = knewstuff3_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KNewStuff3Handlers);
+        JSmoke::Module knewstuff3_module = { "knewstuff3", new JSmoke::Binding(knewstuff3_Smoke) };
+        JSmoke::Global::modules[knewstuff3_Smoke] = knewstuff3_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KNewStuff3Handlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, knewstuff3_Smoke);
-    QtScriptSmoke::registerKNewStuff3Types(engine);
+    JSmoke::Global::initializeClasses(engine, knewstuff3_Smoke);
+    JSmoke::registerKNewStuff3Types(engine);
     
     return;
     

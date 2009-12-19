@@ -42,17 +42,17 @@
 #include <QWidget>
 #include <QtCore/QPair>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
-
-Object::Object( QScriptEngine* engine )
-    : QScriptClass( engine )
+Object::Object(QScriptEngine* engine)
+    : QScriptClass(engine)
 {
 }
 
 
 Object::~Object()
-{ }
+{ 
+}
 
 void Object::Instance::finalize() 
 {
@@ -95,7 +95,8 @@ void Object::Instance::dispose()
     value = 0;
 }
 
-Object::Instance::~Instance() {
+Object::Instance::~Instance() 
+{
     finalize();
 }
 
@@ -105,18 +106,18 @@ bool Object::Instance::isSmokeObject(const QScriptValue &object)
             && object.data().toVariant().canConvert<Object::Instance*>();
 }
 
-Object::Instance * Object::Instance::get(const QScriptValue &object) 
+Object::Instance * Object::Instance::get(const QScriptValue& object) 
 {
     return object.data().toVariant().value<Object::Instance*>();
 }
 
-void Object::Instance::set(QScriptValue &object, Object::Instance * instance)
+void Object::Instance::set(QScriptValue& object, Object::Instance* instance)
 {
     object.setData(object.engine()->newVariant(QVariant::fromValue<Object::Instance*>(instance)));        
 }
 
 QScriptValue::PropertyFlags 
-Object::propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id )
+Object::propertyFlags (const QScriptValue& /*object*/, const QScriptString& /*name*/, uint /*id*/)
 {
     return QScriptValue::ReadOnly | QScriptValue::Undeletable | QScriptValue::SkipInEnumeration;
 }
@@ -183,20 +184,24 @@ Object::property(const QScriptValue& object, const QScriptString& name, uint id)
 QString
 Object::name() const
 {
-    return "QtScriptSmoke::Object";
+    return "JSmoke::Object";
 }
 
 SmokeQObject::SmokeQObject(QScriptEngine* engine)
-    : Object(engine) { }
+    : Object(engine) 
+{ 
+}
 
 
-SmokeQObject::~SmokeQObject() { }
+SmokeQObject::~SmokeQObject() 
+{ 
+}
 
 static const uint ReadQProperty = QScriptValue::UserRange + 0x00010000;
 static const uint WriteQProperty = QScriptValue::UserRange + 0x00020000;
 
 QScriptValue::PropertyFlags 
-SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString & name, uint id)
+SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString& name, uint id)
 {
     SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
     QByteArray propertyName(name.toString().toLatin1());
@@ -284,6 +289,7 @@ SmokeQObject::queryProperty(const QScriptValue& object, const QScriptString& nam
     return Object::queryProperty(object, name, queryFlags, id);
 }
 
+#if QT_VERSION < 0x40600
 static QScriptValue 
 getQProperty(QScriptContext* context, QScriptEngine* engine)
 {
@@ -302,9 +308,10 @@ getQProperty(QScriptContext* context, QScriptEngine* engine)
                                                                                 Global::QObjectClassId ) );
     return valueFromVariant(engine, qobject->property(propertyName));
 }
+#endif
 
 static QScriptValue 
-setQProperty(QScriptContext* context, QScriptEngine* engine)
+setQProperty(QScriptContext* context, QScriptEngine* /*engine*/)
 {
     QByteArray propertyName = context->callee().data().toString().toLatin1();
     Object::Instance * instance = Object::Instance::get(context->thisObject());
@@ -400,7 +407,7 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
     is ignored. Qt 4.5 correctly calls the setQProperty() function instead
  */
 void
-SmokeQObject::setProperty(QScriptValue & object, const QScriptString & name, uint id, const QScriptValue & value)
+SmokeQObject::setProperty(QScriptValue& object, const QScriptString& name, uint id, const QScriptValue& value)
 {
     SmokeQObject::Instance * instance = static_cast<SmokeQObject::Instance*>(Object::Instance::get(object));
     if (instance == 0 || instance->value == 0) {
@@ -429,7 +436,7 @@ SmokeQObject::setProperty(QScriptValue & object, const QScriptString & name, uin
 QString
 SmokeQObject::name() const
 {
-    return "QtScriptSmoke::SmokeQObject";
+    return "JSmoke::SmokeQObject";
 }
 
 }

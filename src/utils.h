@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Ian Monroe <imonroe@kde.org>
+ * Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,25 +19,30 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef JSMOKE_UTILS_H
+#define JSMOKE_UTILS_H
+
 #include <smoke.h>
 
 #include <QtCore/QVector>
 #include <QtCore/QByteArray>
 #include <QtCore/QPair>
 
+#include "jsmoke_export.h"
 #include "object.h"
 
 class QScriptContext;
 
-namespace QtScriptSmoke
-{
-    QString methodToString(Smoke::ModuleIndex methodId);
-    QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
-    QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
-    QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
-    void * constructCopy(Object::Instance *instance);
-    QVariant valueToVariant(const QScriptValue& value);
-    QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant);
+namespace JSmoke {
+    JSMOKE_EXPORT QString methodToString(Smoke::ModuleIndex methodId);
+    JSMOKE_EXPORT QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
+    JSMOKE_EXPORT QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
+    JSMOKE_EXPORT QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
+    JSMOKE_EXPORT QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
+    JSMOKE_EXPORT QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
+    JSMOKE_EXPORT void * constructCopy(Object::Instance *instance);
+    JSMOKE_EXPORT QVariant valueToVariant(const QScriptValue& value);
+    JSMOKE_EXPORT QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant);
 }
+
+#endif

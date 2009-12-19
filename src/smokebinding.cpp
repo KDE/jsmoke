@@ -27,20 +27,20 @@
 #include "virtualmethodcall.h"
 #include "utils.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 Binding::Binding(Smoke* s)
     : SmokeBinding(s) { }
 
 char* Binding::className(Smoke::Index classId)
 {
-    qDebug() << "QtScriptSmoke::Binding::className " << smoke->className(classId);
+    qDebug() << "JSmoke::Binding::className " << smoke->className(classId);
     // Convert '::' to '.' here
     return (char *) smoke->className(classId);
 }
 
 //!method called when a virtual method of a smoke-owned object is called. eg QWidget::mousePressEvent
-bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool isAbstract)
+bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool /*isAbstract*/)
 {
     QByteArray methodName(smoke->methodNames[smoke->methods[method].name]);
 

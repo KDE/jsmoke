@@ -1,8 +1,6 @@
 /*
  *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
 
- *   Based on the PerlQt marshalling code by Ashley Winters
-
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -23,16 +21,45 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
-    
+#include <kparts/event.h>
+#include <kparts/mainwindow.h>
+#include <kparts/part.h>
+#include <kparts/partmanager.h>
+#include <kparts/plugin.h>
 
+Q_DECLARE_METATYPE(KParts::Part*)
+Q_DECLARE_METATYPE(KParts::Plugin*)
+Q_DECLARE_METATYPE(KParts::Plugin::PluginInfo)
+Q_DECLARE_METATYPE(KParts::ReadOnlyPart*)
+Q_DECLARE_METATYPE(QList<KParts::Part*>)
+Q_DECLARE_METATYPE(QList<KParts::Plugin*>)
+Q_DECLARE_METATYPE(QList<KParts::Plugin::PluginInfo>)
+Q_DECLARE_METATYPE(QList<KParts::ReadOnlyPart*>)
+
+namespace JSmoke {
+
+DEF_CONTAINER_MARSHALLER(QListKPartsPart, QList<KParts::Part*>)
+DEF_CONTAINER_MARSHALLER(QListKPartsPlugin, QList<KParts::Plugin*>)
+DEF_CONTAINER_MARSHALLER(QListKPartsPluginPluginInfo, QList<KParts::Plugin::PluginInfo>)
+DEF_CONTAINER_MARSHALLER(QListKPartsReadOnlyPart, QList<KParts::ReadOnlyPart*>)
 
 Marshall::TypeHandler KPartsHandlers[] = {
+    { "QList<KParts::Part*>", marshall_QListKPartsPart },
+    { "QList<KParts::Plugin*>", marshall_QListKPartsPlugin },
+    { "QList<KParts::Plugin::PluginInfo>", marshall_QListKPartsPluginPluginInfo },
+    { "QList<KParts::Plugin::PluginInfo>&", marshall_QListKPartsPluginPluginInfo },
+    { "QList<KParts::ReadOnlyPart*>", marshall_QListKPartsReadOnlyPart },
     { 0, 0 }
 };
 
 void registerKPartsTypes(QScriptEngine * engine)
 {
+    qScriptSmokeRegisterSequenceMetaType<QList<KParts::Plugin::PluginInfo> >(engine);
+
+    qScriptSmokeRegisterPointerSequenceMetaType<QList<KParts::Part*> >(engine);
+    qScriptSmokeRegisterPointerSequenceMetaType<QList<KParts::Plugin*> >(engine);
+    qScriptSmokeRegisterPointerSequenceMetaType<QList<KParts::ReadOnlyPart*> >(engine);
+
     return;
 }
 

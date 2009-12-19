@@ -25,7 +25,7 @@
 
 #include <smoke/qtnetwork_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtNetworkHandlers[];
 extern void registerQtNetworkTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtnetwork_Smoke();
-        QtScriptSmoke::Module qtnetwork_module = { "qtnetwork", new QtScriptSmoke::Binding(qtnetwork_Smoke) };
-        QtScriptSmoke::Global::modules[qtnetwork_Smoke] = qtnetwork_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtNetworkHandlers);
+        JSmoke::Module qtnetwork_module = { "qtnetwork", new JSmoke::Binding(qtnetwork_Smoke) };
+        JSmoke::Global::modules[qtnetwork_Smoke] = qtnetwork_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtNetworkHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtnetwork_Smoke);
-    QtScriptSmoke::registerQtNetworkTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtnetwork_Smoke);
+    JSmoke::registerQtNetworkTypes(engine);
     
     return;
     

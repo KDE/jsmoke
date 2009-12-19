@@ -1,8 +1,6 @@
 /*
  *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
 
- *   Based on the PerlQt marshalling code by Ashley Winters
-
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -23,16 +21,24 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
-    
+#include <solid/device.h>
 
+Q_DECLARE_METATYPE(QList<Solid::Device>)
+Q_DECLARE_METATYPE(Solid::Device)
+
+namespace JSmoke {
+
+DEF_CONTAINER_MARSHALLER(QListSolidDevice, QList<Solid::Device>)
 
 Marshall::TypeHandler SolidHandlers[] = {
+    { "QList<Solid::Device>", marshall_QListSolidDevice },
     { 0, 0 }
 };
 
 void registerSolidTypes(QScriptEngine * engine)
 {
+    qScriptSmokeRegisterSequenceMetaType<QList<Solid::Device> >(engine);
+
     return;
 }
 

@@ -1,8 +1,6 @@
 /*
  *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
 
- *   Based on the PerlQt marshalling code by Ashley Winters
-
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -23,16 +21,24 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
-    
+#include <kcmoduleproxy.h>
 
+Q_DECLARE_METATYPE(KCModuleProxy*)
+Q_DECLARE_METATYPE(QList<KCModuleProxy*>)
+
+namespace JSmoke {
+
+DEF_CONTAINER_MARSHALLER(QListKCModuleProxy, QList<KCModuleProxy*>)
 
 Marshall::TypeHandler KUtilsHandlers[] = {
+    { "QList<KCModuleProxy*>&", marshall_QListKCModuleProxy },
     { 0, 0 }
 };
 
 void registerKUtilsTypes(QScriptEngine * engine)
 {
+    qScriptSmokeRegisterPointerSequenceMetaType<QList<KCModuleProxy*> >(engine);
+
     return;
 }
 

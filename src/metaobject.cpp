@@ -38,7 +38,7 @@
 #include "utils.h"
 #include "global.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
     
 // This will be called for any call() invocation, not just something like 
@@ -61,7 +61,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     args.property("shift").call(args);
     constructorContext->activationObject().setProperty("arguments", args);
     
-    QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(    classId, 
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = JSmoke::resolveMethod(    classId, 
                                                                                         classId.smoke->classes[classId.index].className,                                                                                        constructorContext );
     if (matches.count() == 0) {
         QString message = QString("overloaded %1() constructor not resolved").arg(classId.smoke->classes[classId.index].className);
@@ -73,23 +73,24 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
 
-    QtScriptSmoke::MethodCall methodCall(classId.smoke, matches[0].first.index, constructorContext, constructorContext->engine());
+    JSmoke::MethodCall methodCall(classId.smoke, matches[0].first.index, constructorContext, constructorContext->engine());
     methodCall.next();
     engine->popContext();
     return engine->undefinedValue();
 }
 
-MetaObject::MetaObject( QScriptEngine* engine, const QByteArray& className, Object * object )
-    : QScriptClass( engine )
-    , m_className( className )
-    , m_classId( qtcore_Smoke->findClass(className.constData()) )
-    , m_object( object )
+MetaObject::MetaObject(QScriptEngine* engine, const QByteArray& className, Object* object)
+    : QScriptClass(engine),
+    m_className(className),
+    m_classId(qtcore_Smoke->findClass(className.constData())),
+    m_object(object)
 { 
     m_proto = engine->newObject();
 }
 
 MetaObject::~MetaObject()
-{  }
+{  
+}
 
 QScriptValue
 MetaObject::prototype() const
@@ -98,7 +99,7 @@ MetaObject::prototype() const
 }
 
 QScriptValue::PropertyFlags 
-MetaObject::propertyFlags(const QScriptValue& object, const QScriptString& name, uint id)
+MetaObject::propertyFlags(const QScriptValue& /*object*/, const QScriptString& /*name*/, uint /*id*/)
 {
     // qDebug() << "MetaObject::propertyFlags(" << m_className << name << "," << id << ")";
     return  QScriptValue::Undeletable 
@@ -107,7 +108,7 @@ MetaObject::propertyFlags(const QScriptValue& object, const QScriptString& name,
 }
 
 QScriptClass::QueryFlags
-MetaObject::queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id)
+MetaObject::queryProperty(const QScriptValue& /*object*/, const QScriptString& name, QueryFlags flags, uint* id)
 {
     QByteArray propertyName(name.toString().toLatin1());
     
@@ -160,7 +161,7 @@ MetaObject::property(const QScriptValue& object, const QScriptString & name, uin
         if (methodId.index != 0) {
             Smoke::Index ix = methodId.smoke->methodMaps[methodId.index].method;
             if (ix > 0 && (m_classId.smoke->methods[ix].flags & Smoke::mf_enum) != 0) {
-                QtScriptSmoke::MethodCall methodCall(m_classId.smoke, ix, object.engine()->currentContext(), object.engine());
+                JSmoke::MethodCall methodCall(m_classId.smoke, ix, object.engine()->currentContext(), object.engine());
                 methodCall.next();
                 return *(methodCall.var());
             }
@@ -177,7 +178,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
 {
     if (extension == Callable) {
         QScriptContext *context = qvariant_cast<QScriptContext*>(argument);
-        QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(m_classId, m_className.constData(), context);
+        QVector<QPair<Smoke::ModuleIndex, int> > matches = JSmoke::resolveMethod(m_classId, m_className.constData(), context);
 
         if (matches.count() == 0) {
             QString message = QString("overloaded %1() constructor not resolved").arg(m_className.constData());
@@ -194,7 +195,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         context->thisObject().setScriptClass(object());
         context->thisObject().setProperty("prototype", m_proto);
 
-        QtScriptSmoke::MethodCall methodCall(m_classId.smoke, matches[0].first.index, context, context->engine());
+        JSmoke::MethodCall methodCall(m_classId.smoke, matches[0].first.index, context, context->engine());
         methodCall.next();
         
         // Set the 'this object' in case an exception has been thrown in the method call

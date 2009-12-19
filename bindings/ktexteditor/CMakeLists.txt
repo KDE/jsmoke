@@ -8,6 +8,7 @@ target_link_libraries(  jsmokektexteditor
                             ${QT_QTGUI_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
                             ${SMOKE_QTCORE_LIBRARY} 
+                            ${KDE4_KTEXTEDITOR_LIBS} 
                             smokektexteditor 
                             jsmokeruntime )
 

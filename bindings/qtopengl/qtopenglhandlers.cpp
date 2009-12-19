@@ -23,14 +23,14 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
    
 Marshall::TypeHandler QtOpenGLHandlers[] = {
     
     { 0, 0 }
 };
 
-void registerQtOpenGLTypes(QScriptEngine * engine) 
+void registerQtOpenGLTypes(QScriptEngine * /*engine*/) 
 {   
  
     return;

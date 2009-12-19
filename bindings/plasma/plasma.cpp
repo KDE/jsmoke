@@ -25,7 +25,7 @@
 
 #include <smoke/plasma_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler PlasmaHandlers[];
 extern void registerPlasmaTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_plasma_Smoke();
-        QtScriptSmoke::Module plasma_module = { "plasma", new QtScriptSmoke::Binding(plasma_Smoke) };
-        QtScriptSmoke::Global::modules[plasma_Smoke] = plasma_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::PlasmaHandlers);
+        JSmoke::Module plasma_module = { "plasma", new JSmoke::Binding(plasma_Smoke) };
+        JSmoke::Global::modules[plasma_Smoke] = plasma_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::PlasmaHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, plasma_Smoke);
-    QtScriptSmoke::registerPlasmaTypes(engine);
+    JSmoke::Global::initializeClasses(engine, plasma_Smoke);
+    JSmoke::registerPlasmaTypes(engine);
     
     return;
     

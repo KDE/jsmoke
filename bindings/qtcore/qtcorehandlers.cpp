@@ -46,10 +46,16 @@
 #include <global.h>
 #include <marshall.h>
 #include <marshallmacros.h>
+#include <object.h>
 
+Q_DECLARE_METATYPE(QDate)
+Q_DECLARE_METATYPE(QDateTime)
+Q_DECLARE_METATYPE(QTime)
 Q_DECLARE_METATYPE(QFileInfo)
 Q_DECLARE_METATYPE(QLocale::Country)
 Q_DECLARE_METATYPE(QModelIndex)
+Q_DECLARE_METATYPE(QList<QRegExp>)
+Q_DECLARE_METATYPE(QRegExp)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QXmlStreamEntityDeclaration)
 Q_DECLARE_METATYPE(QXmlStreamNamespaceDeclaration)
@@ -57,6 +63,9 @@ Q_DECLARE_METATYPE(QXmlStreamNotationDeclaration)
 
 Q_DECLARE_METATYPE(QList<int>)
 Q_DECLARE_METATYPE(QList<QByteArray>)                                                                                                              
+Q_DECLARE_METATYPE(QList<QDate>)                                                                                                              
+Q_DECLARE_METATYPE(QList<QDateTime>)                                                                                                              
+Q_DECLARE_METATYPE(QList<QTime>)                                                                                                              
 Q_DECLARE_METATYPE(QList<QFileInfo>)                                                                                                              
 Q_DECLARE_METATYPE(QList<QLocale::Country>)
 Q_DECLARE_METATYPE(QList<QModelIndex>)
@@ -81,7 +90,7 @@ Q_DECLARE_METATYPE(QVector<QXmlStreamNamespaceDeclaration>)
 Q_DECLARE_METATYPE(QVector<QXmlStreamNotationDeclaration>)
 Q_DECLARE_METATYPE(QVector<unsigned int>)
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
 static void marshall_QString(Marshall *m) {
     switch(m->action()) {
@@ -153,8 +162,6 @@ static void marshall_CString(Marshall *m) {
     switch(m->action()) {
     case Marshall::FromQScriptValue:
     {
-        QString * s = 0;
-        
         if (m->var()->isNull()) {
             m->item().s_voidp = 0;
             return;
@@ -246,10 +253,14 @@ DEF_CONTAINER_MARSHALLER(QStringList, QStringList)
 
 DEF_CONTAINER_MARSHALLER(QListInt, QList<int>)
 DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)                                                                                                             
+DEF_CONTAINER_MARSHALLER(QListQDate, QList<QDate>)                                                                                                             
+DEF_CONTAINER_MARSHALLER(QListQDateTime, QList<QDateTime>)                                                                                                             
+DEF_CONTAINER_MARSHALLER(QListQTime, QList<QTime>)                                                                                                             
 DEF_CONTAINER_MARSHALLER(QListQFileInfo, QList<QFileInfo>)                                                                                                               
 DEF_CONTAINER_MARSHALLER(QListQModelIndex, QList<QModelIndex>)
 DEF_CONTAINER_MARSHALLER(QListQReal, QList<qreal>)
 DEF_CONTAINER_MARSHALLER(QListQRectF, QList<QRectF>)
+DEF_CONTAINER_MARSHALLER(QListQRegExp, QList<QRegExp>)
 DEF_CONTAINER_MARSHALLER(QListQSize, QList<QSize>)
 DEF_CONTAINER_MARSHALLER(QListQUrl, QList<QUrl>)
 DEF_CONTAINER_MARSHALLER(QListQVariant, QList<QVariant>)
@@ -276,7 +287,14 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<int>", marshall_QListInt },
     { "QList<int>*", marshall_QListInt },
     { "QList<int>&", marshall_QListInt },
+    { "QList<QByteArray>", marshall_QListQByteArray },                                                                                                  
     { "QList<QByteArray>&", marshall_QListQByteArray },                                                                                                  
+    { "QList<QDate>&", marshall_QListQDate },                                                                                                  
+    { "QList<QDate>", marshall_QListQDate },                                                                                                  
+    { "QList<QDateTime>&", marshall_QListQDateTime },                                                                                                  
+    { "QList<QDateTime>", marshall_QListQDateTime },                                                                                                  
+    { "QList<Time>&", marshall_QListQDateTime },                                                                                                  
+    { "QList<Time>", marshall_QListQTime },                                                                                                  
     { "QList<QFileInfo>&", marshall_QListQFileInfo },                                                                                                   
     { "QList<QLocale::Country>", marshall_QListEnum },
     { "QList<QModelIndex>&", marshall_QListQModelIndex },                                                                                           
@@ -286,6 +304,7 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<qreal>", marshall_QListQReal },
     { "QList<qreal>&", marshall_QListQReal },
     { "QList<QRectF>&", marshall_QListQRectF },
+    { "QList<QRegExp>&", marshall_QListQRegExp },
     { "QList<QSize>&", marshall_QListQSize },
     { "QList<QUrl>&", marshall_QListQUrl },
     { "QList<QVariant>", marshall_QListQVariant },
@@ -341,9 +360,13 @@ void registerQtCoreTypes(QScriptEngine * engine)
     qScriptSmokeRegisterSequenceMetaType<QVector<QRectF> >(engine);
     
     qScriptSmokeRegisterSequenceMetaType<QList<QByteArray> >(engine);                                                                                                            
+    qScriptSmokeRegisterSequenceMetaType<QList<QDate> >(engine);                                                                                                            
+    qScriptSmokeRegisterSequenceMetaType<QList<QDateTime> >(engine);                                                                                                            
+    qScriptSmokeRegisterSequenceMetaType<QList<QTime> >(engine);                                                                                                            
     qScriptSmokeRegisterSequenceMetaType<QList<QFileInfo> >(engine);                                                                                                              
     qScriptSmokeRegisterSequenceMetaType<QList<QModelIndex> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QRectF> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QRegExp> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QSize> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QUrl> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QVariant> >(engine);

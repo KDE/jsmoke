@@ -23,7 +23,7 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 
 
@@ -31,7 +31,7 @@ Marshall::TypeHandler kHTMLHandlers[] = {
     { 0, 0 }
 };
 
-void registerkHTMLTypes(QScriptEngine * engine)
+void registerkHTMLTypes(QScriptEngine * /*engine*/)
 {
     return;
 }

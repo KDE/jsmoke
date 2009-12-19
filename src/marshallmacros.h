@@ -19,15 +19,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QTSCRIPT_SMOKE_MARSHALL_MACROS_H
-#define QTSCRIPT_SMOKE_MARSHALL_MACROS_H
+#ifndef JSMOKE_MARSHALL_MACROS_H
+#define JSMOKE_MARSHALL_MACROS_H
 
 #include "marshall.h"
+#include "object.h"
 
 #define DEF_CONTAINER_MARSHALLER(ContainerIdentifier, Container)  \
         Marshall::HandlerFn marshall_##ContainerIdentifier = marshall_Container<Container>;
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 template <class Container>
 void marshall_Container(Marshall *m) {
@@ -77,12 +78,12 @@ void marshall_Container(Marshall *m) {
 
 inline QScriptValue qScriptSmokeValueFromSequence_helper(QScriptEngine *eng, Smoke::ModuleIndex classId, void * ptr)
 {
-    QScriptValue * value = QtScriptSmoke::Global::getScriptValue(ptr);
+    QScriptValue * value = JSmoke::Global::getScriptValue(ptr);
     if (value != 0) {
         return *value;
     }
     
-    return QtScriptSmoke::Global::wrapInstance(eng, classId, ptr);
+    return JSmoke::Global::wrapInstance(eng, classId, ptr);
 }
 
 template <class Container>
@@ -104,7 +105,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
 
 inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, Smoke::ModuleIndex classId)
 {
-    QtScriptSmoke::Object::Instance * instance = QtScriptSmoke::Object::Instance::get(item);
+    JSmoke::Object::Instance * instance = JSmoke::Object::Instance::get(item);
     return instance->classId.smoke->cast(instance->value, instance->classId, classId);
 }
 

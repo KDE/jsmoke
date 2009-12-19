@@ -19,42 +19,43 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QTSCRIPT_VIRTUAL_METHOD_RETURN_VALUE_H
-#define QTSCRIPT_VIRTUAL_METHOD_RETURN_VALUE_H
+#ifndef JSMOKE_VIRTUAL_METHOD_RETURN_VALUE_H
+#define JSMOKE_VIRTUAL_METHOD_RETURN_VALUE_H
 
 #include <smoke.h>
+
 #include "marshall.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
-class Q_DECL_EXPORT VirtualMethodReturnValue : public Marshall {
-public:
-	VirtualMethodReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue);
+    class VirtualMethodReturnValue : public Marshall {
+    public:
+        VirtualMethodReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue);
 
-	inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
-	inline SmokeType type() { return m_type; }
-	inline Marshall::Action action() { return Marshall::FromQScriptValue; }
-	inline Smoke::StackItem &item() { return m_stack[0]; }
-    inline QScriptEngine * engine() { return 0; }
-	inline QScriptValue * var() { return &m_returnValue; }
-	inline Smoke *smoke() { return m_smoke; }
-	inline bool cleanup() { return false; }
+        inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
+        inline SmokeType type() { return m_type; }
+        inline Marshall::Action action() { return Marshall::FromQScriptValue; }
+        inline Smoke::StackItem &item() { return m_stack[0]; }
+        inline QScriptEngine * engine() { return 0; }
+        inline QScriptValue * var() { return &m_returnValue; }
+        inline Smoke *smoke() { return m_smoke; }
+        inline bool cleanup() { return false; }
 
-	void unsupported();
-	void next();
-    
-private:
-    Smoke *m_smoke;
-    Smoke::Index m_method;
-    Smoke::Stack m_stack;
-    SmokeType m_type;
-    QScriptValue m_returnValue;
+        void unsupported();
+        void next();
+        
+    private:
+        Smoke *m_smoke;
+        Smoke::Index m_method;
+        Smoke::Stack m_stack;
+        SmokeType m_type;
+        QScriptValue m_returnValue;
 
-};
+    };
 
 }
 
-#endif // QTSCRIPT_VIRTUAL_METHOD_RETURN_VALUE_H
+#endif // JSMOKE_VIRTUAL_METHOD_RETURN_VALUE_H
 
 // kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;
 

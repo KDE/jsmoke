@@ -31,7 +31,7 @@
 Q_DECLARE_METATYPE(QLocale::Country)
 Q_DECLARE_METATYPE(QList<QLocale::Country>)
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 static void marshall_basetype(Marshall *m)
 {
@@ -286,7 +286,7 @@ static void marshall_basetype(Marshall *m)
 
             if (value.isNull()) {
                 m->item().s_enum = 0;
-            } else if (value.instanceOf(QtScriptSmoke::Global::QtEnum)) {
+            } else if (value.instanceOf(JSmoke::Global::QtEnum)) {
                 m->item().s_enum = value.property("value").toUInt32();
             } else {
                 m->item().s_enum = value.toUInt32();
@@ -297,7 +297,7 @@ static void marshall_basetype(Marshall *m)
         {
             QScriptValueList args;
             args << (uint) m->item().s_enum << m->type().name();
-            *(m->var()) = QtScriptSmoke::Global::QtEnum.call(QScriptValue(), args);
+            *(m->var()) = JSmoke::Global::QtEnum.call(QScriptValue(), args);
             break;
         }
         default:
@@ -319,11 +319,11 @@ static void marshall_basetype(Marshall *m)
             
             if (value.isDate()) {
                 Smoke::ModuleIndex classId = qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className);
-                if (classId == QtScriptSmoke::Global::QDateClassId) {
+                if (classId == JSmoke::Global::QDateClassId) {
                     m->item().s_class = new QDate(value.toDateTime().date());
-                } else if (classId == QtScriptSmoke::Global::QDateTimeClassId) {
+                } else if (classId == JSmoke::Global::QDateTimeClassId) {
                      m->item().s_class = new QDateTime(value.toDateTime());
-                } else if (classId == QtScriptSmoke::Global::QTimeClassId) {
+                } else if (classId == JSmoke::Global::QTimeClassId) {
                      m->item().s_class = new QTime(value.toDateTime().time());
                 } else {
                     m->item().s_class = 0;
@@ -363,7 +363,7 @@ static void marshall_basetype(Marshall *m)
             }
             
             void * ptr = m->item().s_voidp;
-            QScriptValue * value = QtScriptSmoke::Global::getScriptValue(ptr);
+            QScriptValue * value = JSmoke::Global::getScriptValue(ptr);
             
             if (value != 0) {
                 *(m->var()) = *value;

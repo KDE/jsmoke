@@ -19,51 +19,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QTSCRIPT_VIRTUAL_METHOD_CALL_H
-#define QTSCRIPT_VIRTUAL_METHOD_CALL_H
+#ifndef JSMOKE_VIRTUAL_METHOD_CALL_H
+#define JSMOKE_VIRTUAL_METHOD_CALL_H
 
 #include <smoke.h>
 #include "marshall.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
-class Q_DECL_EXPORT VirtualMethodCall : public Marshall {
+    class VirtualMethodCall : public Marshall {
 
-public:
-    VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod);
+    public:
+        VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod);
 
-    ~VirtualMethodCall();
+        ~VirtualMethodCall();
 
-    inline SmokeType type() { return SmokeType(m_smoke, m_args[m_current]); }
-    inline Marshall::Action action() { return Marshall::ToQScriptValue; }
-    inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
-    inline QScriptEngine * engine() { return m_engine; }
-    inline QScriptValue * var() { return &(m_valueList[m_current]); }
-    inline const Smoke::Method &method() { return m_methodRef; }
-    inline Smoke *smoke() { return m_smoke; }
-    inline bool cleanup() { return false; }   // is this right?
+        inline SmokeType type() { return SmokeType(m_smoke, m_args[m_current]); }
+        inline Marshall::Action action() { return Marshall::ToQScriptValue; }
+        inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
+        inline QScriptEngine * engine() { return m_engine; }
+        inline QScriptValue * var() { return &(m_valueList[m_current]); }
+        inline const Smoke::Method &method() { return m_methodRef; }
+        inline Smoke *smoke() { return m_smoke; }
+        inline bool cleanup() { return false; }   // is this right?
 
-    void unsupported();
-    void callMethod();
-    void next();
-    
-private:
-    Smoke * m_smoke;
-    Smoke::Index m_method;
-    Smoke::Stack m_stack;
-    QScriptEngine * m_engine;
-    QScriptValue m_obj;
-    QScriptValue m_overridenMethod;
-    int m_current;
-    Smoke::Index * m_args;
-    QScriptValueList m_valueList;
-    bool m_called;
-    Smoke::Method & m_methodRef;
-};
+        void unsupported();
+        void callMethod();
+        void next();
+        
+    private:
+        Smoke * m_smoke;
+        Smoke::Index m_method;
+        Smoke::Stack m_stack;
+        QScriptEngine * m_engine;
+        QScriptValue m_obj;
+        QScriptValue m_overridenMethod;
+        int m_current;
+        Smoke::Index * m_args;
+        QScriptValueList m_valueList;
+        bool m_called;
+        Smoke::Method & m_methodRef;
+    };
 
 }
 
-#endif // QTSCRIPT_VIRTUAL_METHOD_CALL_H
+#endif // JSMOKE_VIRTUAL_METHOD_CALL_H
 
 // kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;
 

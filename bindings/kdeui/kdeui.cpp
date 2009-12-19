@@ -25,7 +25,7 @@
 
 #include <smoke/kdeui_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KDEUiHandlers[];
 extern void registerKDEUiTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_kdeui_Smoke();
-        QtScriptSmoke::Module kdeui_module = { "kdeui", new QtScriptSmoke::Binding(kdeui_Smoke) };
-        QtScriptSmoke::Global::modules[kdeui_Smoke] = kdeui_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KDEUiHandlers);
+        JSmoke::Module kdeui_module = { "kdeui", new JSmoke::Binding(kdeui_Smoke) };
+        JSmoke::Global::modules[kdeui_Smoke] = kdeui_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KDEUiHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, kdeui_Smoke);
-    QtScriptSmoke::registerKDEUiTypes(engine);
+    JSmoke::Global::initializeClasses(engine, kdeui_Smoke);
+    JSmoke::registerKDEUiTypes(engine);
     
     return;
     

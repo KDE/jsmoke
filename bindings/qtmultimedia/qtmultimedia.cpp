@@ -25,7 +25,7 @@
 
 #include <smoke/qtmultimedia_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtMultimediaHandlers[];
 extern void registerQtMultimediaTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtmultimedia_Smoke();
-        QtScriptSmoke::Module qtmultimedia_module = { "qtmultimedia", new QtScriptSmoke::Binding(qtmultimedia_Smoke) };
-        QtScriptSmoke::Global::modules[qtmultimedia_Smoke] = qtmultimedia_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtMultimediaHandlers);
+        JSmoke::Module qtmultimedia_module = { "qtmultimedia", new JSmoke::Binding(qtmultimedia_Smoke) };
+        JSmoke::Global::modules[qtmultimedia_Smoke] = qtmultimedia_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtMultimediaHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtmultimedia_Smoke);
-    QtScriptSmoke::registerQtMultimediaTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtmultimedia_Smoke);
+    JSmoke::registerQtMultimediaTypes(engine);
     
     return;
     

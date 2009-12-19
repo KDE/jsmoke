@@ -19,61 +19,63 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QTSCRIPT_METHOD_CALL_H
-#define QTSCRIPT_METHOD_CALL_H
+#ifndef JSMOKE_METHOD_CALL_H
+#define JSMOKE_METHOD_CALL_H
 
 #include <smoke.h>
+
+#include "jsmoke_export.h"
 #include "marshall.h"
 #include "metaobject.h"
 
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
-class Q_DECL_EXPORT MethodCall : public Marshall {
-    
-public:
-    MethodCall(Smoke * smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine);
-    ~MethodCall();
+    class JSMOKE_EXPORT MethodCall : public Marshall {
+        
+    public:
+        MethodCall(Smoke * smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine);
+        ~MethodCall();
 
-    inline SmokeType type() { return SmokeType(m_smoke, m_args[m_current]); }
-    inline Marshall::Action action() { return Marshall::FromQScriptValue; }
-    inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
-    inline QScriptEngine * engine() { return m_engine; }
-    inline QScriptValue * var() {
-        if (m_current < 0 || m_error) {
-            return &m_returnValue;
+        inline SmokeType type() { return SmokeType(m_smoke, m_args[m_current]); }
+        inline Marshall::Action action() { return Marshall::FromQScriptValue; }
+        inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
+        inline QScriptEngine * engine() { return m_engine; }
+        inline QScriptValue * var() {
+            if (m_current < 0 || m_error) {
+                return &m_returnValue;
+            }
+            
+            return &(m_valueList[m_current]);
         }
-        
-        return &(m_valueList[m_current]);
-    }
-    inline Smoke *smoke() { return m_smoke; }
-    inline bool cleanup() { return true; }
+        inline Smoke *smoke() { return m_smoke; }
+        inline bool cleanup() { return true; }
 
-    void unsupported();
+        void unsupported();
 
-    void callMethod();
-    void next();
-        
-private:
-    int m_current;
-    Smoke * m_smoke;
-    Smoke::Stack m_stack;
-    Smoke::Index m_method;
-    Smoke::Index * m_args;
-    QScriptContext * m_context;
-    QScriptEngine * m_engine;
-    QScriptValue m_target;
-    QtScriptSmoke::Object::Instance * m_instance;
-    QScriptValue m_returnValue;
-    QScriptValueList m_valueList;
-    bool m_called;
-    bool m_error;
-    Smoke::Method & m_methodRef;
-};
+        void callMethod();
+        void next();
+            
+    private:
+        int m_current;
+        Smoke * m_smoke;
+        Smoke::Stack m_stack;
+        Smoke::Index m_method;
+        Smoke::Index * m_args;
+        QScriptContext * m_context;
+        QScriptEngine * m_engine;
+        QScriptValue m_target;
+        JSmoke::Object::Instance * m_instance;
+        QScriptValue m_returnValue;
+        QScriptValueList m_valueList;
+        bool m_called;
+        bool m_error;
+        Smoke::Method & m_methodRef;
+    };
 
 }
 
-#endif // QTSCRIPT_METHOD_CALL_H
+#endif // JSMOKE_METHOD_CALL_H
 
 // kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;
 

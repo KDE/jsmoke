@@ -25,7 +25,7 @@
 
 #include <smoke/qtuitools_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtUiToolsHandlers[];
 extern void registerQtUiToolsTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtuitools_Smoke();
-        QtScriptSmoke::Module qtuitools_module = { "qtuitools", new QtScriptSmoke::Binding(qtuitools_Smoke) };
-        QtScriptSmoke::Global::modules[qtuitools_Smoke] = qtuitools_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtUiToolsHandlers);
+        JSmoke::Module qtuitools_module = { "qtuitools", new JSmoke::Binding(qtuitools_Smoke) };
+        JSmoke::Global::modules[qtuitools_Smoke] = qtuitools_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtUiToolsHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtuitools_Smoke);
-    QtScriptSmoke::registerQtUiToolsTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtuitools_Smoke);
+    JSmoke::registerQtUiToolsTypes(engine);
     
     return;
     

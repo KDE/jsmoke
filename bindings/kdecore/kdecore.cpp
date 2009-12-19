@@ -25,7 +25,7 @@
 
 #include <smoke/kdecore_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KDECoreHandlers[];
 extern void registerKDECoreTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_kdecore_Smoke();
-        QtScriptSmoke::Module kdecore_module = { "kdecore", new QtScriptSmoke::Binding(kdecore_Smoke) };
-        QtScriptSmoke::Global::modules[kdecore_Smoke] = kdecore_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KDECoreHandlers);
+        JSmoke::Module kdecore_module = { "kdecore", new JSmoke::Binding(kdecore_Smoke) };
+        JSmoke::Global::modules[kdecore_Smoke] = kdecore_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KDECoreHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, kdecore_Smoke);
-    QtScriptSmoke::registerKDECoreTypes(engine);
+    JSmoke::Global::initializeClasses(engine, kdecore_Smoke);
+    JSmoke::registerKDECoreTypes(engine);
     
     return;
     

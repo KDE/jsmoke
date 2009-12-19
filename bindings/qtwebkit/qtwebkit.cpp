@@ -25,7 +25,7 @@
 
 #include <smoke/qtwebkit_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtWebKitHandlers[];
 extern void registerQtWebKitTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtwebkit_Smoke();
-        QtScriptSmoke::Module qtwebkit_module = { "qtwebkit", new QtScriptSmoke::Binding(qtwebkit_Smoke) };
-        QtScriptSmoke::Global::modules[qtwebkit_Smoke] = qtwebkit_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtWebKitHandlers);
+        JSmoke::Module qtwebkit_module = { "qtwebkit", new JSmoke::Binding(qtwebkit_Smoke) };
+        JSmoke::Global::modules[qtwebkit_Smoke] = qtwebkit_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtWebKitHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtwebkit_Smoke);
-    QtScriptSmoke::registerQtWebKitTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtwebkit_Smoke);
+    JSmoke::registerQtWebKitTypes(engine);
     
     return;
     

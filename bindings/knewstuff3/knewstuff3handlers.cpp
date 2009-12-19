@@ -23,7 +23,7 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 
 
@@ -31,7 +31,7 @@ Marshall::TypeHandler KNewStuff3Handlers[] = {
     { 0, 0 }
 };
 
-void registerKNewStuff3Types(QScriptEngine * engine)
+void registerKNewStuff3Types(QScriptEngine * /*engine*/)
 {
     return;
 }

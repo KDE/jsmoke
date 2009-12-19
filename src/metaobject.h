@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Ian Monroe <imonroe@kde.org>
+ * Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,8 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STATIC_CLASS_H
-#define STATIC_CLASS_H
+#ifndef JSMOKE_META_OBJECT_H
+#define JSMOKE_META_OBJECT_H
 
 #include <QScriptClass>
 #include <QScriptEngine>
@@ -29,29 +30,30 @@
 
 #include "object.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
    
-//!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
-class MetaObject : public QScriptClass
-{
+    //!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
+    class MetaObject : public QScriptClass
+    {
     public:
-        MetaObject( QScriptEngine*, const QByteArray& className, Object * object );
+        MetaObject( QScriptEngine*, const QByteArray& className, Object* object );
         ~MetaObject();
         QScriptValue prototype() const;
-        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
-        QueryFlags queryProperty( const QScriptValue & object, const QScriptString & name, QueryFlags flags, uint * id );
-        QScriptValue property ( const QScriptValue & object, const QScriptString & name, uint id );
-        QVariant extension( QScriptClass::Extension extension, const QVariant& argument );
-        bool supportsExtension( QScriptClass::Extension extension ) const;
+        QScriptValue::PropertyFlags propertyFlags (const QScriptValue & object, const QScriptString& name, uint id);
+        QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint * id);
+        QScriptValue property (const QScriptValue& object, const QScriptString& name, uint id);
+        QVariant extension(QScriptClass::Extension extension, const QVariant& argument);
+        bool supportsExtension(QScriptClass::Extension extension) const;
         QString name() const;
         Smoke::ModuleIndex classId() { return m_classId; };
-        Object * object() { return m_object; };
+        Object* object() { return m_object; };
+        
     private:
         QByteArray m_className;
         Smoke::ModuleIndex m_classId;
         Object* m_object;
         QScriptValue m_proto;
-};
+    };
 
 }
 

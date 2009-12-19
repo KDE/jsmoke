@@ -24,14 +24,14 @@
 #include "marshallmacros.h"
 
 
-namespace QtScriptSmoke {
+namespace JSmoke {
    
 Marshall::TypeHandler QtXmlHandlers[] = {
     
     { 0, 0 }
 };
 
-void registerQtXmlTypes(QScriptEngine * engine) 
+void registerQtXmlTypes(QScriptEngine * /*engine*/) 
 {   
  
     return;

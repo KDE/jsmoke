@@ -47,7 +47,7 @@ Q_DECLARE_METATYPE(QList<QWebFrame*>)
 //Q_DECLARE_METATYPE(QWebHistoryItem)
 //Q_DECLARE_METATYPE(QList<QWebHistoryItem>)
 
-namespace QtScriptSmoke {
+namespace JSmoke {
    
 DEF_CONTAINER_MARSHALLER(QListQWebFrame, QList<QWebFrame*>)
 DEF_CONTAINER_MARSHALLER(QListQWebPluginFactoryPlugin, QList<QWebPluginFactory::Plugin>)

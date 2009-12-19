@@ -25,7 +25,7 @@
 
 #include <smoke/qtopengl_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtOpenGLHandlers[];
 extern void registerQtOpenGLTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtopengl_Smoke();
-        QtScriptSmoke::Module qtopengl_module = { "qtopengl", new QtScriptSmoke::Binding(qtopengl_Smoke) };
-        QtScriptSmoke::Global::modules[qtopengl_Smoke] = qtopengl_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtOpenGLHandlers);
+        JSmoke::Module qtopengl_module = { "qtopengl", new JSmoke::Binding(qtopengl_Smoke) };
+        JSmoke::Global::modules[qtopengl_Smoke] = qtopengl_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtOpenGLHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtopengl_Smoke);
-    QtScriptSmoke::registerQtOpenGLTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtopengl_Smoke);
+    JSmoke::registerQtOpenGLTypes(engine);
     
     return;
     

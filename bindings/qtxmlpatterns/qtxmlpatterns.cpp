@@ -25,7 +25,7 @@
 
 #include <smoke/qtxmlpatterns_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtXmlPatternsHandlers[];
 extern void registerQtXmlPatternsTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtxmlpatterns_Smoke();
-        QtScriptSmoke::Module qtxmlpatterns_module = { "qtxmlpatterns", new QtScriptSmoke::Binding(qtxmlpatterns_Smoke) };
-        QtScriptSmoke::Global::modules[qtxmlpatterns_Smoke] = qtxmlpatterns_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtXmlPatternsHandlers);
+        JSmoke::Module qtxmlpatterns_module = { "qtxmlpatterns", new JSmoke::Binding(qtxmlpatterns_Smoke) };
+        JSmoke::Global::modules[qtxmlpatterns_Smoke] = qtxmlpatterns_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtXmlPatternsHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtxmlpatterns_Smoke);
-    QtScriptSmoke::registerQtXmlPatternsTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtxmlpatterns_Smoke);
+    JSmoke::registerQtXmlPatternsTypes(engine);
     
     return;
     

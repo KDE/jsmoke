@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Ian Monroe <imonroe@kde.org>
+ * Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,21 +19,22 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SAMPLEIMPL_H
-#define SAMPLEIMPL_H
+#ifndef JSMOKE_OBJECT_H
+#define JSMOKE_OBJECT_H
 
 #include <smoke.h>
+#include <jsmoke_export.h>
 
 #include <QScriptClass>
 #include <QScriptEngine>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
-//!When the user constructs an object, they get a scriptvalue of one of these.
-class Object : public QScriptClass
-{
+    //!When the user constructs an object, they get a scriptvalue of one of these.
+    class JSMOKE_EXPORT Object : public QScriptClass
+    {
     public:
-        Object( QScriptEngine* );
+        Object(QScriptEngine*);
         ~Object(); 
         
         class Instance {
@@ -42,26 +44,26 @@ class Object : public QScriptClass
             void dispose();
             virtual ~Instance();
 
-            static bool isSmokeObject(const QScriptValue &object);
-            static Instance *get(const QScriptValue &object);
-            static void set(QScriptValue &object, Instance * instance);
+            static bool isSmokeObject(const QScriptValue& object);
+            static Instance *get(const QScriptValue& object);
+            static void set(QScriptValue& object, Instance* instance);
 
         public:
-            void * value;
+            void* value;
             QScriptEngine::ValueOwnership ownership;
             Smoke::ModuleIndex classId;
         };
 
         typedef void (*TypeResolver)(Instance *);
         
-        QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
+        QScriptValue::PropertyFlags propertyFlags (const QScriptValue& object, const QScriptString& name, uint id);
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
         QString name() const;
-};
+    };
 
-class SmokeQObject : public Object 
-{
+    class JSMOKE_EXPORT SmokeQObject : public Object 
+    {
     public:
         SmokeQObject( QScriptEngine* );
         ~SmokeQObject(); 
@@ -77,13 +79,13 @@ class SmokeQObject : public Object
         QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
-        void setProperty(QScriptValue & object, const QScriptString & name, uint id, const QScriptValue & value);
+        void setProperty(QScriptValue& object, const QScriptString& name, uint id, const QScriptValue& value);
         QString name() const;
-};
+    };
 
 }
 
-Q_DECLARE_METATYPE( QtScriptSmoke::Object::Instance* )
-Q_DECLARE_METATYPE( QtScriptSmoke::SmokeQObject::Instance* )
+Q_DECLARE_METATYPE( JSmoke::Object::Instance* )
+Q_DECLARE_METATYPE( JSmoke::SmokeQObject::Instance* )
 
 #endif // SAMPLEIMPL_H

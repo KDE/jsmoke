@@ -29,7 +29,7 @@
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptContextInfo>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
 MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine) :
     m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), 
@@ -37,7 +37,7 @@ MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * conte
     m_methodRef(smoke->methods[method])
 {
     m_target = m_context->thisObject();
-    m_instance = QtScriptSmoke::Object::Instance::get(m_target); 
+    m_instance = JSmoke::Object::Instance::get(m_target); 
     m_args = m_smoke->argumentList + m_methodRef.args;
     m_stack = new Smoke::StackItem[m_methodRef.numArgs + 1];
 
@@ -116,10 +116,10 @@ void MethodCall::callMethod()
         m_instance->ownership = QScriptEngine::ScriptOwnership;
         
         Object::Instance::set(m_returnValue, m_instance);
-        QtScriptSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
+        JSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();
-        QtScriptSmoke::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
+        JSmoke::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
     }
     
     if ((Debug::DoDebug & Debug::Calls) != 0) {

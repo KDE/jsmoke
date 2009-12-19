@@ -25,7 +25,7 @@
 
 #include <smoke/kio_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KIOHandlers[];
 extern void registerKIOTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_kio_Smoke();
-        QtScriptSmoke::Module kio_module = { "kio", new QtScriptSmoke::Binding(kio_Smoke) };
-        QtScriptSmoke::Global::modules[kio_Smoke] = kio_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KIOHandlers);
+        JSmoke::Module kio_module = { "kio", new JSmoke::Binding(kio_Smoke) };
+        JSmoke::Global::modules[kio_Smoke] = kio_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KIOHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, kio_Smoke);
-    QtScriptSmoke::registerKIOTypes(engine);
+    JSmoke::Global::initializeClasses(engine, kio_Smoke);
+    JSmoke::registerKIOTypes(engine);
     
     return;
     

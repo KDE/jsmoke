@@ -1,3 +1,4 @@
+add_definitions(-DBUILD_JSMOKE)
 
 include_directories(${QT_INCLUDES} ${SMOKE_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -21,5 +22,5 @@ set_target_properties(jsmokeruntime PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(    TARGETS jsmokeruntime 
             DESTINATION ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} )
 
-install(    FILES global.h marshall.h marshallmacros.h metaobject.h object.h smokebinding.h 
+install(    FILES jsmoke_export.h global.h marshall.h marshallmacros.h metaobject.h object.h smokebinding.h 
             DESTINATION ${CMAKE_INSTALL_PREFIX}/include/jsmoke )

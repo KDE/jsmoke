@@ -23,7 +23,7 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 
 Marshall::TypeHandler QtSvgHandlers[] = {
@@ -31,7 +31,7 @@ Marshall::TypeHandler QtSvgHandlers[] = {
     { 0, 0 }
 };
 
-void registerQtSvgTypes(QScriptEngine * engine) 
+void registerQtSvgTypes(QScriptEngine * /*engine*/) 
 {   
 
     return;

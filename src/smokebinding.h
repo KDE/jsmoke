@@ -1,5 +1,6 @@
 /*
  * Copyright 2009 Ian Monroe <imonroe@kde.org>
+ * Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,28 +19,30 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QTSCRIPTSMOKEBINDING_H
-#define QTSCRIPTSMOKEBINDING_H
+#ifndef JSMOKE_SMOKE_BINDING_H
+#define JSMOKE_SMOKE_BINDING_H
 
+#include <QtCore/qglobal.h>
 #include <smoke.h>
+#include "jsmoke_export.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
-class Binding : public SmokeBinding
-{
+    class JSMOKE_EXPORT Binding : public SmokeBinding
+    {
     public:
         Binding() : SmokeBinding(0) {}
         Binding(Smoke* s);
         virtual char* className(Smoke::Index classId);
         virtual bool callMethod(Smoke::Index method, void* obj, Smoke::Stack args, bool isAbstract = false);
         virtual void deleted(Smoke::Index classId, void* obj);
-};
+    };
 
-struct Module {
-    const char *name;
-    Binding *binding;
-};
+    struct Module {
+        const char* name;
+        Binding* binding;
+    };
 
 }
 
-#endif // QTSCRIPTSMOKEBINDING_H
+#endif // JSMOKE_SMOKE_BINDING_H

@@ -29,7 +29,7 @@
 #include "global.h"
 #include "smoke/qtcore_smoke.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     namespace Debug {
         uint DoDebug = 0;
     }
@@ -37,8 +37,8 @@ namespace QtScriptSmoke {
     namespace Global {
 
         
-static QtScriptSmoke::Object * Object = 0;
-static QtScriptSmoke::SmokeQObject * SmokeQObject = 0;
+static JSmoke::Object * Object = 0;
+static JSmoke::SmokeQObject * SmokeQObject = 0;
 
 Smoke::ModuleIndex QObjectClassId;
 Smoke::ModuleIndex QDateClassId;
@@ -63,15 +63,15 @@ getScriptValue(void *ptr)
 
     if (!qscriptValues() || !qscriptValues()->contains(ptr)) {
         if (Debug::DoDebug & Debug::GC) {
-            qWarning("QtScriptSmoke::Global::getScriptValue %p -> nil", ptr);
+            qWarning("JSmoke::Global::getScriptValue %p -> nil", ptr);
             if (!qscriptValues()) {
-                qWarning("QtScriptSmoke::Global::getScriptValue qscriptValues deleted");
+                qWarning("JSmoke::Global::getScriptValue qscriptValues deleted");
             }
         }
         return 0;
     } else {
         if (Debug::DoDebug & Debug::GC) {
-            qWarning("QtScriptSmoke::Global::getScriptValue %p -> %p", ptr, (void *) qscriptValues()->operator[](ptr));
+            qWarning("JSmoke::Global::getScriptValue %p -> %p", ptr, (void *) qscriptValues()->operator[](ptr));
         }
         return qscriptValues()->operator[](ptr);
     }
@@ -92,7 +92,7 @@ unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr)
             if (Debug::DoDebug & Debug::GC) {
                 Object::Instance * instance = Object::Instance::get(*obj);
                 const char *className = instance->classId.smoke->classes[instance->classId.index].className;
-                qWarning("QtScriptSmoke::Global::unmapPointer (%s*)%p -> %p size: %d", className, ptr, obj, qscriptValues()->size() - 1);
+                qWarning("JSmoke::Global::unmapPointer (%s*)%p -> %p size: %d", className, ptr, obj, qscriptValues()->size() - 1);
             }
             
             qscriptValues()->remove(ptr);
@@ -123,7 +123,7 @@ mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId
         if (Debug::DoDebug & Debug::GC) {
             Object::Instance * instance = Object::Instance::get(*obj);
             const char *className = instance->classId.smoke->classes[instance->classId.index].className;
-            qWarning("QtScriptSmoke::Global::mapPointer (%s*)%p -> %p size: %d", className, ptr, (void*)obj, qscriptValues()->size() + 1);
+            qWarning("JSmoke::Global::mapPointer (%s*)%p -> %p size: %d", className, ptr, (void*)obj, qscriptValues()->size() + 1);
         }
         
         qscriptValues()->insert(ptr, obj);
@@ -244,8 +244,8 @@ void
 initializeClasses(QScriptEngine * engine, Smoke * smoke)
 {
     if (Global::Object == 0) {
-        Global::Object = new QtScriptSmoke::Object(engine);
-        Global::SmokeQObject = new QtScriptSmoke::SmokeQObject(engine);
+        Global::Object = new JSmoke::Object(engine);
+        Global::SmokeQObject = new JSmoke::SmokeQObject(engine);
     }
     
     for (int i = 1; i <= smoke->numClasses; i++) {
@@ -257,9 +257,9 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         QScriptClass * klass = 0;
         
         if (smoke->isDerivedFrom(Smoke::ModuleIndex(smoke, i), Global::QObjectClassId)) {
-            klass = new QtScriptSmoke::MetaObject(engine, className, Global::SmokeQObject);
+            klass = new JSmoke::MetaObject(engine, className, Global::SmokeQObject);
         } else {
-            klass = new QtScriptSmoke::MetaObject(engine, className, Global::Object);
+            klass = new JSmoke::MetaObject(engine, className, Global::Object);
         }
         
         if (className.contains("::")) {
@@ -279,4 +279,4 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
 
 
     } // namespace Global
-} // namespace QtScriptSmoke
+} // namespace JSmoke

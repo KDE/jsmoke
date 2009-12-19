@@ -1,8 +1,6 @@
 /*
  *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
 
- *   Based on the PerlQt marshalling code by Ashley Winters
-
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
  *   published by the Free Software Foundation; either version 2, or
@@ -23,16 +21,42 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
-    
+#include <QtMultimedia/QAudioDeviceInfo>
+#include <QtMultimedia/QVideoFrame>
 
+Q_DECLARE_METATYPE(QAudioFormat::Endian)
+Q_DECLARE_METATYPE(QAudioFormat::SampleType)
+// Q_DECLARE_METATYPE(QList<QAudioDeviceInfo>)
+Q_DECLARE_METATYPE(QList<QAudioFormat::Endian>)
+Q_DECLARE_METATYPE(QList<QAudioFormat::SampleType>)
+Q_DECLARE_METATYPE(QList<QByteArray>)
+Q_DECLARE_METATYPE(QList<QVideoFrame::PixelFormat>)
+
+namespace JSmoke {
+
+// DEF_CONTAINER_MARSHALLER(QListQAudioDeviceInfo, QList<QAudioDeviceInfo>)
+DEF_CONTAINER_MARSHALLER(QListQAudioFormatEndian, QList<QAudioFormat::Endian>)
+DEF_CONTAINER_MARSHALLER(QListQAudioFormatSampleType, QList<QAudioFormat::SampleType>)
+DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)
+DEF_CONTAINER_MARSHALLER(QListQVideoFramePixelFormat, QList<QVideoFrame::PixelFormat>)
 
 Marshall::TypeHandler QtMultimediaHandlers[] = {
+//    { "QList<QAudioDeviceInfo>", marshall_QListQAudioDeviceInfo },
+    { "QList<QAudioFormat::Endian>", marshall_QListQAudioFormatEndian },
+    { "QList<QAudioFormat::SampleType>", marshall_QListQAudioFormatSampleType },
+    { "QList<QByteArray>", marshall_QListQByteArray },
+    { "QList<QVideoFrame::PixelFormat>", marshall_QListQVideoFramePixelFormat },
     { 0, 0 }
 };
 
 void registerQtMultimediaTypes(QScriptEngine * engine)
 {
+//    qScriptSmokeRegisterSequenceMetaType<QList<QAudioDeviceInfo> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QAudioFormat::Endian> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QAudioFormat::SampleType> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QByteArray> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QVideoFrame::PixelFormat> >(engine);
+
     return;
 }
 

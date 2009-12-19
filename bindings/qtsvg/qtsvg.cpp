@@ -25,7 +25,7 @@
 
 #include <smoke/qtsvg_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtSvgHandlers[];
 extern void registerQtSvgTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtsvg_Smoke();
-        QtScriptSmoke::Module qtsvg_module = { "qtsvg", new QtScriptSmoke::Binding(qtsvg_Smoke) };
-        QtScriptSmoke::Global::modules[qtsvg_Smoke] = qtsvg_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtSvgHandlers);
+        JSmoke::Module qtsvg_module = { "qtsvg", new JSmoke::Binding(qtsvg_Smoke) };
+        JSmoke::Global::modules[qtsvg_Smoke] = qtsvg_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtSvgHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtsvg_Smoke);
-    QtScriptSmoke::registerQtSvgTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtsvg_Smoke);
+    JSmoke::registerQtSvgTypes(engine);
     
     return;
     

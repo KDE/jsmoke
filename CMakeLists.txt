@@ -11,6 +11,11 @@ find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
 include(MacroLibrary)
 
+macro_optional_find_package(OpenGL)
+macro_optional_find_package(Soprano)
+macro_optional_find_package(Nepomuk)
+macro_optional_find_package(Phonon)
+
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DQT3_SUPPORT)
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 

@@ -25,7 +25,7 @@
 
 #include <smoke/ktexteditor_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KTextEditorHandlers[];
 extern void registerKTextEditorTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_ktexteditor_Smoke();
-        QtScriptSmoke::Module ktexteditor_module = { "ktexteditor", new QtScriptSmoke::Binding(ktexteditor_Smoke) };
-        QtScriptSmoke::Global::modules[ktexteditor_Smoke] = ktexteditor_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KTextEditorHandlers);
+        JSmoke::Module ktexteditor_module = { "ktexteditor", new JSmoke::Binding(ktexteditor_Smoke) };
+        JSmoke::Global::modules[ktexteditor_Smoke] = ktexteditor_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KTextEditorHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, ktexteditor_Smoke);
-    QtScriptSmoke::registerKTextEditorTypes(engine);
+    JSmoke::Global::initializeClasses(engine, ktexteditor_Smoke);
+    JSmoke::registerKTextEditorTypes(engine);
     
     return;
     

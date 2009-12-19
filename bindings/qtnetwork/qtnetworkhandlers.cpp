@@ -48,7 +48,7 @@ Q_DECLARE_METATYPE(QList<QSslCertificate>)
 Q_DECLARE_METATYPE(QList<QSslCipher>)
 Q_DECLARE_METATYPE(QList<QSslError>)
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 DEF_CONTAINER_MARSHALLER(QListQHostAddress, QList<QHostAddress>)                                                                                                            
 DEF_CONTAINER_MARSHALLER(QListQNetworkAddressEntry, QList<QNetworkAddressEntry>)
@@ -60,10 +60,10 @@ DEF_CONTAINER_MARSHALLER(QListQSslCipher, QList<QSslCipher>)
 DEF_CONTAINER_MARSHALLER(QListQSslError, QList<QSslError>)
 
 Marshall::TypeHandler QtNetworkHandlers[] = {
-    { "QList<QHostAddress>&", marshall_QListQHostAddress },                                                                                              
+    { "QList<QHostAddress>", marshall_QListQHostAddress },                                                                                              
     { "QList<QHostAddress>&", marshall_QListQHostAddress },                                                                                                
     { "QList<QNetworkAddressEntry>&", marshall_QListQNetworkAddressEntry },                                                                                        
-    { "QList<QNetworkCookie>&", marshall_QListQNetworkCookie },                                                                                           
+    { "QList<QNetworkCookie>", marshall_QListQNetworkCookie },                                                                                           
     { "QList<QNetworkCookie>&", marshall_QListQNetworkCookie },                                                                                              
     { "QList<QNetworkInterface>&", marshall_QListQNetworkInterface },                                                                                           
     { "QList<QNetworkProxy>&", marshall_QListQNetworkProxy },                                                                                               

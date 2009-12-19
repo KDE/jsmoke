@@ -25,7 +25,7 @@
 
 #include <smoke/kfile_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KFileHandlers[];
 extern void registerKFileTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_kfile_Smoke();
-        QtScriptSmoke::Module kfile_module = { "kfile", new QtScriptSmoke::Binding(kfile_Smoke) };
-        QtScriptSmoke::Global::modules[kfile_Smoke] = kfile_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KFileHandlers);
+        JSmoke::Module kfile_module = { "kfile", new JSmoke::Binding(kfile_Smoke) };
+        JSmoke::Global::modules[kfile_Smoke] = kfile_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KFileHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, kfile_Smoke);
-    QtScriptSmoke::registerKFileTypes(engine);
+    JSmoke::Global::initializeClasses(engine, kfile_Smoke);
+    JSmoke::registerKFileTypes(engine);
     
     return;
     

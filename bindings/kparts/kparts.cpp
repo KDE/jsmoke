@@ -25,7 +25,7 @@
 
 #include <smoke/kparts_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KPartsHandlers[];
 extern void registerKPartsTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_kparts_Smoke();
-        QtScriptSmoke::Module kparts_module = { "kparts", new QtScriptSmoke::Binding(kparts_Smoke) };
-        QtScriptSmoke::Global::modules[kparts_Smoke] = kparts_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KPartsHandlers);
+        JSmoke::Module kparts_module = { "kparts", new JSmoke::Binding(kparts_Smoke) };
+        JSmoke::Global::modules[kparts_Smoke] = kparts_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KPartsHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, kparts_Smoke);
-    QtScriptSmoke::registerKPartsTypes(engine);
+    JSmoke::Global::initializeClasses(engine, kparts_Smoke);
+    JSmoke::registerKPartsTypes(engine);
     
     return;
     

@@ -28,16 +28,17 @@
 #include <marshall.h>
 #include <marshallmacros.h>
 #include <utils.h>
+#include <object.h>
 
 #include <smoke/qtcore_smoke.h>
 
 static void
-qeventTypeResolver(QtScriptSmoke::Object::Instance * instance)
+qeventTypeResolver(JSmoke::Object::Instance * instance)
 {
     Smoke * smoke = instance->classId.smoke;    
     QEvent * qevent = static_cast<QEvent*>( smoke->cast(    instance->value, 
                                                             instance->classId,
-                                                            QtScriptSmoke::Global::QEventClassId ) );
+                                                            JSmoke::Global::QEventClassId ) );
     switch (qevent->type()) {
     case QEvent::Timer:
         instance->classId = smoke->findClass("QTimerEvent");
@@ -261,12 +262,12 @@ qeventTypeResolver(QtScriptSmoke::Object::Instance * instance)
 }
 
 static void
-qobjectTypeResolver(QtScriptSmoke::Object::Instance * instance)
+qobjectTypeResolver(JSmoke::Object::Instance * instance)
 {
     Smoke * smoke = instance->classId.smoke;    
     QObject * qobject = static_cast<QObject*>( smoke->cast( instance->value, 
                                                             instance->classId,
-                                                            QtScriptSmoke::Global::QObjectClassId ) );
+                                                            JSmoke::Global::QObjectClassId ) );
     const QMetaObject * meta = qobject->metaObject();
 
     while (meta != 0) {
@@ -283,13 +284,13 @@ qobjectTypeResolver(QtScriptSmoke::Object::Instance * instance)
 }
 
 static QScriptValue 
-QtEnum_toString(QScriptContext* context, QScriptEngine* engine)
+QtEnum_toString(QScriptContext* context, QScriptEngine* /*engine*/)
 {
     return context->thisObject().property("value").toString();
 }
 
 static QScriptValue 
-QtEnum_valueOf(QScriptContext* context, QScriptEngine* engine)
+QtEnum_valueOf(QScriptContext* context, QScriptEngine* /*engine*/)
 {
     return context->thisObject().property("value");
 }
@@ -320,7 +321,7 @@ QtEnum_ctor(QScriptContext* context, QScriptEngine* engine)
 static QScriptValue 
 Debug_trace(QScriptContext* context, QScriptEngine* engine)
 {
-    QtScriptSmoke::Debug::DoDebug = context->argument(0).toUInt32();
+    JSmoke::Debug::DoDebug = context->argument(0).toUInt32();
     return engine->undefinedValue();
 }
 
@@ -345,26 +346,26 @@ Debug_ctor(QScriptContext* context, QScriptEngine* engine)
 static QScriptValue 
 QVariant_valueOf(QScriptContext* context, QScriptEngine* engine)
 {
-    QtScriptSmoke::Object::Instance * instance = QtScriptSmoke::Object::Instance::get(context->thisObject());
+    JSmoke::Object::Instance * instance = JSmoke::Object::Instance::get(context->thisObject());
     if (instance == 0) {
         return context->thisObject();
     }
     
     QVariant * variant = static_cast<QVariant*>(instance->value);   
-    return QtScriptSmoke::valueFromVariant(engine, *variant);
+    return JSmoke::valueFromVariant(engine, *variant);
 }
 
 static QScriptValue 
 QVariant_fromValue(QScriptContext* context, QScriptEngine* engine)
 {
     QScriptValue value = context->argument(0);
-    QVariant variant = QtScriptSmoke::valueToVariant(value);
+    QVariant variant = JSmoke::valueToVariant(value);
     QVariant * copy = new QVariant(variant);
-    QScriptValue result = QtScriptSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QVariant"), copy);
+    QScriptValue result = JSmoke::Global::wrapInstance(engine, qtcore_Smoke->findClass("QVariant"), copy);
     return result;
 }
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtCoreHandlers[];
 extern void registerQtCoreTypes(QScriptEngine * engine);  
 }
@@ -375,39 +376,37 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtcore_Smoke();
-        QtScriptSmoke::Module qtcore_module = { "qtcore", new QtScriptSmoke::Binding(qtcore_Smoke) };
-        QtScriptSmoke::Global::modules[qtcore_Smoke] = qtcore_module;    
+        JSmoke::Module qtcore_module = { "qtcore", new JSmoke::Binding(qtcore_Smoke) };
+        JSmoke::Global::modules[qtcore_Smoke] = qtcore_module;    
     
-        QtScriptSmoke::Global::QObjectClassId = qtcore_Smoke->idClass("QObject");
-        QtScriptSmoke::Global::QDateClassId = qtcore_Smoke->idClass("QDate");
-        QtScriptSmoke::Global::QDateTimeClassId = qtcore_Smoke->idClass("QDateTime");
-        QtScriptSmoke::Global::QTimeClassId = qtcore_Smoke->idClass("QTime");
-        QtScriptSmoke::Global::QEventClassId = qtcore_Smoke->idClass("QEvent");
+        JSmoke::Global::QObjectClassId = qtcore_Smoke->idClass("QObject");
+        JSmoke::Global::QDateClassId = qtcore_Smoke->idClass("QDate");
+        JSmoke::Global::QDateTimeClassId = qtcore_Smoke->idClass("QDateTime");
+        JSmoke::Global::QTimeClassId = qtcore_Smoke->idClass("QTime");
+        JSmoke::Global::QEventClassId = qtcore_Smoke->idClass("QEvent");
 
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtCoreHandlers);
+        JSmoke::Marshall::installHandlers(JSmoke::QtCoreHandlers);
         
-        QtScriptSmoke::Global::registerTypeResolver(    QtScriptSmoke::Global::QEventClassId, 
-                                                        qeventTypeResolver );
-        QtScriptSmoke::Global::registerTypeResolver(    QtScriptSmoke::Global::QObjectClassId, 
-                                                        qobjectTypeResolver );
+        JSmoke::Global::registerTypeResolver(JSmoke::Global::QEventClassId, qeventTypeResolver);
+        JSmoke::Global::registerTypeResolver(JSmoke::Global::QObjectClassId, qobjectTypeResolver );
                                                         
-        QtScriptSmoke::Global::startFinalizerThread();
+        JSmoke::Global::startFinalizerThread();
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtcore_Smoke);
+    JSmoke::Global::initializeClasses(engine, qtcore_Smoke);
                
     QScriptValue QtClass = engine->globalObject().property(QString("Qt"));
-    QtScriptSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
-    QtClass.setProperty("Enum", QtScriptSmoke::Global::QtEnum);            
+    JSmoke::Global::QtEnum = engine->newFunction(QtEnum_ctor);
+    QtClass.setProperty("Enum", JSmoke::Global::QtEnum);            
     QtClass.setProperty("Debug", engine->newFunction(Debug_ctor).call());
 
     QScriptValue QVariantClass = engine->globalObject().property(QString("QVariant"));
     QVariantClass.setProperty("fromValue", engine->newFunction(QVariant_fromValue));
     QVariantClass.property("prototype").setProperty("valueOf", engine->newFunction(QVariant_valueOf));
 
-    QtScriptSmoke::registerQtCoreTypes(engine);
+    JSmoke::registerQtCoreTypes(engine);
         
     return;
 }

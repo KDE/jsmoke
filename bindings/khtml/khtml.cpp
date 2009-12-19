@@ -25,7 +25,7 @@
 
 #include <smoke/khtml_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler kHTMLHandlers[];
 extern void registerkHTMLTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_khtml_Smoke();
-        QtScriptSmoke::Module khtml_module = { "khtml", new QtScriptSmoke::Binding(khtml_Smoke) };
-        QtScriptSmoke::Global::modules[khtml_Smoke] = khtml_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::kHTMLHandlers);
+        JSmoke::Module khtml_module = { "khtml", new JSmoke::Binding(khtml_Smoke) };
+        JSmoke::Global::modules[khtml_Smoke] = khtml_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::kHTMLHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, khtml_Smoke);
-    QtScriptSmoke::registerkHTMLTypes(engine);
+    JSmoke::Global::initializeClasses(engine, khtml_Smoke);
+    JSmoke::registerkHTMLTypes(engine);
     
     return;
     

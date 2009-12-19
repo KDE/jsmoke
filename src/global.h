@@ -17,20 +17,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QTSCRIPT_GLOBAL_H
-#define QTSCRIPT_GLOBAL_H
+#ifndef JSMOKE_GLOBAL_H
+#define JSMOKE_GLOBAL_H
 
 #include <QtScript/QScriptValue>
 
 #include <smoke.h>
 
+#include "jsmoke_export.h"
 #include "metaobject.h"
 #include "smokebinding.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     namespace Debug {
         
-        extern Q_DECL_EXPORT uint DoDebug;
+        extern JSMOKE_EXPORT uint DoDebug;
 
         enum QtDebugChannel {
             None = 0x00,
@@ -45,37 +46,37 @@ namespace QtScriptSmoke {
     }
 
     namespace Global {
-        extern Q_DECL_EXPORT QHash<Smoke*, Module> modules;
+        extern JSMOKE_EXPORT QHash<Smoke*, Module> modules;
         
-        extern Smoke::ModuleIndex QObjectClassId;
-        extern Smoke::ModuleIndex QDateClassId;
-        extern Smoke::ModuleIndex QDateTimeClassId;
-        extern Smoke::ModuleIndex QTimeClassId;
-        extern Smoke::ModuleIndex QEventClassId;
-        extern Smoke::ModuleIndex QGraphicsItemClassId;
+        extern JSMOKE_EXPORT Smoke::ModuleIndex QObjectClassId;
+        extern JSMOKE_EXPORT Smoke::ModuleIndex QDateClassId;
+        extern JSMOKE_EXPORT Smoke::ModuleIndex QDateTimeClassId;
+        extern JSMOKE_EXPORT Smoke::ModuleIndex QTimeClassId;
+        extern JSMOKE_EXPORT Smoke::ModuleIndex QEventClassId;
+        extern JSMOKE_EXPORT Smoke::ModuleIndex QGraphicsItemClassId;
         
-        extern QScriptValue QtEnum;
+        extern JSMOKE_EXPORT QScriptValue QtEnum;
         
-        extern Q_DECL_EXPORT void startFinalizerThread();
+        extern JSMOKE_EXPORT void startFinalizerThread();
         
-        extern Q_DECL_EXPORT QScriptValue * getScriptValue(void * ptr);
+        extern JSMOKE_EXPORT QScriptValue * getScriptValue(void * ptr);
         
-        extern Q_DECL_EXPORT void unmapPointer( Object::Instance * instance, 
+        extern JSMOKE_EXPORT void unmapPointer( Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                 
-        extern Q_DECL_EXPORT void mapPointer(   QScriptValue * obj, 
+        extern JSMOKE_EXPORT void mapPointer(   QScriptValue * obj, 
                                                 Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                                                                 
-        extern Q_DECL_EXPORT QScriptValue wrapInstance( QScriptEngine * engine, 
+        extern JSMOKE_EXPORT QScriptValue wrapInstance( QScriptEngine * engine, 
                                                         Smoke::ModuleIndex classId, 
                                                         void * ptr,
                                                         QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 
-        extern Q_DECL_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
-        extern Q_DECL_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
+        extern JSMOKE_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
+        extern JSMOKE_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
     }
 }
 

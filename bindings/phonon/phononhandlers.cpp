@@ -1,0 +1,94 @@
+/*
+ *   Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
+
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as
+ *   published by the Free Software Foundation; either version 2, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "marshall.h"
+#include "global.h"
+#include "marshallmacros.h"
+
+/*
+#include <Qt/q3cstring.h>
+#include <Qt/qabstractitemmodel.h>
+#include <Qt/qbytearray.h>
+#include <Qt/qbytearraymatcher.h>
+#include <Qt/qpropertyanimation.h>
+#include <Qt/qurl.h>
+#include <Qt/qurlinfo.h>
+#include <Qt/qvariant.h>
+#include <Qt/qvariantanimation.h>
+#include <Qt3Support/q3cstring.h>
+#include <QtCore/qabstractitemmodel.h>
+#include <QtCore/qbytearray.h>
+#include <QtCore/qbytearraymatcher.h>
+#include <QtCore/qpropertyanimation.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
+#include <QtCore/qvariantanimation.h>
+#include <QtNetwork/qurlinfo.h>
+#include <kcoreconfigskeleton.h>
+#include <kurl.h>
+*/
+
+#include <phonon/effect.h>
+#include <phonon/effectparameter.h>
+#include <phonon/effectwidget.h>
+#include <phonon/mediasource.h>
+#include <phonon/path.h>
+#include <phonon/volumefadereffect.h>
+
+Q_DECLARE_METATYPE(Phonon::Effect*)
+Q_DECLARE_METATYPE(Phonon::EffectParameter)
+Q_DECLARE_METATYPE(Phonon::MediaSource)
+// Q_DECLARE_METATYPE(Phonon::ObjectDescription<Phonon::AudioChannelType>)
+// Q_DECLARE_METATYPE(Phonon::ObjectDescription<Phonon::SubtitleType>)
+Q_DECLARE_METATYPE(Phonon::Path)
+Q_DECLARE_METATYPE(QList<Phonon::Effect*>)
+Q_DECLARE_METATYPE(QList<Phonon::EffectParameter>)
+Q_DECLARE_METATYPE(QList<Phonon::MediaSource>)
+Q_DECLARE_METATYPE(QList<Phonon::Path>)
+
+namespace JSmoke {
+
+DEF_CONTAINER_MARSHALLER(QListPhononEffect, QList<Phonon::Effect*>)
+DEF_CONTAINER_MARSHALLER(QListPhononEffectParameter, QList<Phonon::EffectParameter>)
+DEF_CONTAINER_MARSHALLER(QListPhononMediaSource, QList<Phonon::MediaSource>)
+DEF_CONTAINER_MARSHALLER(QListPhononPath, QList<Phonon::Path>)
+
+Marshall::TypeHandler PhononHandlers[] = {
+    { "QList<Phonon::Effect*>", marshall_QListPhononEffect },
+    { "QList<Phonon::EffectParameter>", marshall_QListPhononEffectParameter },
+    { "QList<Phonon::MediaSource>", marshall_QListPhononMediaSource },
+    { "QList<Phonon::MediaSource>&", marshall_QListPhononMediaSource },
+    { "QList<Phonon::Path>", marshall_QListPhononPath },
+    { 0, 0 }
+};
+
+void registerPhononTypes(QScriptEngine * engine)
+{
+    qScriptSmokeRegisterSequenceMetaType<QList<Phonon::EffectParameter> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<Phonon::MediaSource> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<Phonon::Path> >(engine);
+
+    qScriptSmokeRegisterPointerSequenceMetaType<QList<Phonon::Effect*> >(engine);
+
+    return;
+}
+
+}
+
+// kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;

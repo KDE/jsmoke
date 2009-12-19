@@ -1,3 +1,11 @@
+2009-12-19  Richard Dale  <richard.j.dale@gmail.com>
+
+* Changed the namespace for the project from QtScriptSmoke to JSmoke
+* Added some more plugins for Soprano, Nepomuk, Attica, Phonon and QImageBlitz
+* Added the script used to generate the plugin code in 
+scripts/jsmoke_plugin_template.rb
+* Changed the namespace for the project from QtScriptSmoke to JSmoke
+
 2009-12-14  Richard Dale  <richard.j.dale@gmail.com>
 
 * Fixed bug in the way prototypes were being set up for newly created 

@@ -23,7 +23,7 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
    
 
 Marshall::TypeHandler QtSqlHandlers[] = {
@@ -31,7 +31,7 @@ Marshall::TypeHandler QtSqlHandlers[] = {
     { 0, 0 }
 };
 
-void registerQtSqlTypes(QScriptEngine * engine) 
+void registerQtSqlTypes(QScriptEngine * /*engine*/) 
 {   
  
     return;

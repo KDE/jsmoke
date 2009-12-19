@@ -32,7 +32,7 @@ Q_DECLARE_METATYPE(QVector<QXmlName>)
 Q_DECLARE_METATYPE(QXmlNodeModelIndex)
 Q_DECLARE_METATYPE(QVector<QXmlNodeModelIndex>)
 
-namespace QtScriptSmoke {
+namespace JSmoke {
    
 DEF_CONTAINER_MARSHALLER(QVectorQXmlName, QVector<QXmlName>)
 DEF_CONTAINER_MARSHALLER(QVectorQXmlNodeModelIndex, QVector<QXmlNodeModelIndex>)

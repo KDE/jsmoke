@@ -25,7 +25,7 @@
 
 #include <smoke/qtsql_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtSqlHandlers[];
 extern void registerQtSqlTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtsql_Smoke();
-        QtScriptSmoke::Module qtsql_module = { "qtsql", new QtScriptSmoke::Binding(qtsql_Smoke) };
-        QtScriptSmoke::Global::modules[qtsql_Smoke] = qtsql_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtSqlHandlers);
+        JSmoke::Module qtsql_module = { "qtsql", new JSmoke::Binding(qtsql_Smoke) };
+        JSmoke::Global::modules[qtsql_Smoke] = qtsql_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtSqlHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtsql_Smoke);
-    QtScriptSmoke::registerQtSqlTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtsql_Smoke);
+    JSmoke::registerQtSqlTypes(engine);
     
     return;
     

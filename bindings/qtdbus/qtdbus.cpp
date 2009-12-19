@@ -25,7 +25,7 @@
 
 #include <smoke/qtdbus_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler QtDBusHandlers[];
 extern void registerQtDBusTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_qtdbus_Smoke();
-        QtScriptSmoke::Module qtdbus_module = { "qtdbus", new QtScriptSmoke::Binding(qtdbus_Smoke) };
-        QtScriptSmoke::Global::modules[qtdbus_Smoke] = qtdbus_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::QtDBusHandlers);
+        JSmoke::Module qtdbus_module = { "qtdbus", new JSmoke::Binding(qtdbus_Smoke) };
+        JSmoke::Global::modules[qtdbus_Smoke] = qtdbus_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::QtDBusHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, qtdbus_Smoke);
-    QtScriptSmoke::registerQtDBusTypes(engine);
+    JSmoke::Global::initializeClasses(engine, qtdbus_Smoke);
+    JSmoke::registerQtDBusTypes(engine);
     
     return;
     

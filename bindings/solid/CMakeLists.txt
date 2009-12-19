@@ -5,9 +5,9 @@ set(jsmokesolid_LIB_SRCS plugin.cpp solid.cpp solidhandlers.cpp)
 add_library(jsmokesolid MODULE ${jsmokesolid_LIB_SRCS})
 target_link_libraries(  jsmokesolid 
                             ${QT_QTCORE_LIBRARY} 
-                            ${QT_QTGUI_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
                             ${SMOKE_QTCORE_LIBRARY} 
+                            ${KDE4_SOLID_LIBS} 
                             smokesolid 
                             jsmokeruntime )
 

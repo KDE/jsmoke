@@ -5,9 +5,12 @@ set(jsmokekio_LIB_SRCS plugin.cpp kio.cpp kiohandlers.cpp)
 add_library(jsmokekio MODULE ${jsmokekio_LIB_SRCS})
 target_link_libraries(  jsmokekio 
                             ${QT_QTCORE_LIBRARY} 
+                            ${QT_QTNETWORK_LIBRARY} 
                             ${QT_QTGUI_LIBRARY} 
                             ${QT_QTSCRIPT_LIBRARY} 
                             ${SMOKE_QTCORE_LIBRARY} 
+                            ${KDE4_KDECORE_LIBS} 
+                            ${KDE4_KIO_LIBS} 
                             smokekio 
                             jsmokeruntime )
 

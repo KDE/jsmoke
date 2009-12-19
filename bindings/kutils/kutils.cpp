@@ -25,7 +25,7 @@
 
 #include <smoke/kutils_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler KUtilsHandlers[];
 extern void registerKUtilsTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_kutils_Smoke();
-        QtScriptSmoke::Module kutils_module = { "kutils", new QtScriptSmoke::Binding(kutils_Smoke) };
-        QtScriptSmoke::Global::modules[kutils_Smoke] = kutils_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::KUtilsHandlers);
+        JSmoke::Module kutils_module = { "kutils", new JSmoke::Binding(kutils_Smoke) };
+        JSmoke::Global::modules[kutils_Smoke] = kutils_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::KUtilsHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, kutils_Smoke);
-    QtScriptSmoke::registerKUtilsTypes(engine);
+    JSmoke::Global::initializeClasses(engine, kutils_Smoke);
+    JSmoke::registerKUtilsTypes(engine);
     
     return;
     

@@ -25,7 +25,7 @@
 
 #include <smoke/solid_smoke.h>
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 extern Marshall::TypeHandler SolidHandlers[];
 extern void registerSolidTypes(QScriptEngine * engine);  
 }
@@ -36,15 +36,15 @@ static bool initialized = false;
 
     if (!initialized) {
         init_solid_Smoke();
-        QtScriptSmoke::Module solid_module = { "solid", new QtScriptSmoke::Binding(solid_Smoke) };
-        QtScriptSmoke::Global::modules[solid_Smoke] = solid_module;    
-        QtScriptSmoke::Marshall::installHandlers(QtScriptSmoke::SolidHandlers);
+        JSmoke::Module solid_module = { "solid", new JSmoke::Binding(solid_Smoke) };
+        JSmoke::Global::modules[solid_Smoke] = solid_module;    
+        JSmoke::Marshall::installHandlers(JSmoke::SolidHandlers);
         initialized = true;
     }
     
     QScriptEngine* engine = extensionObject.engine();
-    QtScriptSmoke::Global::initializeClasses(engine, solid_Smoke);
-    QtScriptSmoke::registerSolidTypes(engine);
+    JSmoke::Global::initializeClasses(engine, solid_Smoke);
+    JSmoke::registerSolidTypes(engine);
     
     return;
     

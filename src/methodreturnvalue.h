@@ -19,42 +19,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QTSCRIPT_METHOD_RETURN_VALUE_H
-#define QTSCRIPT_METHOD_RETURN_VALUE_H
+#ifndef JSMOKE_METHOD_RETURN_VALUE_H
+#define JSMOKE_METHOD_RETURN_VALUE_H
 
 #include <smoke.h>
+
+#include "jsmoke_export.h"
 #include "marshall.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
-class Q_DECL_EXPORT MethodReturnValue : public Marshall {
-    
-public:
-    MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue);
+    class JSMOKE_EXPORT MethodReturnValue : public Marshall {
+        
+    public:
+        MethodReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue);
 
-    inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
-    inline SmokeType type() { return SmokeType(m_smoke, method().ret); }
-    inline Marshall::Action action() { return Marshall::ToQScriptValue; }
-    inline Smoke::StackItem &item() { return m_stack[0]; }
-    inline QScriptEngine * engine() { return m_engine; }
-    inline QScriptValue * var() { return m_returnValue; }
-    inline Smoke *smoke() { return m_smoke; }
-    inline bool cleanup() { return false; }
+        inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
+        inline SmokeType type() { return SmokeType(m_smoke, method().ret); }
+        inline Marshall::Action action() { return Marshall::ToQScriptValue; }
+        inline Smoke::StackItem &item() { return m_stack[0]; }
+        inline QScriptEngine * engine() { return m_engine; }
+        inline QScriptValue * var() { return m_returnValue; }
+        inline Smoke *smoke() { return m_smoke; }
+        inline bool cleanup() { return false; }
 
-    void unsupported();
-    void next();
-    
-private:
-    Smoke *m_smoke;
-    Smoke::Index m_method;
-    Smoke::Stack m_stack;
-    QScriptEngine * m_engine;
-    QScriptValue * m_returnValue;
-};
+        void unsupported();
+        void next();
+        
+    private:
+        Smoke *m_smoke;
+        Smoke::Index m_method;
+        Smoke::Stack m_stack;
+        QScriptEngine * m_engine;
+        QScriptValue * m_returnValue;
+    };
 
 }
 
-#endif // QTSCRIPT_METHOD_RETURN_VALUE_H
+#endif // JSMOKE_METHOD_RETURN_VALUE_H
 
 // kate: space-indent on; indent-width 4; replace-tabs on; mixed-indent off;
 

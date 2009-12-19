@@ -35,7 +35,7 @@
 #include "methodcall.h"
 #include "global.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
 
 QString
 methodToString(Smoke::ModuleIndex methodId)
@@ -88,31 +88,26 @@ methodToString(Smoke::ModuleIndex methodId)
 * - append ? for things like an array, or a hash, or an undefined value     
 */
 QVector<QByteArray> 
-mungedMethods( const QByteArray& nameFn, QScriptContext* context )
+mungedMethods(const QByteArray& nameFn, QScriptContext* context)
 {
         QVector<QByteArray> ret;
         ret.append( nameFn );
         
-        for( int i = 0; i < context->argumentCount(); i++ )
-        {
+        for( int i = 0; i < context->argumentCount(); i++ ) {
             QScriptValue val = context->argument( i );
             if (    val.isNumber() 
                     || val.isBool() 
                     || val.isString() 
-                    || val.instanceOf(QtScriptSmoke::Global::QtEnum) )
+                    || val.instanceOf(JSmoke::Global::QtEnum) )
             {
                 for (int i = 0; i < ret.count(); i++) {
                     ret[i] += '$';
                 }
-            }
-            else if( val.isArray() )
-            {
+            } else if (val.isArray()) {
                 for (int i = 0; i < ret.count(); i++) {
                     ret[i] += '?';
                 }
-            }
-            else if( val.isNull() || val.isUndefined() )
-            {
+            } else if (val.isNull() || val.isUndefined()) {
                 QVector<QByteArray> temp;
                 foreach (QByteArray mungedMethod, ret) {
                     temp.append(mungedMethod + '$');
@@ -131,6 +126,7 @@ mungedMethods( const QByteArray& nameFn, QScriptContext* context )
                 qDebug() << "Unknown value type:" << val.toString();
             }
         }
+        
         return ret;
 }
 
@@ -143,7 +139,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
     Smoke::Class & klass = classId.smoke->classes[classId.index];
     QVector<Smoke::ModuleIndex> methodIds;
     QVector<QPair<Smoke::ModuleIndex, int> > matches;
-    QVector<QByteArray> mungedMethods = QtScriptSmoke::mungedMethods(methodName, context);
+    QVector<QByteArray> mungedMethods = JSmoke::mungedMethods(methodName, context);
         
     foreach (QByteArray mungedMethod, mungedMethods) {
         Smoke::ModuleIndex methodId = classId.smoke->findMethod(klass.className, mungedMethod);
@@ -202,8 +198,8 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         Smoke::Method & methodRef = method.smoke->methods[method.index];
         
         if ((methodRef.flags & Smoke::mf_internal) == 0) {
-            Smoke::Index *args = method.smoke->argumentList + methodRef.args;            
-            const char *tname = method.smoke->types[methodRef.ret].name;            
+            // Smoke::Index *args = method.smoke->argumentList + methodRef.args;            
+            // const char *tname = method.smoke->types[methodRef.ret].name;            
             int matchDistance = 0;
             
             // If a method is overloaded only on const-ness, prefer the
@@ -251,7 +247,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                         matchDistance += 10;
                         break;
                     }
-                } else if (actual.instanceOf(QtScriptSmoke::Global::QtEnum)) {
+                } else if (actual.instanceOf(JSmoke::Global::QtEnum)) {
                     switch (argFlags & Smoke::tf_elem) {
                     case Smoke::t_enum:
                         if (actual.property("typeName").toString().toLatin1() != argType) {
@@ -363,7 +359,7 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
     QString nameFn = context->callee().data().toString();
     QScriptClass * cls = context->thisObject().scriptClass();
     Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
-    QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(classId, nameFn.toLatin1(), context);
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = JSmoke::resolveMethod(classId, nameFn.toLatin1(), context);
     
     if (matches.count() == 0) {
         QString message = QString("%1 is not defined").arg(nameFn);
@@ -376,7 +372,7 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
     
-    QtScriptSmoke::MethodCall methodCall(matches[0].first.smoke, matches[0].first.index, context, engine);
+    JSmoke::MethodCall methodCall(matches[0].first.smoke, matches[0].first.index, context, engine);
     methodCall.next();
     return *(methodCall.var());
 }
@@ -387,7 +383,7 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     QString nameFn = context->callee().data().toString();
     Object::Instance * instance = Object::Instance::get(context->thisObject());
     
-    QVector<QPair<Smoke::ModuleIndex, int> > matches = QtScriptSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
+    QVector<QPair<Smoke::ModuleIndex, int> > matches = JSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
     
     if (matches.count() == 0) {
         QString message = QString("%1 is not defined").arg(nameFn);
@@ -400,7 +396,7 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
     
-    QtScriptSmoke::MethodCall methodCall(matches[0].first.smoke, matches[0].first.index, context, engine);
+    JSmoke::MethodCall methodCall(matches[0].first.smoke, matches[0].first.index, context, engine);
     methodCall.next();
     return *(methodCall.var());
 }
@@ -436,7 +432,7 @@ constructCopy(Object::Instance* instance)
     Smoke::ModuleIndex ccMethod = smoke->findMethod(instance->classId, ccId);
 
     if (ccMethod.index == 0) {
-        qWarning("QtScriptSmoke::constructCopy() failed %s %p\n", className, instance->value);
+        qWarning("JSmoke::constructCopy() failed %s %p\n", className, instance->value);
         return 0;
     }
     
@@ -444,7 +440,7 @@ constructCopy(Object::Instance* instance)
     if (method > 0) {
         // Make sure it's a copy constructor
         if (ccArg != smoke->types[*(smoke->argumentList + smoke->methods[method].args)].name) {
-            qWarning("QtScriptSmoke::constructCopy() failed %s %p\n", className, instance->value);
+            qWarning("JSmoke::constructCopy() failed %s %p\n", className, instance->value);
             return 0;
         }
 
@@ -461,7 +457,7 @@ constructCopy(Object::Instance* instance)
 
         ccMethod.index = ccMethod.smoke->ambiguousMethodList[i];
         if (ccMethod.index == 0) {
-            qWarning("QtScriptSmoke::constructCopy() failed %s %p\n", className, instance->value);
+            qWarning("JSmoke::constructCopy() failed %s %p\n", className, instance->value);
             return 0;
         }
     }
@@ -487,7 +483,7 @@ QVariant valueToVariant(const QScriptValue& value)
         Object::Instance * instance = Object::Instance::get(value);
         Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
         return QVariant(QMetaType::type(klass.className), instance->value);
-    } else if (value.instanceOf(QtScriptSmoke::Global::QtEnum)) {
+    } else if (value.instanceOf(JSmoke::Global::QtEnum)) {
         return QVariant(value.property("value").toUInt32());
     } else {
         return value.toVariant();

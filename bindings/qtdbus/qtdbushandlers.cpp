@@ -23,7 +23,7 @@
 #include "global.h"
 #include "marshallmacros.h"
 
-namespace QtScriptSmoke {
+namespace JSmoke {
     
 
 Marshall::TypeHandler QtDBusHandlers[] = {
@@ -31,7 +31,7 @@ Marshall::TypeHandler QtDBusHandlers[] = {
     { 0, 0 }
 };
 
-void registerQtDBusTypes(QScriptEngine * engine) 
+void registerQtDBusTypes(QScriptEngine * /*engine*/) 
 {   
 
     return;
