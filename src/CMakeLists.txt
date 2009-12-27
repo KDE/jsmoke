@@ -9,9 +9,7 @@ set(    jsmokeruntime_LIB_SRCS
             smokebinding.cpp  
             utils.cpp
             methodcall.cpp
-            methodreturnvalue.cpp
             virtualmethodcall.cpp
-            virtualmethodreturnvalue.cpp
             handlers.cpp )
 
 add_library(jsmokeruntime SHARED ${jsmokeruntime_LIB_SRCS})

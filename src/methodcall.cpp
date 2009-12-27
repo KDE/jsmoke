@@ -19,7 +19,7 @@
 
 
 #include "methodcall.h"
-#include "methodreturnvalue.h"
+// #include "methodreturnvalue.h"
 #include "smokebinding.h"
 #include "global.h"
 
@@ -30,6 +30,35 @@
 #include <QtScript/QScriptContextInfo>
 
 namespace JSmoke {
+    
+MethodCall::ReturnValue::ReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue) :
+    m_smoke(smoke), m_method(method), m_stack(stack), m_engine(engine), m_returnValue(returnValue)
+{
+    Marshall::HandlerFn fn = getMarshallFn(type());
+    (*fn)(this);
+}
+
+void
+MethodCall::ReturnValue::unsupported()
+{
+    if (strcmp(m_smoke->className(method().classId), "QGlobalSpace") == 0) {
+        m_engine->currentContext()->throwError( QScriptContext::TypeError, 
+                                                QString("Cannot handle '%1' as return type of %2")
+                                                        .arg(type().name())
+                                                        .arg(m_smoke->methodNames[method().name]) );
+    } else {
+        m_engine->currentContext()->throwError( QScriptContext::TypeError, 
+                                                QString("Cannot handle '%1' as return type of %2::%3")
+                                                        .arg(type().name())
+                                                        .arg(m_smoke->className(method().classId))
+                                                        .arg(m_smoke->methodNames[method().name]) );
+    }
+}
+
+void
+MethodCall::ReturnValue::next() 
+{
+}
 
 MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine) :
     m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), 
@@ -119,7 +148,7 @@ void MethodCall::callMethod()
         JSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();
-        JSmoke::MethodReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
+        ReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
     }
     
     if ((Debug::DoDebug & Debug::Calls) != 0) {

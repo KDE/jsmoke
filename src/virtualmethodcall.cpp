@@ -23,6 +23,29 @@
 #include "virtualmethodreturnvalue.h"
 
 namespace JSmoke {
+    
+VirtualMethodCall::ReturnValue::ReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue) :
+    m_smoke(smoke), m_method(meth), m_stack(stack), m_returnValue(returnValue) 
+{
+    m_type.set(m_smoke, method().ret);
+    Marshall::HandlerFn fn = getMarshallFn(type());
+    (*fn)(this);
+}
+
+void
+VirtualMethodCall::ReturnValue::unsupported()
+{
+    m_returnValue.engine()->currentContext()->throwError(   QScriptContext::TypeError, 
+                                                            QString("Cannot handle '%1' as return type of virtual method %2::%3")
+                                                                    .arg(type().name())
+                                                                    .arg(m_smoke->className(method().classId))
+                                                                    .arg(m_smoke->methodNames[method().name]) );
+}
+
+void
+VirtualMethodCall::ReturnValue::next() 
+{
+}
 
 VirtualMethodCall::VirtualMethodCall(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod) :
     m_smoke(smoke), m_method(method), m_stack(stack), m_obj(obj),
@@ -59,7 +82,7 @@ VirtualMethodCall::callMethod() {
     
     m_called = true;
     QScriptValue value = m_overridenMethod.call(m_obj, m_valueList);
-    VirtualMethodReturnValue result(m_smoke, m_method, m_stack, value);
+    ReturnValue result(m_smoke, m_method, m_stack, value);
 }
 
 void

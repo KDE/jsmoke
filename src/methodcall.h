@@ -33,6 +33,31 @@ namespace JSmoke {
 
     class JSMOKE_EXPORT MethodCall : public Marshall {
         
+        class ReturnValue : Marshall {
+            
+        public:
+            ReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue);
+
+            inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
+            inline SmokeType type() { return SmokeType(m_smoke, method().ret); }
+            inline Marshall::Action action() { return Marshall::ToQScriptValue; }
+            inline Smoke::StackItem &item() { return m_stack[0]; }
+            inline QScriptEngine * engine() { return m_engine; }
+            inline QScriptValue * var() { return m_returnValue; }
+            inline Smoke *smoke() { return m_smoke; }
+            inline bool cleanup() { return false; }
+
+            void unsupported();
+            void next();
+            
+        private:
+            Smoke *m_smoke;
+            Smoke::Index m_method;
+            Smoke::Stack m_stack;
+            QScriptEngine * m_engine;
+            QScriptValue * m_returnValue;
+        };
+        
     public:
         MethodCall(Smoke * smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine);
         ~MethodCall();

@@ -28,7 +28,32 @@
 namespace JSmoke {
 
     class VirtualMethodCall : public Marshall {
+        
+        class ReturnValue : Marshall {
+        public:
+            ReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue);
 
+            inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
+            inline SmokeType type() { return m_type; }
+            inline Marshall::Action action() { return Marshall::FromQScriptValue; }
+            inline Smoke::StackItem &item() { return m_stack[0]; }
+            inline QScriptEngine * engine() { return 0; }
+            inline QScriptValue * var() { return &m_returnValue; }
+            inline Smoke *smoke() { return m_smoke; }
+            inline bool cleanup() { return false; }
+
+            void unsupported();
+            void next();
+            
+        private:
+            Smoke *m_smoke;
+            Smoke::Index m_method;
+            Smoke::Stack m_stack;
+            SmokeType m_type;
+            QScriptValue m_returnValue;
+
+        };
+        
     public:
         VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod);
 
