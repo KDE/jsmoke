@@ -1,3 +1,10 @@
+2009-12-29  Richard Dale  <richard.j.dale@gmail.com>
+
+* When a C++ instance created on the C++ side is wrapped, if there is a type
+resolver function for the class then it is used to get a more accurate class.
+For instance, when a QEvent is passed to QWidget.event() it is resolved to a
+QMouseEvent, QPaintEvent etc according to the QEvent.type().
+
 2009-12-27  Richard Dale  <richard.j.dale@gmail.com>
 
 Nest the MethodCallReturnValue and VirtualMethodCallReturnValue classes within

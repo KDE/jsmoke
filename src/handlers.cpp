@@ -370,10 +370,11 @@ static void marshall_basetype(Marshall *m)
                 return ;
             }
             
-            QScriptValue obj = Global::wrapInstance(  m->engine(), 
-                                        qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className), 
-                                        ptr,
-                                        QScriptEngine::QtOwnership );
+            QByteArray className(m->smoke()->classes[m->type().classId()].className);
+            QScriptValue obj = Global::wrapInstance(    m->engine(), 
+                                                        qtcore_Smoke->findClass(className), 
+                                                        ptr,
+                                                        QScriptEngine::QtOwnership );
             
             if (m->type().isConst() && m->type().isRef()) {
                 Object::Instance * instance = Object::Instance::get(obj);

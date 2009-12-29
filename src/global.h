@@ -20,6 +20,7 @@
 #ifndef JSMOKE_GLOBAL_H
 #define JSMOKE_GLOBAL_H
 
+#include <QtCore/QHash>
 #include <QtScript/QScriptValue>
 
 #include <smoke.h>
@@ -28,6 +29,10 @@
 #include "metaobject.h"
 #include "smokebinding.h"
 
+inline uint qHash(const Smoke::ModuleIndex& mi) {
+    return qHash(mi.index) ^ qHash(mi.smoke);
+}
+        
 namespace JSmoke {
     namespace Debug {
         
@@ -76,6 +81,8 @@ namespace JSmoke {
                                                         QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 
         extern JSMOKE_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
+        extern JSMOKE_EXPORT void resolveType(Object::Instance * instance);
+        
         extern JSMOKE_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
     }
 }

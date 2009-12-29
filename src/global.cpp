@@ -222,6 +222,8 @@ wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QSc
     instance->classId = classId;
     instance->value = ptr;
     instance->ownership = ownership;
+    resolveType(instance);
+    
     QScriptValue obj = engine->newObject(isQObject ? Global::SmokeQObject : Global::Object); 
     Object::Instance::set(obj, instance);
     
@@ -233,6 +235,7 @@ wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QSc
 }
 
 static QList<QPair<Smoke::ModuleIndex, Object::TypeResolver> > typeResolvers;
+static QHash<Smoke::ModuleIndex, Object::TypeResolver> typeResolverMap;
 
 void 
 registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver typeResolver)
@@ -240,10 +243,23 @@ registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver t
     typeResolvers << QPair<Smoke::ModuleIndex, Object::TypeResolver>(baseClass, typeResolver);
 }
 
+void 
+resolveType(Object::Instance * instance)
+{
+    if (typeResolverMap.contains(instance->classId)) {
+        Object::TypeResolver resolver = typeResolverMap[instance->classId];
+        Smoke::ModuleIndex classId = instance->classId;
+        (*resolver)(instance);
+        instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
+    }
+}
+
 void
 initializeClasses(QScriptEngine * engine, Smoke * smoke)
 {
     if (Global::Object == 0) {
+        // This is wrong because it won't work with multiple engines, as there is
+        // only one Global::Object for all engines
         Global::Object = new JSmoke::Object(engine);
         Global::SmokeQObject = new JSmoke::SmokeQObject(engine);
     }
@@ -254,9 +270,16 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         }
         
         QByteArray className(smoke->classes[i].className);        
-        QScriptClass * klass = 0;
+        Smoke::ModuleIndex classId(smoke, i);
+        QScriptClass * klass = 0;        
         
-        if (smoke->isDerivedFrom(Smoke::ModuleIndex(smoke, i), Global::QObjectClassId)) {
+        for (int i = 0; i < typeResolvers.size(); ++i) {
+            if (smoke->isDerivedFrom(classId, typeResolvers.at(i).first)) {
+                typeResolverMap[classId] = typeResolvers.at(i).second;
+            }
+        }
+        
+        if (smoke->isDerivedFrom(classId, Global::QObjectClassId)) {
             klass = new JSmoke::MetaObject(engine, className, Global::SmokeQObject);
         } else {
             klass = new JSmoke::MetaObject(engine, className, Global::Object);

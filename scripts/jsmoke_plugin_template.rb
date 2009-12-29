@@ -16,8 +16,8 @@ Obviously it should be rewitten in QtScript at some point..
 =end
 
 module_name = ARGV[0]
-INCLUDE_DIR = "/usr/include/"
-#INCLUDE_DIR = "/opt/kde4/include/"
+# INCLUDE_DIR = "/usr/include/"
+INCLUDE_DIR = "/opt/kde4/include/"
 # INCLUDE_DIR = "#{ENV['KDEDIRS']}/include/"
 # INCLUDE_AREA = module_name.downcase
 INCLUDE_AREA = ""

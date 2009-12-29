@@ -20,7 +20,6 @@
  */
 
 #include "virtualmethodcall.h"
-#include "virtualmethodreturnvalue.h"
 
 namespace JSmoke {
     

@@ -33,8 +33,7 @@ namespace JSmoke {
 
     class JSMOKE_EXPORT MethodCall : public Marshall {
         
-        class ReturnValue : Marshall {
-            
+        class ReturnValue : Marshall {            
         public:
             ReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue);
 

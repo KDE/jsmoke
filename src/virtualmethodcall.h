@@ -51,7 +51,6 @@ namespace JSmoke {
             Smoke::Stack m_stack;
             SmokeType m_type;
             QScriptValue m_returnValue;
-
         };
         
     public:
