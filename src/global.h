@@ -36,7 +36,7 @@ inline uint qHash(const Smoke::ModuleIndex& mi) {
 namespace JSmoke {
     namespace Debug {
         
-        extern JSMOKE_EXPORT uint DoDebug;
+        JSMOKE_EXPORT extern uint DoDebug;
 
         enum QtDebugChannel {
             None = 0x00,
@@ -51,39 +51,39 @@ namespace JSmoke {
     }
 
     namespace Global {
-        extern JSMOKE_EXPORT QHash<Smoke*, Module> modules;
+        JSMOKE_EXPORT extern QHash<Smoke*, Module> modules;
         
-        extern JSMOKE_EXPORT Smoke::ModuleIndex QObjectClassId;
-        extern JSMOKE_EXPORT Smoke::ModuleIndex QDateClassId;
-        extern JSMOKE_EXPORT Smoke::ModuleIndex QDateTimeClassId;
-        extern JSMOKE_EXPORT Smoke::ModuleIndex QTimeClassId;
-        extern JSMOKE_EXPORT Smoke::ModuleIndex QEventClassId;
-        extern JSMOKE_EXPORT Smoke::ModuleIndex QGraphicsItemClassId;
+        JSMOKE_EXPORT extern Smoke::ModuleIndex QObjectClassId;
+        JSMOKE_EXPORT extern Smoke::ModuleIndex QDateClassId;
+        JSMOKE_EXPORT extern Smoke::ModuleIndex QDateTimeClassId;
+        JSMOKE_EXPORT extern Smoke::ModuleIndex QTimeClassId;
+        JSMOKE_EXPORT extern Smoke::ModuleIndex QEventClassId;
+        JSMOKE_EXPORT extern Smoke::ModuleIndex QGraphicsItemClassId;
         
-        extern JSMOKE_EXPORT QScriptValue QtEnum;
+        JSMOKE_EXPORT extern QScriptValue QtEnum;
         
-        extern JSMOKE_EXPORT void startFinalizerThread();
+        JSMOKE_EXPORT void startFinalizerThread();
         
-        extern JSMOKE_EXPORT QScriptValue * getScriptValue(void * ptr);
+        JSMOKE_EXPORT QScriptValue * getScriptValue(void * ptr);
         
-        extern JSMOKE_EXPORT void unmapPointer( Object::Instance * instance, 
+        JSMOKE_EXPORT void unmapPointer( Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                 
-        extern JSMOKE_EXPORT void mapPointer(   QScriptValue * obj, 
+        JSMOKE_EXPORT void mapPointer(   QScriptValue * obj, 
                                                 Object::Instance * instance, 
                                                 Smoke::Index classId, 
                                                 void * lastptr );
                                                                                                 
-        extern JSMOKE_EXPORT QScriptValue wrapInstance( QScriptEngine * engine, 
+        JSMOKE_EXPORT QScriptValue wrapInstance( QScriptEngine * engine, 
                                                         Smoke::ModuleIndex classId, 
                                                         void * ptr,
                                                         QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 
-        extern JSMOKE_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
-        extern JSMOKE_EXPORT void resolveType(Object::Instance * instance);
+        JSMOKE_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
+        JSMOKE_EXPORT void resolveType(Object::Instance * instance);
         
-        extern JSMOKE_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
+        JSMOKE_EXPORT void initializeClasses(QScriptEngine * engine, Smoke * smoke);
     }
 }
 
