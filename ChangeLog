@@ -1,3 +1,7 @@
+2009-12-30  Richard Dale  <richard.j.dale@gmail.com>
+
+* Add some marshallers for lists of KSycocaEntry types, such as KService.
+
 2009-12-29  Richard Dale  <richard.j.dale@gmail.com>
 
 * When a C++ instance created on the C++ side is wrapped, if there is a type

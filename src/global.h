@@ -29,13 +29,8 @@
 #include "metaobject.h"
 #include "smokebinding.h"
 
-inline uint qHash(const Smoke::ModuleIndex& mi) {
-    return qHash(mi.index) ^ qHash(mi.smoke);
-}
-        
 namespace JSmoke {
-    namespace Debug {
-        
+    namespace Debug {        
         JSMOKE_EXPORT extern uint DoDebug;
 
         enum QtDebugChannel {
@@ -47,7 +42,6 @@ namespace JSmoke {
             Virtual = 0x10,
             Verbose = 0x20
         };
-
     }
 
     namespace Global {
@@ -66,19 +60,19 @@ namespace JSmoke {
         
         JSMOKE_EXPORT QScriptValue * getScriptValue(void * ptr);
         
-        JSMOKE_EXPORT void unmapPointer( Object::Instance * instance, 
-                                                Smoke::Index classId, 
-                                                void * lastptr );
+        JSMOKE_EXPORT void unmapPointer(    Object::Instance * instance, 
+                                            Smoke::Index classId, 
+                                            void * lastptr );
                                                 
-        JSMOKE_EXPORT void mapPointer(   QScriptValue * obj, 
-                                                Object::Instance * instance, 
-                                                Smoke::Index classId, 
-                                                void * lastptr );
+        JSMOKE_EXPORT void mapPointer(  QScriptValue * obj, 
+                                        Object::Instance * instance, 
+                                        Smoke::Index classId, 
+                                        void * lastptr );
                                                                                                 
-        JSMOKE_EXPORT QScriptValue wrapInstance( QScriptEngine * engine, 
-                                                        Smoke::ModuleIndex classId, 
-                                                        void * ptr,
-                                                        QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
+        JSMOKE_EXPORT QScriptValue wrapInstance(    QScriptEngine * engine, 
+                                                    Smoke::ModuleIndex classId, 
+                                                    void * ptr,
+                                                    QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 
         JSMOKE_EXPORT void registerTypeResolver(const Smoke::ModuleIndex& baseClass, Object::TypeResolver);
         JSMOKE_EXPORT void resolveType(Object::Instance * instance);

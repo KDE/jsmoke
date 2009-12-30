@@ -29,6 +29,10 @@
 #include "global.h"
 #include "smoke/qtcore_smoke.h"
 
+static uint qHash(const Smoke::ModuleIndex& mi) {
+    return qHash(mi.index) ^ qHash(mi.smoke);
+}
+
 namespace JSmoke {
     namespace Debug {
         uint DoDebug = 0;

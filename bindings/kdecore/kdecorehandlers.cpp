@@ -40,7 +40,78 @@
 #include <ktimezone.h>
 #include <kuiserverjobtracker.h>
 #include <kuser.h>
+
+#include <ksycocaentry.h>
+#include <kservice.h>
+#include <kservicegroup.h>
+#include <kservicetype.h>
+#include <kmimetype.h>
+
+Q_DECLARE_METATYPE(KSharedPtr<KMimeType>)
+Q_DECLARE_METATYPE(KSharedPtr<KService>)
+Q_DECLARE_METATYPE(KSharedPtr<KServiceGroup>)
+Q_DECLARE_METATYPE(KSharedPtr<KServiceType>)
+Q_DECLARE_METATYPE(KSharedPtr<KSycocaEntry>)
+Q_DECLARE_METATYPE(QList<KSharedPtr<KMimeType> >)
+Q_DECLARE_METATYPE(QList<KSharedPtr<KService> >)
+Q_DECLARE_METATYPE(QList<KSharedPtr<KServiceGroup> >)
+Q_DECLARE_METATYPE(QList<KSharedPtr<KServiceType> >)
+Q_DECLARE_METATYPE(QList<KSharedPtr<KSycocaEntry> >)
+
+
+template <class Container>
+QScriptValue qScriptSmokeValueFromKSycocaEntrySequence(QScriptEngine *eng, const Container &cont)
+{
+    QScriptValue a = eng->newArray();
+    // QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
+    // Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
+    Smoke::ModuleIndex classId;
+    typename Container::const_iterator begin = cont.begin();
+    typename Container::const_iterator end = cont.end();
+    typename Container::const_iterator it;
+    quint32 i;
+    for (it = begin, i = 0; it != end; ++it, ++i) {
+        switch ((*it)->sycocaType()) {
+        case KST_KSycocaEntry:
+            classId = qtcore_Smoke->findClass("KSycocaEntry");
+            break;
+        case KST_KService:
+            classId = qtcore_Smoke->findClass("KService");
+            break;
+        case KST_KServiceGroup:
+            classId = qtcore_Smoke->findClass("KServiceGroup");
+            break;
+        case KST_KServiceType:
+            classId = qtcore_Smoke->findClass("KServiceType");
+            break;
+        case KST_KMimeType:
+            classId = qtcore_Smoke->findClass("KMimeType");
+            break;
+        default:
+            break;
+        }
+        
+        a.setProperty(i, qScriptSmokeValueFromSequence_helper(eng, classId, (void *) &(*(*it).data())));
+    }
     
+    return a;
+}
+
+
+template<typename T>
+int qScriptSmokeRegisterKSycocaEntrySequenceMetaType(
+    QScriptEngine *engine,
+    const QScriptValue &prototype = QScriptValue()
+#ifndef qdoc
+    , T * /* dummy */ = 0
+#endif
+)
+{
+    return qScriptRegisterMetaType<T>(engine, qScriptSmokeValueFromKSycocaEntrySequence,
+                                      qScriptValueToSequence, prototype);
+}
+
+
 // Q_DECLARE_METATYPE(KAboutLicense)
 // Q_DECLARE_METATYPE(KAboutPerson)
 Q_DECLARE_METATYPE(KAuth::Action)
@@ -92,27 +163,32 @@ namespace JSmoke {
 
 // DEF_CONTAINER_MARSHALLER( QListKAboutLicense, QList<KAboutLicense> )
 // DEF_CONTAINER_MARSHALLER( QListKAboutPerson, QList<KAboutPerson> )
-DEF_CONTAINER_MARSHALLER( QListKAuthAction, QList<KAuth::Action> )
-DEF_CONTAINER_MARSHALLER( QListKAutoSaveFile, QList<KAutoSaveFile*> )
-// DEF_CONTAINER_MARSHALLER( QListKCatalogName, QList<KCatalogName> )
-DEF_CONTAINER_MARSHALLER( QListKConfigSkeletonItem, QList<KConfigSkeletonItem*> )
-DEF_CONTAINER_MARSHALLER( QListKCoreConfigSkeletonItemEnumChoice, QList<KCoreConfigSkeleton::ItemEnum::Choice> )
-DEF_CONTAINER_MARSHALLER( QListKCoreConfigSkeletonItemEnumChoice2, QList<KCoreConfigSkeleton::ItemEnum::Choice2> )
-DEF_CONTAINER_MARSHALLER( QListKJob, QList<KJob*> )
-DEF_CONTAINER_MARSHALLER( QListKLocaleDigitSet, QList<KLocale::DigitSet> )
-DEF_CONTAINER_MARSHALLER( QListKPluginInfo, QList<KPluginInfo> )
-DEF_CONTAINER_MARSHALLER( QListKProtocolInfoExtraField, QList<KProtocolInfo::ExtraField> )
-DEF_CONTAINER_MARSHALLER( QListKServiceAction, QList<KServiceAction> )
-DEF_CONTAINER_MARSHALLER( QListKSslCipher, QList<KSslCipher> )
-DEF_CONTAINER_MARSHALLER( QListKSslError, QList<KSslError> )
-DEF_CONTAINER_MARSHALLER( QListKTimeZoneLeapSeconds, QList<KTimeZone::LeapSeconds> )
-DEF_CONTAINER_MARSHALLER( QListKTimeZonePhase, QList<KTimeZone::Phase> )
-DEF_CONTAINER_MARSHALLER( QListKTimeZoneTransition, QList<KTimeZone::Transition> )
-DEF_CONTAINER_MARSHALLER( QListKUser, QList<KUser> )
-DEF_CONTAINER_MARSHALLER( QListKUserGroup, QList<KUserGroup> )
-DEF_CONTAINER_MARSHALLER( QListQByteArray, QList<QByteArray> )
-DEF_CONTAINER_MARSHALLER( QListQDateTime, QList<QDateTime> )
-DEF_CONTAINER_MARSHALLER( QListQSslCertificate, QList<QSslCertificate> )
+DEF_CONTAINER_MARSHALLER(QListKAuthAction, QList<KAuth::Action>)
+DEF_CONTAINER_MARSHALLER(QListKAutoSaveFile, QList<KAutoSaveFile*>)
+// DEF_CONTAINER_MARSHALLER( QListKCatalogName, QList<KCatalogName>)
+DEF_CONTAINER_MARSHALLER(QListKConfigSkeletonItem, QList<KConfigSkeletonItem*>)
+DEF_CONTAINER_MARSHALLER(QListKCoreConfigSkeletonItemEnumChoice, QList<KCoreConfigSkeleton::ItemEnum::Choice>)
+DEF_CONTAINER_MARSHALLER(QListKCoreConfigSkeletonItemEnumChoice2, QList<KCoreConfigSkeleton::ItemEnum::Choice2>)
+DEF_CONTAINER_MARSHALLER(QListKJob, QList<KJob*>)
+DEF_CONTAINER_MARSHALLER(QListKLocaleDigitSet, QList<KLocale::DigitSet>)
+DEF_CONTAINER_MARSHALLER(QListKPluginInfo, QList<KPluginInfo>)
+DEF_CONTAINER_MARSHALLER(QListKProtocolInfoExtraField, QList<KProtocolInfo::ExtraField>)
+DEF_CONTAINER_MARSHALLER(QListKServiceAction, QList<KServiceAction>)
+DEF_CONTAINER_MARSHALLER(QListKSharedPtrKMimeType, QList<KSharedPtr<KMimeType> >)
+DEF_CONTAINER_MARSHALLER(QListKSharedPtrKService, QList<KSharedPtr<KService> >)
+DEF_CONTAINER_MARSHALLER(QListKSharedPtrKServiceGroup, QList<KSharedPtr<KServiceGroup> >)
+DEF_CONTAINER_MARSHALLER(QListKSharedPtrKServiceType, QList<KSharedPtr<KServiceType> >)
+DEF_CONTAINER_MARSHALLER(QListKSharedPtrKSycocaEntry, QList<KSharedPtr<KSycocaEntry> >)
+DEF_CONTAINER_MARSHALLER(QListKSslCipher, QList<KSslCipher>)
+DEF_CONTAINER_MARSHALLER(QListKSslError, QList<KSslError>)
+DEF_CONTAINER_MARSHALLER(QListKTimeZoneLeapSeconds, QList<KTimeZone::LeapSeconds>)
+DEF_CONTAINER_MARSHALLER(QListKTimeZonePhase, QList<KTimeZone::Phase>)
+DEF_CONTAINER_MARSHALLER(QListKTimeZoneTransition, QList<KTimeZone::Transition>)
+DEF_CONTAINER_MARSHALLER(QListKUser, QList<KUser>)
+DEF_CONTAINER_MARSHALLER(QListKUserGroup, QList<KUserGroup>)
+DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)
+DEF_CONTAINER_MARSHALLER(QListQDateTime, QList<QDateTime>)
+DEF_CONTAINER_MARSHALLER(QListQSslCertificate, QList<QSslCertificate>)
 
 Marshall::TypeHandler KDECoreHandlers[] = {
 //     { "QList<KAboutLicense>", marshall_QListKAboutLicense },
@@ -131,6 +207,12 @@ Marshall::TypeHandler KDECoreHandlers[] = {
     { "QList<KPluginInfo>", marshall_QListKPluginInfo },
     { "QList<KProtocolInfo::ExtraField>", marshall_QListKProtocolInfoExtraField },
     { "QList<KServiceAction>", marshall_QListKServiceAction },
+    { "QList<KSharedPtr<KMimeType>>", marshall_QListKSharedPtrKMimeType },
+    { "QList<KSharedPtr<KService>>", marshall_QListKSharedPtrKService },
+    { "QList<KSharedPtr<KService>>&", marshall_QListKSharedPtrKService },
+    { "QList<KSharedPtr<KServiceGroup>>", marshall_QListKSharedPtrKServiceGroup },
+    { "QList<KSharedPtr<KServiceType>>", marshall_QListKSharedPtrKServiceType },
+    { "QList<KSharedPtr<KSycocaEntry>>", marshall_QListKSharedPtrKSycocaEntry },
     { "QList<KSslCipher>", marshall_QListKSslCipher },
     { "QList<KSslCipher>&", marshall_QListKSslCipher },
     { "QList<KSslError>", marshall_QListKSslError },
@@ -178,6 +260,11 @@ void registerKDECoreTypes(QScriptEngine * engine)
     qScriptSmokeRegisterPointerSequenceMetaType<QList<KConfigSkeletonItem*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<KJob*> >(engine);
 
+    qScriptSmokeRegisterKSycocaEntrySequenceMetaType<QList<KSharedPtr<KMimeType> > >(engine);
+    qScriptSmokeRegisterKSycocaEntrySequenceMetaType<QList<KSharedPtr<KService> > >(engine);
+    qScriptSmokeRegisterKSycocaEntrySequenceMetaType<QList<KSharedPtr<KServiceGroup> > >(engine);
+    qScriptSmokeRegisterKSycocaEntrySequenceMetaType<QList<KSharedPtr<KServiceType> > >(engine);
+    qScriptSmokeRegisterKSycocaEntrySequenceMetaType<QList<KSharedPtr<KSycocaEntry> > >(engine);
     return;
 }
 
