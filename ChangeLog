@@ -1,3 +1,11 @@
+2010-01-01  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added qScriptSmokeRegisterHashMetaType() for handling marshalling QHashs
+and QMaps.
+* Added qScriptSmokeRegisterPairSequenceMetaType() for handling lists of QPairs
+* A metatype can be declared for a type containing a single comma, for example:
+    Q_DECLARE_METATYPE2(QList<QPair<QByteArray,QByteArray> >)       
+
 2009-12-30  Richard Dale  <richard.j.dale@gmail.com>
 
 * Add some marshallers for lists of KSycocaEntry types, such as KService.

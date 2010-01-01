@@ -48,6 +48,10 @@
 #include <marshallmacros.h>
 #include <object.h>
 
+Q_DECLARE_METATYPE(QByteArray)
+Q_DECLARE_METATYPE2(QList<QPair<QByteArray,QByteArray> >)
+Q_DECLARE_METATYPE2(QHash<QString,QVariant>)
+
 Q_DECLARE_METATYPE(QDate)
 Q_DECLARE_METATYPE(QDateTime)
 Q_DECLARE_METATYPE(QTime)
@@ -280,6 +284,9 @@ DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNamespaceDeclaration, QVector<QXmlStre
 DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNotationDeclaration, QVector<QXmlStreamNotationDeclaration>)
 DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
 
+DEF_CONTAINER_MARSHALLER3(QListQPairQByteArrayQByteArray, QList<QPair<QByteArray,QByteArray> >)
+DEF_CONTAINER_MARSHALLER3(QHashQStringQVariant, QHash<QString,QVariant>)
+
 Marshall::TypeHandler QtCoreHandlers[] = {
     { "bool*", marshall_BoolPtr },
     { "char*", marshall_CString },
@@ -289,12 +296,13 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<int>&", marshall_QListInt },
     { "QList<QByteArray>", marshall_QListQByteArray },                                                                                                  
     { "QList<QByteArray>&", marshall_QListQByteArray },                                                                                                  
+    { "QList<QPair<QByteArray,QByteArray>>", marshall_QListQPairQByteArrayQByteArray },                                                                                                  
     { "QList<QDate>&", marshall_QListQDate },                                                                                                  
     { "QList<QDate>", marshall_QListQDate },                                                                                                  
     { "QList<QDateTime>&", marshall_QListQDateTime },                                                                                                  
     { "QList<QDateTime>", marshall_QListQDateTime },                                                                                                  
-    { "QList<Time>&", marshall_QListQDateTime },                                                                                                  
-    { "QList<Time>", marshall_QListQTime },                                                                                                  
+    { "QList<QTime>&", marshall_QListQTime },                                                                                                  
+    { "QList<QTime>", marshall_QListQTime },                                                                                                  
     { "QList<QFileInfo>&", marshall_QListQFileInfo },                                                                                                   
     { "QList<QLocale::Country>", marshall_QListEnum },
     { "QList<QModelIndex>&", marshall_QListQModelIndex },                                                                                           
@@ -375,6 +383,10 @@ void registerQtCoreTypes(QScriptEngine * engine)
     qScriptSmokeRegisterSequenceMetaType<QVector<QXmlStreamNotationDeclaration> >(engine);
     
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QObject*> >(engine);
+    
+    qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<QByteArray,QByteArray> > >(engine);
+
+    qScriptSmokeRegisterHashMetaType<QHash<QString,QVariant> >(engine);
 }
 
 }
