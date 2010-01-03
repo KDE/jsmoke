@@ -23,11 +23,13 @@
 
 #include <kbookmarkmenu.h>
 #include <kdatatool.h>
+#include <kfileitem.h>
 #include <kfileitemdelegate.h>
 #include <kio/accessmanager.h>
 #include <kio/udsentry.h>
 #include <kio/copyjob.h>
 
+Q_DECLARE_METATYPE2(QList<QPair<KFileItem,KFileItem> >)
 Q_DECLARE_METATYPE(KBookmarkMenu*)
 Q_DECLARE_METATYPE(KDataToolInfo)
 Q_DECLARE_METATYPE(KFileItemDelegate::Information)
@@ -45,6 +47,7 @@ Q_DECLARE_METATYPE(QList<KServiceAction>)
 
 namespace JSmoke {
 
+DEF_CONTAINER_MARSHALLER3(QListQPairKFileItemKFileItem, QList<QPair<KFileItem,KFileItem> >)
 DEF_CONTAINER_MARSHALLER(QListKBookmarkMenu, QList<KBookmarkMenu*>)
 DEF_CONTAINER_MARSHALLER(QListKDataToolInfo, QList<KDataToolInfo>)
 DEF_CONTAINER_MARSHALLER(QListKFileItemDelegateInformation, QList<KFileItemDelegate::Information>)
@@ -54,6 +57,7 @@ DEF_CONTAINER_MARSHALLER(QListKServiceAction, QList<KServiceAction>)
 // DEF_CONTAINER_MARSHALLER(QListKSharedPtr<KService>, QList<KSharedPtr<KService>>)
 
 Marshall::TypeHandler KIOHandlers[] = {
+    { "QList<QPair<KFileItem,KFileItem>>", marshall_QListQPairKFileItemKFileItem },
     { "QList<KBookmarkMenu*>&", marshall_QListKBookmarkMenu },
     { "QList<KDataToolInfo>&", marshall_QListKDataToolInfo },
     { "QList<KFileItemDelegate::Information>", marshall_QListKFileItemDelegateInformation },
@@ -72,6 +76,7 @@ void registerKIOTypes(QScriptEngine * engine)
     qScriptSmokeRegisterSequenceMetaType<QList<KIO::CopyInfo> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<KIO::UDSEntry> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<KServiceAction> >(engine);
+    qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<KFileItem,KFileItem> > >(engine);
     
     qScriptSmokeRegisterPointerSequenceMetaType<QList<KBookmarkMenu*> >(engine);
 

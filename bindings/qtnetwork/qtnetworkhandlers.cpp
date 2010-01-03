@@ -32,6 +32,7 @@
 #include "global.h"
 #include "marshallmacros.h"
 
+Q_DECLARE_METATYPE2(QList<QPair<QHostAddress,int> >)
 Q_DECLARE_METATYPE(QHostAddress)
 Q_DECLARE_METATYPE(QNetworkAddressEntry)
 Q_DECLARE_METATYPE(QNetworkInterface)
@@ -49,7 +50,8 @@ Q_DECLARE_METATYPE(QList<QSslCipher>)
 Q_DECLARE_METATYPE(QList<QSslError>)
 
 namespace JSmoke {
-    
+
+DEF_CONTAINER_MARSHALLER3(QListQPairQHostAddressInt, QList<QPair<QHostAddress,int> >)
 DEF_CONTAINER_MARSHALLER(QListQHostAddress, QList<QHostAddress>)                                                                                                            
 DEF_CONTAINER_MARSHALLER(QListQNetworkAddressEntry, QList<QNetworkAddressEntry>)
 DEF_CONTAINER_MARSHALLER(QListQNetworkCookie, QList<QNetworkCookie>)
@@ -60,6 +62,8 @@ DEF_CONTAINER_MARSHALLER(QListQSslCipher, QList<QSslCipher>)
 DEF_CONTAINER_MARSHALLER(QListQSslError, QList<QSslError>)
 
 Marshall::TypeHandler QtNetworkHandlers[] = {
+    { "QList<QPair<QHostAddress,int>>", marshall_QListQPairQHostAddressInt },                                                                                              
+    { "QList<QHostAddress>", marshall_QListQHostAddress },                                                                                              
     { "QList<QHostAddress>", marshall_QListQHostAddress },                                                                                              
     { "QList<QHostAddress>&", marshall_QListQHostAddress },                                                                                                
     { "QList<QNetworkAddressEntry>&", marshall_QListQNetworkAddressEntry },                                                                                        
@@ -76,6 +80,7 @@ Marshall::TypeHandler QtNetworkHandlers[] = {
 
 void registerQtNetworkTypes(QScriptEngine * engine) 
 {   
+    qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<QHostAddress,int> > >(engine);                                                                                                            
     qScriptSmokeRegisterSequenceMetaType<QList<QHostAddress> >(engine);                                                                                                            
     qScriptSmokeRegisterSequenceMetaType<QList<QNetworkAddressEntry> >(engine);
     qScriptSmokeRegisterSequenceMetaType<QList<QNetworkCookie> >(engine);

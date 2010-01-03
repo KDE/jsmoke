@@ -24,11 +24,14 @@
 #include <kactioncollection.h>
 #include <kaction.h>
 #include <kconfigdialogmanager.h>
+#include <kguiitem.h>
 #include <kmainwindow.h>
 #include <kplotobject.h>
 #include <ksessionmanager.h>
 #include <ktoolbar.h>
 
+// Q_DECLARE_METATYPE2(QList<QPair<KGuiItem,KGuiItem> >)
+// Q_DECLARE_METATYPE(KGuiItem)
 Q_DECLARE_METATYPE(KAction*)
 Q_DECLARE_METATYPE(QList<KAction*>)
 Q_DECLARE_METATYPE(KActionCollection*)
@@ -54,6 +57,7 @@ Q_DECLARE_METATYPE(QList<KXMLGUIClient*>)
 
 namespace JSmoke {
 
+// DEF_CONTAINER_MARSHALLER3(QListQPairKGuiItemKGuiItem, QList<QPair<KGuiItem,KGuiItem> >)
 DEF_CONTAINER_MARSHALLER(QListKAction, QList<KAction*>)
 DEF_CONTAINER_MARSHALLER(QListKActionCollection, QList<KActionCollection*>)
 DEF_CONTAINER_MARSHALLER(QListKConfigDialogManager, QList<KConfigDialogManager*>)
@@ -67,6 +71,7 @@ DEF_CONTAINER_MARSHALLER(QListKToolBar, QList<KToolBar*>)
 DEF_CONTAINER_MARSHALLER(QListKXMLGUIClient, QList<KXMLGUIClient*>)
 
 Marshall::TypeHandler KDEUiHandlers[] = {
+//    { "QList<QPair<KGuiItem,KGuiItem>>", marshall_QListQPairKGuiItemKGuiItem },
     { "QList<KAction*>&", marshall_QListKAction },
     { "QList<KActionCollection*>", marshall_QListKActionCollection },
     { "QList<KActionCollection*>&", marshall_QListKActionCollection },
@@ -86,7 +91,7 @@ Marshall::TypeHandler KDEUiHandlers[] = {
 void registerKDEUiTypes(QScriptEngine * engine)
 {
     qScriptSmokeRegisterSequenceMetaType<QList<KStandardAction::StandardAction> >(engine);
-
+//    qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<KGuiItem,KGuiItem> > >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<KAction*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<KActionCollection*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<KConfigDialogManager*> >(engine);

@@ -25,8 +25,6 @@
 
 namespace JSmoke {
     
-
-
 Marshall::TypeHandler kHTMLHandlers[] = {
     { 0, 0 }
 };

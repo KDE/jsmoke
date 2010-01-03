@@ -48,6 +48,9 @@
 #include "global.h"
 #include "marshallmacros.h"
 
+Q_DECLARE_METATYPE2(QList<QPair<double,double> >)
+Q_DECLARE_METATYPE2(QList<QPair<double,QPointF> >)
+Q_DECLARE_METATYPE2(QVector<QPair<double,QColor> >)
 Q_DECLARE_METATYPE(QAbstractButton*)
 Q_DECLARE_METATYPE(QAbstractTextDocumentLayout::Selection)
 Q_DECLARE_METATYPE(QAction*)
@@ -111,6 +114,9 @@ Q_DECLARE_METATYPE(QVector<QTextLength>)
 
 namespace JSmoke {
 
+DEF_CONTAINER_MARSHALLER3(QListQPairDoubleDouble, QList<QPair<double,double> >)
+DEF_CONTAINER_MARSHALLER3(QListQPairDoubleQPointF, QList<QPair<double,QPointF> >)
+DEF_CONTAINER_MARSHALLER3(QVectorQPairDoubleQColor, QVector<QPair<double,QColor> >)
 DEF_CONTAINER_MARSHALLER(QListQAbstractButton, QList<QAbstractButton*>)
 DEF_CONTAINER_MARSHALLER(QListQActionGroup, QList<QActionGroup*>)
 DEF_CONTAINER_MARSHALLER(QListQAction, QList<QAction*>)
@@ -174,6 +180,8 @@ Marshall::TypeHandler QtGuiHandlers[] = {
     { "QList<QMdiSubWindow*>&", marshall_QListQMdiSubWindow },
     { "QList<QModelIndex>", marshall_QListQModelIndex },
     { "QList<QModelIndex>&", marshall_QListQModelIndex },
+    { "QList<QPair<double,double>>", marshall_QListQPairDoubleDouble },
+    { "QList<QPair<double,QPointF>>", marshall_QListQPairDoubleQPointF },
     { "QList<QPersistentModelIndex>", marshall_QListQPersistentModelIndex },
     { "QList<QPolygonF>&", marshall_QListQPolygonF },
     { "QList<QPrinterInfo>&", marshall_QListQPrinterInfo },
@@ -211,33 +219,20 @@ Marshall::TypeHandler QtGuiHandlers[] = {
     { "QVector<QAbstractTextDocumentLayout::Selection>", marshall_QVectorQAbstractTextDocumentLayoutSelection },
     { "QVector<QAbstractTextDocumentLayout::Selection>&", marshall_QVectorQAbstractTextDocumentLayoutSelection },
     { "QVector<QColor>", marshall_QVectorQColor },
+    { "QVector<QPair<double,QColor>>", marshall_QVectorQPairDoubleQColor },
+    { "QVector<QPair<double,QColor>>&", marshall_QVectorQPairDoubleQColor },
     { "QVector<QTextFormat>", marshall_QVectorQTextFormat },
     { "QVector<QTextLength>", marshall_QVectorQTextLength },
     { "QVector<QTextLength>&", marshall_QVectorQTextLength },
 
-   
     { 0, 0 }
 };
 
 void registerQtGuiTypes(QScriptEngine * engine)
 {
-    qScriptSmokeRegisterSequenceMetaType<QList<QChar> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QColor> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QImageTextKeyLang> >(engine);                                                                                                       
-    qScriptSmokeRegisterSequenceMetaType<QList<QKeySequence> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QModelIndex> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QPersistentModelIndex> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QPolygonF> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QPrinterInfo> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QTableWidgetSelectionRange> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QTextBlock> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QTextEdit::ExtraSelection> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QList<QTextLayout::FormatRange> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QVector<QAbstractTextDocumentLayout::Selection> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QVector<QColor> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QVector<QTextFormat> >(engine);
-    qScriptSmokeRegisterSequenceMetaType<QVector<QTextLength> >(engine);    
-    
+    qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<double,double> > >(engine);
+    qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<double,QPointF> > >(engine);
+    qScriptSmokeRegisterPairSequenceMetaType<QVector<QPair<double,QColor> > >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QAbstractButton*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QAction*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QActionGroup*> >(engine);
@@ -254,6 +249,22 @@ void registerQtGuiTypes(QScriptEngine * engine)
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QTreeWidgetItem*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QUndoStack*> >(engine);
     qScriptSmokeRegisterPointerSequenceMetaType<QList<QWidget*> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QChar> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QColor> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QImageTextKeyLang> >(engine);                                                                                                       
+    qScriptSmokeRegisterSequenceMetaType<QList<QKeySequence> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QModelIndex> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QPersistentModelIndex> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QPolygonF> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QPrinterInfo> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTableWidgetSelectionRange> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTextBlock> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTextEdit::ExtraSelection> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QList<QTextLayout::FormatRange> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QAbstractTextDocumentLayout::Selection> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QColor> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QTextFormat> >(engine);
+    qScriptSmokeRegisterSequenceMetaType<QVector<QTextLength> >(engine); 
 
     return;
 }
