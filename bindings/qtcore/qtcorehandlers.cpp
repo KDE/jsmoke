@@ -62,7 +62,9 @@ Q_DECLARE_METATYPE(QByteArray)
 Q_DECLARE_METATYPE(QDate)
 Q_DECLARE_METATYPE(QDateTime)
 Q_DECLARE_METATYPE(QFileInfo)
+Q_DECLARE_METATYPE(QList<bool>)
 Q_DECLARE_METATYPE(QList<int>)
+Q_DECLARE_METATYPE(QList<unsigned int>)
 Q_DECLARE_METATYPE(QList<QByteArray>)                                                                                                              
 Q_DECLARE_METATYPE(QList<QDate>)                                                                                                              
 Q_DECLARE_METATYPE(QList<QDateTime>)                                                                                                              
@@ -268,7 +270,10 @@ DEF_CONTAINER_MARSHALLER3(QListQPairQStringUShort, QList<QPair<QString,unsigned 
 DEF_CONTAINER_MARSHALLER3(QMapIntQVariant, QMap<int,QVariant>)
 DEF_CONTAINER_MARSHALLER3(QMapQStringQVariant, QMap<QString,QVariant>)
 DEF_CONTAINER_MARSHALLER3(QVectorQPairDoubleQVariant, QVector<QPair<double,QVariant> >)
+DEF_CONTAINER_MARSHALLER(QListBool, QList<bool>)
+DEF_CONTAINER_MARSHALLER(QListDouble, QList<double>)
 DEF_CONTAINER_MARSHALLER(QListInt, QList<int>)
+DEF_CONTAINER_MARSHALLER(QListUInt, QList<unsigned int>)
 DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)                                                                                                             
 DEF_CONTAINER_MARSHALLER(QListQDate, QList<QDate>)                                                                                                             
 DEF_CONTAINER_MARSHALLER(QListQDateTime, QList<QDateTime>)                                                                                                             
@@ -304,9 +309,15 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QHash<int,QByteArray>&", marshall_QHashIntQByteArray },
     { "QHash<QString,QVariant>", marshall_QHashQStringQVariant },
     { "QHash<QString,QVariant>&", marshall_QHashQStringQVariant },
+    { "QList<bool>", marshall_QListBool },
+    { "QList<bool>&", marshall_QListBool },
+    { "QList<double>", marshall_QListDouble },
+    { "QList<double>&", marshall_QListDouble },
     { "QList<int>", marshall_QListInt },
     { "QList<int>*", marshall_QListInt },
     { "QList<int>&", marshall_QListInt },
+    { "QList<unsigned int>", marshall_QListUInt },
+    { "QList<unsigned int>&", marshall_QListUInt },
     { "QList<QByteArray>", marshall_QListQByteArray },                                                                                                  
     { "QList<QByteArray>&", marshall_QListQByteArray },                                                                                                  
     { "QList<QDate>", marshall_QListQDate },                                                                                                  
@@ -382,7 +393,10 @@ Marshall::TypeHandler QtCoreHandlers[] = {
 void registerQtCoreTypes(QScriptEngine * engine) 
 {     
     qScriptRegisterSequenceMetaType<QList<QStringList> >(engine); 
+    qScriptRegisterSequenceMetaType<QList<bool> >(engine); 
+    qScriptRegisterSequenceMetaType<QList<double> >(engine); 
     qScriptRegisterSequenceMetaType<QList<int> >(engine); 
+    qScriptRegisterSequenceMetaType<QList<unsigned int> >(engine); 
     qScriptRegisterSequenceMetaType<QList<QLocale::Country> >(engine); 
     qScriptRegisterSequenceMetaType<QList<qreal> >(engine); 
     qScriptRegisterSequenceMetaType<QVector<qreal> >(engine); 
