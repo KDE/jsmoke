@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KFileHandlers[];
 extern void registerKFileTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_kfile_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_kfile_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

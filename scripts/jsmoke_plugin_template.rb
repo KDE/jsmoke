@@ -27,16 +27,16 @@ plugin_program = <<EOS
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptEngine>
 
-void qtscript_initialize_org_kde_#{module_name.downcase}_bindings(QScriptValue &);
+void qtscript_initialize_jsmoke_#{module_name.downcase}_bindings(QScriptValue &);
 
-class org_kde_#{module_name.downcase}_ScriptPlugin : public QScriptExtensionPlugin
+class jsmoke_#{module_name.downcase}_ScriptPlugin : public QScriptExtensionPlugin
 {
 public:
     QStringList keys() const;
     void initialize(const QString &key, QScriptEngine *engine);
 };
 
-QStringList org_kde_#{module_name.downcase}_ScriptPlugin::keys() const
+QStringList jsmoke_#{module_name.downcase}_ScriptPlugin::keys() const
 {
     QStringList list;
     list << QLatin1String("jsmoke");
@@ -44,19 +44,19 @@ QStringList org_kde_#{module_name.downcase}_ScriptPlugin::keys() const
     return list;
 }
 
-void org_kde_#{module_name.downcase}_ScriptPlugin::initialize(const QString &key, QScriptEngine *engine)
+void jsmoke_#{module_name.downcase}_ScriptPlugin::initialize(const QString &key, QScriptEngine *engine)
 {
     if (key == QLatin1String("jsmoke")) {
     } else if (key == QLatin1String("jsmoke.#{module_name.downcase}")) {
         QScriptValue extensionObject = engine->globalObject();
-        qtscript_initialize_org_kde_#{module_name.downcase}_bindings(extensionObject);
+        qtscript_initialize_jsmoke_#{module_name.downcase}_bindings(extensionObject);
     } else {
-        Q_ASSERT_X(false, "org_kde_#{module_name.downcase}::initialize", qPrintable(key));
+        Q_ASSERT_X(false, "jsmoke_#{module_name.downcase}::initialize", qPrintable(key));
     }
 }
 
-Q_EXPORT_STATIC_PLUGIN(org_kde_#{module_name.downcase}_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_org_kde_#{module_name.downcase}, org_kde_#{module_name.downcase}_ScriptPlugin)
+Q_EXPORT_STATIC_PLUGIN(jsmoke_#{module_name.downcase}_ScriptPlugin)
+Q_EXPORT_PLUGIN2(qtscript_jsmoke_#{module_name.downcase}, jsmoke_#{module_name.downcase}_ScriptPlugin)
 EOS
 
 handlers_program = <<EOS
@@ -118,7 +118,7 @@ extern Marshall::TypeHandler #{module_name}Handlers[];
 extern void register#{module_name}Types(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_#{module_name.downcase}_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_#{module_name.downcase}_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

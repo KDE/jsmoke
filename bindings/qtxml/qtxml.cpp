@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtXmlHandlers[];
 extern void registerQtXmlTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_xml_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtxml_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

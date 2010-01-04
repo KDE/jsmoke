@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KDECoreHandlers[];
 extern void registerKDECoreTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_kdecore_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_kdecore_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

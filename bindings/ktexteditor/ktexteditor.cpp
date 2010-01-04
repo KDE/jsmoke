@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KTextEditorHandlers[];
 extern void registerKTextEditorTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_ktexteditor_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_ktexteditor_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

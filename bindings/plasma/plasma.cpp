@@ -30,7 +30,7 @@ extern Marshall::TypeHandler PlasmaHandlers[];
 extern void registerPlasmaTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_plasma_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_plasma_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

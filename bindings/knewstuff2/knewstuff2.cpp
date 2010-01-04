@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KNewStuff2Handlers[];
 extern void registerKNewStuff2Types(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_knewstuff2_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_knewstuff2_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

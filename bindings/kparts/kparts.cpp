@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KPartsHandlers[];
 extern void registerKPartsTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_kparts_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_kparts_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

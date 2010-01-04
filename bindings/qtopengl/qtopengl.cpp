@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtOpenGLHandlers[];
 extern void registerQtOpenGLTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_opengl_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtopengl_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

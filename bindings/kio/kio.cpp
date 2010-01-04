@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KIOHandlers[];
 extern void registerKIOTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_kio_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_kio_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

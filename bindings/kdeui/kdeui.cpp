@@ -30,7 +30,7 @@ extern Marshall::TypeHandler KDEUiHandlers[];
 extern void registerKDEUiTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_kdeui_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_kdeui_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

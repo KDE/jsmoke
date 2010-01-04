@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtWebKitHandlers[];
 extern void registerQtWebKitTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_webkit_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtwebkit_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

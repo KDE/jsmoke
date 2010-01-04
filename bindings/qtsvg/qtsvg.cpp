@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtSvgHandlers[];
 extern void registerQtSvgTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_svg_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtsvg_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

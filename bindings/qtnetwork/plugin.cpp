@@ -2,16 +2,16 @@
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptEngine>
 
-void qtscript_initialize_org_kde_qt_network_bindings(QScriptValue &);
+void qtscript_initialize_jsmoke_qtnetwork_bindings(QScriptValue &);
 
-class org_kde_qt_network_ScriptPlugin : public QScriptExtensionPlugin
+class jsmoke_qtnetwork_ScriptPlugin : public QScriptExtensionPlugin
 {
 public:
     QStringList keys() const;
     void initialize(const QString &key, QScriptEngine *engine);
 };
 
-QStringList org_kde_qt_network_ScriptPlugin::keys() const
+QStringList jsmoke_qtnetwork_ScriptPlugin::keys() const
 {
     QStringList list;
     list << QLatin1String("jsmoke");
@@ -19,16 +19,16 @@ QStringList org_kde_qt_network_ScriptPlugin::keys() const
     return list;
 }
 
-void org_kde_qt_network_ScriptPlugin::initialize(const QString &key, QScriptEngine *engine)
+void jsmoke_qtnetwork_ScriptPlugin::initialize(const QString &key, QScriptEngine *engine)
 {
     if (key == QLatin1String("jsmoke")) {
     } else if (key == QLatin1String("jsmoke.qtnetwork")) {
         QScriptValue extensionObject = engine->globalObject();
-        qtscript_initialize_org_kde_qt_network_bindings(extensionObject);
+        qtscript_initialize_jsmoke_qtnetwork_bindings(extensionObject);
     } else {
-        Q_ASSERT_X(false, "org_kde_qt_network::initialize", qPrintable(key));
+        Q_ASSERT_X(false, "jsmoke_qtnetwork::initialize", qPrintable(key));
     }
 }
 
-Q_EXPORT_STATIC_PLUGIN(org_kde_qt_network_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_org_kde_qt_network, org_kde_qt_network_ScriptPlugin)
+Q_EXPORT_STATIC_PLUGIN(jsmoke_qtnetwork_ScriptPlugin)
+Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtnetwork, jsmoke_qtnetwork_ScriptPlugin)

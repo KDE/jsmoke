@@ -74,7 +74,7 @@ extern Marshall::TypeHandler QtGuiHandlers[];
 extern void registerQtGuiTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_gui_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtgui_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

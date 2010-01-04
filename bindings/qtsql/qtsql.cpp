@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtSqlHandlers[];
 extern void registerQtSqlTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_sql_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtsql_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

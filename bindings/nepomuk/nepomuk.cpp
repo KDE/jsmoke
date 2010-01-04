@@ -30,7 +30,7 @@ extern Marshall::TypeHandler NepomukHandlers[];
 extern void registerNepomukTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_nepomuk_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_nepomuk_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

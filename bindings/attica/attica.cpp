@@ -30,7 +30,7 @@ extern Marshall::TypeHandler AtticaHandlers[];
 extern void registerAtticaTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_attica_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_attica_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

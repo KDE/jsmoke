@@ -30,7 +30,7 @@ extern Marshall::TypeHandler PhononHandlers[];
 extern void registerPhononTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_phonon_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_phonon_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

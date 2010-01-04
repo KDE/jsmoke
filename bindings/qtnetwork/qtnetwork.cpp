@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtNetworkHandlers[];
 extern void registerQtNetworkTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_network_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtnetwork_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

@@ -1,3 +1,8 @@
+2010-01-04  Richard Dale  <richard.j.dale@gmail.com>
+
+* Changed the namespace in the QtScript plugin C function names from 'org_kde'
+to 'jsmoke'
+
 2010-01-03  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added some marshallers for lists of QPairs, QHashs and QMaps.

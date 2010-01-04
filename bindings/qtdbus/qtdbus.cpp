@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtDBusHandlers[];
 extern void registerQtDBusTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qt_dbus_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtdbus_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

@@ -30,7 +30,7 @@ extern Marshall::TypeHandler SolidHandlers[];
 extern void registerSolidTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_solid_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_solid_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

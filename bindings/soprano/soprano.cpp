@@ -30,7 +30,7 @@ extern Marshall::TypeHandler SopranoHandlers[];
 extern void registerSopranoTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_soprano_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_soprano_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 

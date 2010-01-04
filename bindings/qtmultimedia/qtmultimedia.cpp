@@ -30,7 +30,7 @@ extern Marshall::TypeHandler QtMultimediaHandlers[];
 extern void registerQtMultimediaTypes(QScriptEngine * engine);  
 }
 
-void qtscript_initialize_org_kde_qtmultimedia_bindings(QScriptValue& extensionObject)
+void qtscript_initialize_jsmoke_qtmultimedia_bindings(QScriptValue& extensionObject)
 {
 static bool initialized = false;
 
