@@ -31,4 +31,4 @@ void jsmoke_phonon_ScriptPlugin::initialize(const QString &key, QScriptEngine *e
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_phonon_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_phonon, jsmoke_phonon_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_phonon, jsmoke_phonon_ScriptPlugin)

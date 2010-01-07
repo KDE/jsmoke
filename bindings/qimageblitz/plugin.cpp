@@ -31,4 +31,4 @@ void jsmoke_qimageblitz_ScriptPlugin::initialize(const QString &key, QScriptEngi
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qimageblitz_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qimageblitz, jsmoke_qimageblitz_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qimageblitz, jsmoke_qimageblitz_ScriptPlugin)

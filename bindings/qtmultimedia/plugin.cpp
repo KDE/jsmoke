@@ -31,4 +31,4 @@ void jsmoke_qtmultimedia_ScriptPlugin::initialize(const QString &key, QScriptEng
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qtmultimedia_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtmultimedia, jsmoke_qtmultimedia_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qtmultimedia, jsmoke_qtmultimedia_ScriptPlugin)

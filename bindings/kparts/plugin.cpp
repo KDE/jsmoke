@@ -31,4 +31,4 @@ void jsmoke_kparts_ScriptPlugin::initialize(const QString &key, QScriptEngine *e
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_kparts_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_kparts, jsmoke_kparts_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_kparts, jsmoke_kparts_ScriptPlugin)

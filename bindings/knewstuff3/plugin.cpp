@@ -31,4 +31,4 @@ void jsmoke_knewstuff3_ScriptPlugin::initialize(const QString &key, QScriptEngin
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_knewstuff3_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_knewstuff3, jsmoke_knewstuff3_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_knewstuff3, jsmoke_knewstuff3_ScriptPlugin)

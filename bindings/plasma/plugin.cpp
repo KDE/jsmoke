@@ -31,4 +31,4 @@ void jsmoke_plasma_ScriptPlugin::initialize(const QString &key, QScriptEngine *e
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_plasma_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_plasma, jsmoke_plasma_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_plasma, jsmoke_plasma_ScriptPlugin)

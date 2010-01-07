@@ -31,4 +31,4 @@ void jsmoke_qtnetwork_ScriptPlugin::initialize(const QString &key, QScriptEngine
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qtnetwork_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtnetwork, jsmoke_qtnetwork_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qtnetwork, jsmoke_qtnetwork_ScriptPlugin)

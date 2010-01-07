@@ -31,4 +31,4 @@ void jsmoke_kdecore_ScriptPlugin::initialize(const QString &key, QScriptEngine *
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_kdecore_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_kdecore, jsmoke_kdecore_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_kdecore, jsmoke_kdecore_ScriptPlugin)

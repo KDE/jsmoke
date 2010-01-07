@@ -31,4 +31,4 @@ void jsmoke_qtopengl_ScriptPlugin::initialize(const QString &key, QScriptEngine 
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qtopengl_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtopengl, jsmoke_qtopengl_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qtopengl, jsmoke_qtopengl_ScriptPlugin)

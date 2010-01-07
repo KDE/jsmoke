@@ -31,4 +31,4 @@ void jsmoke_nepomukquery_ScriptPlugin::initialize(const QString &key, QScriptEng
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_nepomukquery_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_nepomukquery, jsmoke_nepomukquery_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_nepomukquery, jsmoke_nepomukquery_ScriptPlugin)

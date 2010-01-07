@@ -31,4 +31,4 @@ void jsmoke_kfile_ScriptPlugin::initialize(const QString &key, QScriptEngine *en
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_kfile_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_kfile, jsmoke_kfile_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_kfile, jsmoke_kfile_ScriptPlugin)

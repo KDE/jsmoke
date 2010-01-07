@@ -31,4 +31,4 @@ void jsmoke_qtgui_ScriptPlugin::initialize(const QString &key, QScriptEngine *en
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qtgui_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtgui, jsmoke_qtgui_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qtgui, jsmoke_qtgui_ScriptPlugin)

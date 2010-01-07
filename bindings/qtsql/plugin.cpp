@@ -31,4 +31,4 @@ void jsmoke_qtsql_ScriptPlugin::initialize(const QString &key, QScriptEngine *en
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qtsql_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtsql, jsmoke_qtsql_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qtsql, jsmoke_qtsql_ScriptPlugin)

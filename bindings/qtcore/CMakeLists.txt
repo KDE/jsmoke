@@ -9,3 +9,4 @@ set_target_properties(jsmokeqtcore PROPERTIES PREFIX "")
 
 install(TARGETS jsmokeqtcore DESTINATION ${QT_PLUGINS_DIR}/script )
 
+

@@ -31,4 +31,4 @@ void jsmoke_qtxmlpatterns_ScriptPlugin::initialize(const QString &key, QScriptEn
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_qtxmlpatterns_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_qtxmlpatterns, jsmoke_qtxmlpatterns_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_qtxmlpatterns, jsmoke_qtxmlpatterns_ScriptPlugin)

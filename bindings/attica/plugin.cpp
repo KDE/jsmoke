@@ -31,4 +31,4 @@ void jsmoke_attica_ScriptPlugin::initialize(const QString &key, QScriptEngine *e
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_attica_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_attica, jsmoke_attica_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_attica, jsmoke_attica_ScriptPlugin)

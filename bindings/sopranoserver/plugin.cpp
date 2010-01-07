@@ -31,4 +31,4 @@ void jsmoke_sopranoserver_ScriptPlugin::initialize(const QString &key, QScriptEn
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_sopranoserver_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_sopranoserver, jsmoke_sopranoserver_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_sopranoserver, jsmoke_sopranoserver_ScriptPlugin)
