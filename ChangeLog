@@ -1,3 +1,8 @@
+2010-01-07  Richard Dale  <richard.j.dale@gmail.com>
+
+* Methods in the 'QGlobalSpace' global namespace classes were not being looked 
+up correctly
+
 2010-01-04  Richard Dale  <richard.j.dale@gmail.com>
 
 * Changed the namespace in the QtScript plugin C function names from 'org_kde'

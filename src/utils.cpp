@@ -145,13 +145,15 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         Smoke::ModuleIndex methodId = classId.smoke->findMethod(klass.className, mungedMethod);
 
         if (methodId.index == 0) {
-            // Look in all the open smoke modules
+            // Look in the global namespaces of all the open smoke modules
             QHashIterator<Smoke*, Module> it(Global::modules);
             while (it.hasNext()) {
                 it.next();
-                methodId = it.key()->findMethod("QGlobalSpace", mungedMethod);
+                Smoke * smoke = it.key();
+                methodId = smoke->findMethod(   smoke->idClass("QGlobalSpace"), 
+                                                smoke->idMethodName(mungedMethod) );
                 
-                if (methodId.index != 0) {
+                if (methodId != smoke->NullModuleIndex) {
                     methodIds.append(methodId);
                 }
             }
