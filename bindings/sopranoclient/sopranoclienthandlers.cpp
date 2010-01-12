@@ -28,10 +28,8 @@ Q_DECLARE_METATYPE(Soprano::BackendSetting)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListSopranoBackendSetting, QList<Soprano::BackendSetting>)
-
 Marshall::TypeHandler SopranoClientHandlers[] = {
-    { "QList<Soprano::BackendSetting>&", marshall_QListSopranoBackendSetting },
+    { "QList<Soprano::BackendSetting>&", marshall_Container<QList<Soprano::BackendSetting> > },
     { 0, 0 }
 };
 

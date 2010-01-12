@@ -25,15 +25,6 @@
 **
 ****************************************************************************/
 
-/****************************************************************************
-**
-** This code was taken from the 'qsexec' tool in the Qt Labs QtScript bindings
-** project.
-**
-** Copyright 2009 by Richard Dale <richard.j.dale@gmail.com>
-**
-****************************************************************************/
-
 #include <QtScript>
 
 #include <QtCore/QFile>
@@ -44,18 +35,6 @@
 #include <QtDebug>
 
 namespace {
-
-void printUsage()
-{
-    QFile info(QCoreApplication::applicationDirPath()+"/README.TXT");
-    if (!info.exists() || !info.open(QFile::ReadOnly)) {
-        qDebug() << "Can't read README.TXT";
-    } else {
-        QTextStream stream(&info);
-        qDebug() << stream.readAll();
-        info.close();
-    }
-}
 
 bool loadFile(QString fileName, QScriptEngine *engine)
 {
@@ -130,49 +109,6 @@ QScriptValue importExtension(QScriptContext *context, QScriptEngine *engine)
     return engine->importExtension(context->argument(0).toString());
 }
 
-bool stopInteractiveMode;
-
-QScriptValue exitInteractiveMode(QScriptContext *context, QScriptEngine *engine)
-{
-    Q_UNUSED(context);
-    stopInteractiveMode = true;
-    return engine->undefinedValue();
-}
-
-void interactiveMode(QScriptEngine *engine)
-{
-    engine->globalObject().setProperty("quit", engine->newFunction(exitInteractiveMode));
-    qDebug() << "Running in interactive mode. Press Ctrl+C or call quit() to stop.";
-
-    QTextStream input(stdin, QFile::ReadOnly);
-    const char *qtScriptPrompt = "qs> ";
-    const char *dotPrompt = ".... ";
-    const char *prompt = qtScriptPrompt;
-    QString code;
-    stopInteractiveMode = false;
-    while (!stopInteractiveMode) {
-        QString line;
-        printf("%s", prompt);
-        fflush(stdout);
-        line = input.readLine();
-        if (line.isNull())
-            break;
-        code += line;
-        code += QLatin1Char('\n');
-        if (line.trimmed().isEmpty()) {
-            continue;
-        } else if (!engine->canEvaluate(code)) {
-            prompt = dotPrompt;
-        } else {
-            QScriptValue result = engine->evaluate(code, QLatin1String("stdin"));
-            code.clear();
-            prompt = qtScriptPrompt;
-            if (!result.isUndefined())
-                fprintf(stderr, "%s\n", qPrintable(result.toString()));
-        }
-    }
-}
-
 } // namespace
 
 QScriptEngine * initializeEngine()
@@ -212,8 +148,6 @@ QScriptEngine * initializeEngine()
             envMap.insert(keyVal.at(0), keyVal.at(1));
     }
     system.setProperty("env", engine->toScriptValue(envMap));
-    
-    system.setProperty("argv", engine->toScriptValue(QCoreApplication::arguments()));
 
     // add the include functionality to qt.script.include
     script.setProperty("include", engine->newFunction(includeScript));
@@ -222,38 +156,16 @@ QScriptEngine * initializeEngine()
     return engine;
 }
 
-int run(QScriptEngine * engine)
+int run(QScriptEngine * engine, const QString& fileName)
 {
     QScriptValue global = engine->globalObject();
     QScriptValue script = global.property("qs").property("script");
-
-    QStringList args = QCoreApplication::arguments();
-    args.takeFirst();
-    if (args.isEmpty()) {
-        interactiveMode(engine);
-    } else if (args.size() == 1 &&
-            (args.at(0) == "-help" || args.at(0) == "--help" || args.at(0) == "-h" || args.at(0) == "/h")) {
-        printUsage();
-    } else { // read script file and execute
-
-        QStringList files;
-        bool singlefile = (args.at(0) != "-f");
-        if (singlefile) {
-            files << args.takeFirst();
-            // add arguments to qt.script.arguments
-            script.setProperty("args", engine->toScriptValue(args));
-        } else {
-            args.takeFirst();
-            files += args;
-        }
-
-        foreach (const QString &fileName, files) {
-            if (!loadFile(fileName, engine)) {
-                qDebug() << "Failed:" << fileName;
-                return EXIT_FAILURE;
-            }
-        }
+    
+    if (!loadFile(fileName, engine)) {
+        qDebug() << "Failed:" << fileName;
+        return EXIT_FAILURE;
     }
+
     delete engine;
     return EXIT_SUCCESS;
 }

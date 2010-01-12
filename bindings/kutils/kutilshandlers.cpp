@@ -28,10 +28,8 @@ Q_DECLARE_METATYPE(QList<KCModuleProxy*>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListKCModuleProxy, QList<KCModuleProxy*>)
-
 Marshall::TypeHandler KUtilsHandlers[] = {
-    { "QList<KCModuleProxy*>&", marshall_QListKCModuleProxy },
+    { "QList<KCModuleProxy*>&", marshall_Container<QList<KCModuleProxy*> > },
     { 0, 0 }
 };
 

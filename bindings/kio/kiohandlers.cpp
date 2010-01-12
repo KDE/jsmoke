@@ -47,25 +47,16 @@ Q_DECLARE_METATYPE(QList<KServiceAction>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER3(QListQPairKFileItemKFileItem, QList<QPair<KFileItem,KFileItem> >)
-DEF_CONTAINER_MARSHALLER(QListKBookmarkMenu, QList<KBookmarkMenu*>)
-DEF_CONTAINER_MARSHALLER(QListKDataToolInfo, QList<KDataToolInfo>)
-DEF_CONTAINER_MARSHALLER(QListKFileItemDelegateInformation, QList<KFileItemDelegate::Information>)
-DEF_CONTAINER_MARSHALLER(QListKIOCopyInfo, QList<KIO::CopyInfo>)
-DEF_CONTAINER_MARSHALLER(QListKIOUDSEntry, QList<KIO::UDSEntry>)
-DEF_CONTAINER_MARSHALLER(QListKServiceAction, QList<KServiceAction>)
-// DEF_CONTAINER_MARSHALLER(QListKSharedPtr<KService>, QList<KSharedPtr<KService>>)
-
 Marshall::TypeHandler KIOHandlers[] = {
-    { "QList<QPair<KFileItem,KFileItem>>", marshall_QListQPairKFileItemKFileItem },
-    { "QList<KBookmarkMenu*>&", marshall_QListKBookmarkMenu },
-    { "QList<KDataToolInfo>&", marshall_QListKDataToolInfo },
-    { "QList<KFileItemDelegate::Information>", marshall_QListKFileItemDelegateInformation },
-    { "QList<KFileItemDelegate::Information>&", marshall_QListKFileItemDelegateInformation },
-    { "QList<KIO::CopyInfo>&", marshall_QListKIOCopyInfo },
-    { "QList<KIO::UDSEntry>&", marshall_QListKIOUDSEntry },
-    { "QList<KServiceAction>", marshall_QListKServiceAction },
-//    { "QList<KSharedPtr<KService>>", marshall_QListKSharedPtr<KService> },
+    { "QList<QPair<KFileItem,KFileItem>>", marshall_Container<QList<QPair<KFileItem,KFileItem> > > },
+    { "QList<KBookmarkMenu*>&", marshall_Container<QList<KBookmarkMenu*> > },
+    { "QList<KDataToolInfo>&", marshall_Container<QList<KDataToolInfo> > },
+    { "QList<KFileItemDelegate::Information>", marshall_Container<QList<KFileItemDelegate::Information> > },
+    { "QList<KFileItemDelegate::Information>&", marshall_Container<QList<KFileItemDelegate::Information> > },
+    { "QList<KIO::CopyInfo>&", marshall_Container<QList<KIO::CopyInfo> > },
+    { "QList<KIO::UDSEntry>&", marshall_Container<QList<KIO::UDSEntry> > },
+    { "QList<KServiceAction>", marshall_Container<QList<KServiceAction> > },
+//    { "QList<KSharedPtr<KService>>", marshall_Container<QList<KSharedPtr> ><KService> },
     { 0, 0 }
 };
 

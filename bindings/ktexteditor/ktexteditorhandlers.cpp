@@ -46,23 +46,15 @@ Q_DECLARE_METATYPE(QVector<KTextEditor::Range>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListKTextEditorCommand, QList<KTextEditor::Command*>)
-DEF_CONTAINER_MARSHALLER(QListKTextEditorDocument, QList<KTextEditor::Document*>)
-DEF_CONTAINER_MARSHALLER(QListKTextEditorSmartRange, QList<KTextEditor::SmartRange*>)
-DEF_CONTAINER_MARSHALLER(QListKTextEditorSmartRangeNotifier, QList<KTextEditor::SmartRangeNotifier*>)
-DEF_CONTAINER_MARSHALLER(QListKTextEditorSmartRangeWatcher, QList<KTextEditor::SmartRangeWatcher*>)
-DEF_CONTAINER_MARSHALLER(QListKTextEditorView, QList<KTextEditor::View*>)
-DEF_CONTAINER_MARSHALLER(QVectorKTextEditorRange, QVector<KTextEditor::Range>)
-
 Marshall::TypeHandler KTextEditorHandlers[] = {
-    { "QList<KTextEditor::Command*>", marshall_QListKTextEditorCommand },
-    { "QList<KTextEditor::Document*>&", marshall_QListKTextEditorDocument },
-    { "QList<KTextEditor::SmartRange*>", marshall_QListKTextEditorSmartRange },
-    { "QList<KTextEditor::SmartRange*>&", marshall_QListKTextEditorSmartRange },
-    { "QList<KTextEditor::SmartRangeNotifier*>", marshall_QListKTextEditorSmartRangeNotifier },
-    { "QList<KTextEditor::SmartRangeWatcher*>&", marshall_QListKTextEditorSmartRangeWatcher },
-    { "QList<KTextEditor::View*>&", marshall_QListKTextEditorView },
-    { "QVector<KTextEditor::Range>", marshall_QVectorKTextEditorRange },
+    { "QList<KTextEditor::Command*>", marshall_Container<QList<KTextEditor::Command*> > },
+    { "QList<KTextEditor::Document*>&", marshall_Container<QList<KTextEditor::Document*> > },
+    { "QList<KTextEditor::SmartRange*>", marshall_Container<QList<KTextEditor::SmartRange*> > },
+    { "QList<KTextEditor::SmartRange*>&", marshall_Container<QList<KTextEditor::SmartRange*> > },
+    { "QList<KTextEditor::SmartRangeNotifier*>", marshall_Container<QList<KTextEditor::SmartRangeNotifier*> > },
+    { "QList<KTextEditor::SmartRangeWatcher*>&", marshall_Container<QList<KTextEditor::SmartRangeWatcher*> > },
+    { "QList<KTextEditor::View*>&", marshall_Container<QList<KTextEditor::View*> > },
+    { "QVector<KTextEditor::Range>", marshall_Container<QVector<KTextEditor::Range> > },
     { 0, 0 }
 };
 

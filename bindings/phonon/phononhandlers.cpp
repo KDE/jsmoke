@@ -64,17 +64,12 @@ Q_DECLARE_METATYPE(QList<Phonon::Path>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListPhononEffect, QList<Phonon::Effect*>)
-DEF_CONTAINER_MARSHALLER(QListPhononEffectParameter, QList<Phonon::EffectParameter>)
-DEF_CONTAINER_MARSHALLER(QListPhononMediaSource, QList<Phonon::MediaSource>)
-DEF_CONTAINER_MARSHALLER(QListPhononPath, QList<Phonon::Path>)
-
 Marshall::TypeHandler PhononHandlers[] = {
-    { "QList<Phonon::Effect*>", marshall_QListPhononEffect },
-    { "QList<Phonon::EffectParameter>", marshall_QListPhononEffectParameter },
-    { "QList<Phonon::MediaSource>", marshall_QListPhononMediaSource },
-    { "QList<Phonon::MediaSource>&", marshall_QListPhononMediaSource },
-    { "QList<Phonon::Path>", marshall_QListPhononPath },
+    { "QList<Phonon::Effect*>", marshall_Container<QList<Phonon::Effect*> > },
+    { "QList<Phonon::EffectParameter>", marshall_Container<QList<Phonon::EffectParameter> > },
+    { "QList<Phonon::MediaSource>", marshall_Container<QList<Phonon::MediaSource> > },
+    { "QList<Phonon::MediaSource>&", marshall_Container<QList<Phonon::MediaSource> > },
+    { "QList<Phonon::Path>", marshall_Container<QList<Phonon::Path> > },
     { 0, 0 }
 };
 

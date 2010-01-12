@@ -28,6 +28,7 @@
 #include <QtGui/QGraphicsItem>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsWidget>
+#include <QtGui/QFontDatabase>
 #include <QtGui/QImageTextKeyLang>                                                                                                       
 #include <QtGui/QKeySequence>
 #include <QtGui/QListWidgetItem>
@@ -43,6 +44,7 @@
 #include <QtGui/QTextLength>
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QUndoStack>
+#include <QtGui/QWizard>
 
 #include "marshall.h"
 #include "global.h"
@@ -60,6 +62,27 @@ Q_DECLARE_METATYPE(QColor)
 Q_DECLARE_METATYPE(QDockWidget*)
 Q_DECLARE_METATYPE(QGraphicsView*)
 Q_DECLARE_METATYPE(QGraphicsWidget*)
+Q_DECLARE_METATYPE(QFontDatabase::WritingSystem)
+Q_DECLARE_METATYPE(QPrinter::PageSize)
+Q_DECLARE_METATYPE(QTableWidgetItem)
+Q_DECLARE_METATYPE(QWizard::WizardButton)
+Q_DECLARE_METATYPE(QListView::Flow)
+Q_DECLARE_METATYPE(QListView::LayoutMode)
+Q_DECLARE_METATYPE(QListView::Movement)
+Q_DECLARE_METATYPE(QListView::ResizeMode)
+Q_DECLARE_METATYPE(QListView::ViewMode)
+Q_DECLARE_METATYPE(QListWidgetItem::ItemType)
+Q_DECLARE_METATYPE(QList<QFontDatabase::WritingSystem>)
+Q_DECLARE_METATYPE(QList<QPrinter::PageSize>)
+Q_DECLARE_METATYPE(QList<QTableWidgetItem>)
+Q_DECLARE_METATYPE(QList<QTextOption::Tab>)
+Q_DECLARE_METATYPE(QList<QWizard::WizardButton>)
+Q_DECLARE_METATYPE(QList<QListView::Flow>)
+Q_DECLARE_METATYPE(QList<QListView::LayoutMode>)
+Q_DECLARE_METATYPE(QList<QListView::Movement>)
+Q_DECLARE_METATYPE(QList<QListView::ResizeMode>)
+Q_DECLARE_METATYPE(QList<QListView::ViewMode>)
+Q_DECLARE_METATYPE(QList<QListWidgetItem::ItemType>)
 Q_DECLARE_METATYPE(QImageTextKeyLang)
 Q_DECLARE_METATYPE(QKeySequence)
 Q_DECLARE_METATYPE(QList<QAbstractButton*>)
@@ -114,122 +137,98 @@ Q_DECLARE_METATYPE(QVector<QTextLength>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER3(QListQPairDoubleDouble, QList<QPair<double,double> >)
-DEF_CONTAINER_MARSHALLER3(QListQPairDoubleQPointF, QList<QPair<double,QPointF> >)
-DEF_CONTAINER_MARSHALLER3(QVectorQPairDoubleQColor, QVector<QPair<double,QColor> >)
-DEF_CONTAINER_MARSHALLER(QListQAbstractButton, QList<QAbstractButton*>)
-DEF_CONTAINER_MARSHALLER(QListQActionGroup, QList<QActionGroup*>)
-DEF_CONTAINER_MARSHALLER(QListQAction, QList<QAction*>)
-DEF_CONTAINER_MARSHALLER(QListQChar, QList<QChar>)
-DEF_CONTAINER_MARSHALLER(QListQColor, QList<QColor>)
-DEF_CONTAINER_MARSHALLER(QListQDockWidget, QList<QDockWidget*>)
-DEF_CONTAINER_MARSHALLER(QListQGraphicsItem, QList<QGraphicsItem*>)
-DEF_CONTAINER_MARSHALLER(QListQGraphicsView, QList<QGraphicsView*>)
-DEF_CONTAINER_MARSHALLER(QListQGraphicsWidget, QList<QGraphicsWidget*>)
-DEF_CONTAINER_MARSHALLER(QListQImageTextKeyLang, QList<QImageTextKeyLang>)                                                                                                      
-DEF_CONTAINER_MARSHALLER(QListQKeySequence, QList<QKeySequence>)
-DEF_CONTAINER_MARSHALLER(QListQListWidgetItem, QList<QListWidgetItem*>)
-DEF_CONTAINER_MARSHALLER(QListQMdiSubWindow, QList<QMdiSubWindow*>)
-DEF_CONTAINER_MARSHALLER(QListQModelIndex, QList<QModelIndex>)
-DEF_CONTAINER_MARSHALLER(QListQPersistentModelIndex, QList<QPersistentModelIndex>)
-DEF_CONTAINER_MARSHALLER(QListQPolygonF, QList<QPolygonF>)
-DEF_CONTAINER_MARSHALLER(QListQPrinterInfo, QList<QPrinterInfo>)
-DEF_CONTAINER_MARSHALLER(QListQStandardItem, QList<QStandardItem*>)
-DEF_CONTAINER_MARSHALLER(QListQTableWidgetItem, QList<QTableWidgetItem*>)
-DEF_CONTAINER_MARSHALLER(QListQTableWidgetSelectionRange, QList<QTableWidgetSelectionRange>)
-DEF_CONTAINER_MARSHALLER(QListQTextBlock, QList<QTextBlock>)
-DEF_CONTAINER_MARSHALLER(QListQTextEditExtraSelection, QList<QTextEdit::ExtraSelection>)
-DEF_CONTAINER_MARSHALLER(QListQTextFrame, QList<QTextFrame*>)
-DEF_CONTAINER_MARSHALLER(QListQTextLayoutFormatRange, QList<QTextLayout::FormatRange>)
-DEF_CONTAINER_MARSHALLER(QListQTreeWidgetItem, QList<QTreeWidgetItem*>)
-DEF_CONTAINER_MARSHALLER(QListQTreeWidget, QList<QTreeWidget*>)
-DEF_CONTAINER_MARSHALLER(QListQUndoStack, QList<QUndoStack*>)
-DEF_CONTAINER_MARSHALLER(QListQWidget, QList<QWidget*>)
-DEF_CONTAINER_MARSHALLER(QVectorQAbstractTextDocumentLayoutSelection, QVector<QAbstractTextDocumentLayout::Selection>)
-DEF_CONTAINER_MARSHALLER(QVectorQColor, QVector<QColor>)
-DEF_CONTAINER_MARSHALLER(QVectorQTextFormat, QVector<QTextFormat>)
-DEF_CONTAINER_MARSHALLER(QVectorQTextLength, QVector<QTextLength>)
-
 Marshall::TypeHandler QtGuiHandlers[] = {
-    { "QList<QAbstractButton*>", marshall_QListQAbstractButton },
-    { "QList<QAbstractButton*>&", marshall_QListQAbstractButton },
-    { "QList<QActionGroup*>", marshall_QListQActionGroup },
-    { "QList<QActionGroup*>&", marshall_QListQActionGroup },
-    { "QList<QAction*>", marshall_QListQAction },
-    { "QList<QAction*>&", marshall_QListQAction },
-    { "QList<QChar>", marshall_QListQChar },
-    { "QList<QColor>", marshall_QListQColor },
-    { "QList<QColor>&", marshall_QListQColor },
-    { "QList<QDockWidget*>", marshall_QListQDockWidget },
-    { "QList<QDockWidget*>&", marshall_QListQDockWidget },
-    { "QList<QFontDatabase::WritingSystem>", marshall_QListEnum },
-    { "QList<QGraphicsItem*>", marshall_QListQGraphicsItem },
-    { "QList<QGraphicsItem*>&", marshall_QListQGraphicsItem },
-    { "QList<QGraphicsView*>", marshall_QListQGraphicsView },
-    { "QList<QGraphicsView*>&", marshall_QListQGraphicsView },
-    { "QList<QGraphicsWidget*>", marshall_QListQGraphicsWidget },
-    { "QList<QGraphicsWidget*>&", marshall_QListQGraphicsWidget },
-    { "QList<QImageTextKeyLang>&", marshall_QListQImageTextKeyLang },                                                                                           
-    { "QList<QKeySequence>", marshall_QListQKeySequence },
-    { "QList<QKeySequence>&", marshall_QListQKeySequence },
-    { "QList<QKeySequence>&", marshall_QListQKeySequence },                                                                                            
-    { "QList<QKeySequence>&", marshall_QListQKeySequence },                                                                                                
-    { "QList<QListWidgetItem*>", marshall_QListQListWidgetItem },
-    { "QList<QListWidgetItem*>&", marshall_QListQListWidgetItem },
-    { "QList<QMdiSubWindow*>", marshall_QListQMdiSubWindow },
-    { "QList<QMdiSubWindow*>&", marshall_QListQMdiSubWindow },
-    { "QList<QModelIndex>", marshall_QListQModelIndex },
-    { "QList<QModelIndex>&", marshall_QListQModelIndex },
-    { "QList<QPair<double,double>>", marshall_QListQPairDoubleDouble },
-    { "QList<QPair<double,QPointF>>", marshall_QListQPairDoubleQPointF },
-    { "QList<QPersistentModelIndex>", marshall_QListQPersistentModelIndex },
-    { "QList<QPolygonF>&", marshall_QListQPolygonF },
-    { "QList<QPrinterInfo>&", marshall_QListQPrinterInfo },
-    { "QList<QPrinter::PageSize>", marshall_QListEnum },
-    { "QList<QStandardItem*>", marshall_QListQStandardItem },
-    { "QList<QStandardItem*>&", marshall_QListQStandardItem },
-    { "QList<QTableWidgetItem*>", marshall_QListQTableWidgetItem },
-    { "QList<QTableWidgetItem*>&", marshall_QListQTableWidgetItem },
-    { "QList<QTableWidgetSelectionRange>&", marshall_QListQTableWidgetSelectionRange },
-    { "QList<QTextBlock>&", marshall_QListQTextBlock },
-    { "QList<QTextEdit::ExtraSelection>", marshall_QListQTextEditExtraSelection },
-    { "QList<QTextEdit::ExtraSelection>&", marshall_QListQTextEditExtraSelection },
-    { "QList<QTextFrame*>", marshall_QListQTextFrame },
-    { "QList<QTextFrame*>&", marshall_QListQTextFrame },
-    { "QList<QTextLayout::FormatRange>", marshall_QListQTextLayoutFormatRange },
-    { "QList<QTextLayout::FormatRange>&", marshall_QListQTextLayoutFormatRange },
-    { "QList<QTextOption::Tab>", marshall_QListEnum },
-    { "QList<QTextOption::Tab>&", marshall_QListEnum },
-    { "QList<QTreeWidgetItem*>", marshall_QListQTreeWidgetItem },
-    { "QList<QTreeWidgetItem*>&", marshall_QListQTreeWidgetItem },
-    { "QList<QTreeWidget*>", marshall_QListQTreeWidget },
-    { "QList<QTreeWidget*>&", marshall_QListQTreeWidget },
-    { "QList<QUndoStack*>", marshall_QListQUndoStack },
-    { "QList<QUndoStack*>&", marshall_QListQUndoStack },
-    { "QList<QWidget*>", marshall_QListQWidget },
-    { "QList<QWidget*>&", marshall_QListQWidget },
-    { "QList<QWidget*>&", marshall_QListQWidget }, 
-    { "QList<QWizard::WizardButton>&", marshall_QListEnum },     
-    { "QListView::Flow", marshall_QListEnum },
-    { "QListView::LayoutMode", marshall_QListEnum },
-    { "QListView::Movement", marshall_QListEnum },
-    { "QListView::ResizeMode", marshall_QListEnum },
-    { "QListView::ViewMode", marshall_QListEnum },
-    { "QListWidgetItem::ItemType", marshall_QListEnum },
-    { "QVector<QAbstractTextDocumentLayout::Selection>", marshall_QVectorQAbstractTextDocumentLayoutSelection },
-    { "QVector<QAbstractTextDocumentLayout::Selection>&", marshall_QVectorQAbstractTextDocumentLayoutSelection },
-    { "QVector<QColor>", marshall_QVectorQColor },
-    { "QVector<QPair<double,QColor>>", marshall_QVectorQPairDoubleQColor },
-    { "QVector<QPair<double,QColor>>&", marshall_QVectorQPairDoubleQColor },
-    { "QVector<QTextFormat>", marshall_QVectorQTextFormat },
-    { "QVector<QTextLength>", marshall_QVectorQTextLength },
-    { "QVector<QTextLength>&", marshall_QVectorQTextLength },
+    { "QList<QAbstractButton*>", marshall_Container<QList<QAbstractButton*> > },
+    { "QList<QAbstractButton*>&", marshall_Container<QList<QAbstractButton*> > },
+    { "QList<QActionGroup*>", marshall_Container<QList<QActionGroup*> > },
+    { "QList<QActionGroup*>&", marshall_Container<QList<QActionGroup*> > },
+    { "QList<QAction*>", marshall_Container<QList<QAction*> > },
+    { "QList<QAction*>&", marshall_Container<QList<QAction*> > },
+    { "QList<QChar>", marshall_Container<QList<QChar> > },
+    { "QList<QColor>", marshall_Container<QList<QColor> > },
+    { "QList<QColor>&", marshall_Container<QList<QColor> > },
+    { "QList<QDockWidget*>", marshall_Container<QList<QDockWidget*> > },
+    { "QList<QDockWidget*>&", marshall_Container<QList<QDockWidget*> > },
+    { "QList<QFontDatabase::WritingSystem>", marshall_Container<QList<QFontDatabase::WritingSystem> > },
+    { "QList<QGraphicsItem*>", marshall_Container<QList<QGraphicsItem*> > },
+    { "QList<QGraphicsItem*>&", marshall_Container<QList<QGraphicsItem*> > },
+    { "QList<QGraphicsView*>", marshall_Container<QList<QGraphicsView*> > },
+    { "QList<QGraphicsView*>&", marshall_Container<QList<QGraphicsView*> > },
+    { "QList<QGraphicsWidget*>", marshall_Container<QList<QGraphicsWidget*> > },
+    { "QList<QGraphicsWidget*>&", marshall_Container<QList<QGraphicsWidget*> > },
+    { "QList<QImageTextKeyLang>&", marshall_Container<QList<QImageTextKeyLang> > },                                                                                           
+    { "QList<QKeySequence>", marshall_Container<QList<QKeySequence> > },
+    { "QList<QKeySequence>&", marshall_Container<QList<QKeySequence> > },
+    { "QList<QKeySequence>&", marshall_Container<QList<QKeySequence> > },                                                                                            
+    { "QList<QKeySequence>&", marshall_Container<QList<QKeySequence> > },                                                                                                
+    { "QList<QListWidgetItem*>", marshall_Container<QList<QListWidgetItem*> > },
+    { "QList<QListWidgetItem*>&", marshall_Container<QList<QListWidgetItem*> > },
+    { "QList<QMdiSubWindow*>", marshall_Container<QList<QMdiSubWindow*> > },
+    { "QList<QMdiSubWindow*>&", marshall_Container<QList<QMdiSubWindow*> > },
+    { "QList<QModelIndex>", marshall_Container<QList<QModelIndex> > },
+    { "QList<QModelIndex>&", marshall_Container<QList<QModelIndex> > },
+    { "QList<QPair<double,double>>", marshall_Container<QList<QPair<double,double> > > },
+    { "QList<QPair<double,QPointF>>", marshall_Container<QList<QPair<double,QPointF> > > },
+    { "QList<QPersistentModelIndex>", marshall_Container<QList<QPersistentModelIndex> > },
+    { "QList<QPolygonF>&", marshall_Container<QList<QPolygonF> > },
+    { "QList<QPrinterInfo>&", marshall_Container<QList<QPrinterInfo> > },
+    { "QList<QPrinter::PageSize>", marshall_Container<QList<QPrinter::PageSize> > },
+    { "QList<QStandardItem*>", marshall_Container<QList<QStandardItem*> > },
+    { "QList<QStandardItem*>&", marshall_Container<QList<QStandardItem*> > },
+    { "QList<QTableWidgetItem*>", marshall_Container<QList<QTableWidgetItem*> > },
+    { "QList<QTableWidgetItem*>&", marshall_Container<QList<QTableWidgetItem> > },
+    { "QList<QTableWidgetSelectionRange>&", marshall_Container<QList<QTableWidgetSelectionRange> > },
+    { "QList<QTextBlock>&", marshall_Container<QList<QTextBlock> > },
+    { "QList<QTextEdit::ExtraSelection>", marshall_Container<QList<QTextEdit::ExtraSelection> > },
+    { "QList<QTextEdit::ExtraSelection>&", marshall_Container<QList<QTextEdit::ExtraSelection> > },
+    { "QList<QTextFrame*>", marshall_Container<QList<QTextFrame*> > },
+    { "QList<QTextFrame*>&", marshall_Container<QList<QTextFrame*> > },
+    { "QList<QTextLayout::FormatRange>", marshall_Container<QList<QTextLayout::FormatRange> > },
+    { "QList<QTextLayout::FormatRange>&", marshall_Container<QList<QTextLayout::FormatRange> > },
+    { "QList<QTextOption::Tab>", marshall_Container<QList<QTextOption::Tab> > },
+    { "QList<QTextOption::Tab>&", marshall_Container<QList<QTextOption::Tab> > },
+    { "QList<QTreeWidgetItem*>", marshall_Container<QList<QTreeWidgetItem*> > },
+    { "QList<QTreeWidgetItem*>&", marshall_Container<QList<QTreeWidgetItem*> > },
+    { "QList<QTreeWidget*>", marshall_Container<QList<QTreeWidget*> > },
+    { "QList<QTreeWidget*>&", marshall_Container<QList<QTreeWidget*> > },
+    { "QList<QUndoStack*>", marshall_Container<QList<QUndoStack*> > },
+    { "QList<QUndoStack*>&", marshall_Container<QList<QUndoStack*> > },
+    { "QList<QWidget*>", marshall_Container<QList<QWidget*> > },
+    { "QList<QWidget*>&", marshall_Container<QList<QWidget*> > },
+    { "QList<QWidget*>&", marshall_Container<QList<QWidget*> > }, 
+    { "QList<QWizard::WizardButton>&", marshall_Container<QList<QWizard::WizardButton> > },     
+    { "QList<QListView::Flow>", marshall_Container<QList<QListView::Flow> > },
+    { "QList<QListView::LayoutMode>", marshall_Container<QList<QListView::LayoutMode> > },
+    { "QList<QListView::Movement>", marshall_Container<QList<QListView::Movement> > },
+    { "QList<QListView::ResizeMode>", marshall_Container<QList<QListView::ResizeMode> > },
+    { "QList<QListView::ViewMode>", marshall_Container<QList<QListView::ViewMode> > },
+    { "QList<QListWidgetItem::ItemType>", marshall_Container<QList<QListWidgetItem::ItemType> > },
+    { "QVector<QAbstractTextDocumentLayout::Selection>", marshall_Container<QVector<QAbstractTextDocumentLayout::Selection> > },
+    { "QVector<QAbstractTextDocumentLayout::Selection>&", marshall_Container<QVector<QAbstractTextDocumentLayout::Selection> > },
+    { "QVector<QColor>", marshall_Container<QVector<QColor> > },
+    { "QVector<QPair<double,QColor>>", marshall_Container<QVector<QPair<double,QColor> > > },
+    { "QVector<QPair<double,QColor>>&", marshall_Container<QVector<QPair<double,QColor> > > },
+    { "QVector<QTextFormat>", marshall_Container<QVector<QTextFormat> > },
+    { "QVector<QTextLength>", marshall_Container<QVector<QTextLength> > },
+    { "QVector<QTextLength>&", marshall_Container<QVector<QTextLength> > },
 
     { 0, 0 }
 };
 
 void registerQtGuiTypes(QScriptEngine * engine)
 {
+    qScriptRegisterSequenceMetaType<QList<QFontDatabase::WritingSystem> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QPrinter::PageSize> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QTableWidgetItem> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QTextOption::Tab> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QWizard::WizardButton> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QListView::Flow> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QListView::LayoutMode> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QListView::Movement> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QListView::ResizeMode> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QListView::ViewMode> >(engine);
+    qScriptRegisterSequenceMetaType<QList<QListWidgetItem::ItemType> >(engine);
+
     qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<double,double> > >(engine);
     qScriptSmokeRegisterPairSequenceMetaType<QList<QPair<double,QPointF> > >(engine);
     qScriptSmokeRegisterPairSequenceMetaType<QVector<QPair<double,QColor> > >(engine);

@@ -56,26 +56,17 @@ Q_DECLARE_METATYPE(Soprano::Serializer*)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListSopranoBackendSetting, QList<Soprano::BackendSetting>)
-DEF_CONTAINER_MARSHALLER(QListSopranoBindingSet, QList<Soprano::BindingSet>)
-DEF_CONTAINER_MARSHALLER(QListSopranoInferenceRule, QList<Soprano::Inference::Rule>)
-DEF_CONTAINER_MARSHALLER(QListSopranoNode, QList<Soprano::Node>)
-DEF_CONTAINER_MARSHALLER(QListSopranoStatement, QList<Soprano::Statement>)
-DEF_CONTAINER_MARSHALLER(QListSopranoBackend, QList<Soprano::Backend*>)
-DEF_CONTAINER_MARSHALLER(QListSopranoParser, QList<Soprano::Parser*>)
-DEF_CONTAINER_MARSHALLER(QListSopranoSerializer, QList<Soprano::Serializer*>)
-
 Marshall::TypeHandler SopranoHandlers[] = {
-    { "QList<Soprano::BackendSetting>&", marshall_QListSopranoBackendSetting },
-    { "QList<Soprano::BindingSet>", marshall_QListSopranoBindingSet },
-    { "QList<Soprano::Inference::Rule>&", marshall_QListSopranoInferenceRule },
-    { "QList<Soprano::Node>", marshall_QListSopranoNode },
-    { "QList<Soprano::Node>&", marshall_QListSopranoNode },
-    { "QList<Soprano::Statement>", marshall_QListSopranoStatement },
-    { "QList<Soprano::Statement>&", marshall_QListSopranoStatement },
-    { "QList<const Soprano::Backend*>", marshall_QListSopranoBackend },
-    { "QList<const Soprano::Parser*>", marshall_QListSopranoParser },
-    { "QList<const Soprano::Serializer*>", marshall_QListSopranoSerializer },
+    { "QList<Soprano::BackendSetting>&", marshall_Container<QList<Soprano::BackendSetting> > },
+    { "QList<Soprano::BindingSet>", marshall_Container<QList<Soprano::BindingSet> > },
+    { "QList<Soprano::Inference::Rule>&", marshall_Container<QList<Soprano::Inference::Rule> > },
+    { "QList<Soprano::Node>", marshall_Container<QList<Soprano::Node> > },
+    { "QList<Soprano::Node>&", marshall_Container<QList<Soprano::Node> > },
+    { "QList<Soprano::Statement>", marshall_Container<QList<Soprano::Statement> > },
+    { "QList<Soprano::Statement>&", marshall_Container<QList<Soprano::Statement> > },
+    { "QList<const Soprano::Backend*>", marshall_Container<QList<Soprano::Backend*> > },
+    { "QList<const Soprano::Parser*>", marshall_Container<QList<Soprano::Parser*> > },
+    { "QList<const Soprano::Serializer*>", marshall_Container<QList<Soprano::Serializer*> > },
     { 0, 0 }
 };
 

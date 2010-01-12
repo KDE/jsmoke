@@ -156,76 +156,46 @@ int qScriptSmokeRegisterKSycocaEntrySequenceMetaType(
 
 namespace JSmoke {
 
-// DEF_CONTAINER_MARSHALLER( QListKAboutLicense, QList<KAboutLicense> )
-// DEF_CONTAINER_MARSHALLER( QListKAboutPerson, QList<KAboutPerson> )
-DEF_CONTAINER_MARSHALLER(QListKAuthAction, QList<KAuth::Action>)
-DEF_CONTAINER_MARSHALLER(QListKAutoSaveFile, QList<KAutoSaveFile*>)
-// DEF_CONTAINER_MARSHALLER( QListKCatalogName, QList<KCatalogName>)
-DEF_CONTAINER_MARSHALLER(QListKConfigSkeletonItem, QList<KConfigSkeletonItem*>)
-DEF_CONTAINER_MARSHALLER(QListKCoreConfigSkeletonItemEnumChoice2, QList<KCoreConfigSkeleton::ItemEnum::Choice2>)
-DEF_CONTAINER_MARSHALLER(QListKCoreConfigSkeletonItemEnumChoice, QList<KCoreConfigSkeleton::ItemEnum::Choice>)
-DEF_CONTAINER_MARSHALLER(QListKJob, QList<KJob*>)
-DEF_CONTAINER_MARSHALLER(QListKLocaleDigitSet, QList<KLocale::DigitSet>)
-DEF_CONTAINER_MARSHALLER(QListKPluginInfo, QList<KPluginInfo>)
-DEF_CONTAINER_MARSHALLER(QListKProtocolInfoExtraField, QList<KProtocolInfo::ExtraField>)
-DEF_CONTAINER_MARSHALLER(QListKServiceAction, QList<KServiceAction>)
-DEF_CONTAINER_MARSHALLER(QListKSharedPtrKMimeType, QList<KSharedPtr<KMimeType> >)
-DEF_CONTAINER_MARSHALLER(QListKSharedPtrKServiceGroup, QList<KSharedPtr<KServiceGroup> >)
-DEF_CONTAINER_MARSHALLER(QListKSharedPtrKService, QList<KSharedPtr<KService> >)
-DEF_CONTAINER_MARSHALLER(QListKSharedPtrKServiceType, QList<KSharedPtr<KServiceType> >)
-DEF_CONTAINER_MARSHALLER(QListKSharedPtrKSycocaEntry, QList<KSharedPtr<KSycocaEntry> >)
-DEF_CONTAINER_MARSHALLER(QListKSslCipher, QList<KSslCipher>)
-DEF_CONTAINER_MARSHALLER(QListKSslError, QList<KSslError>)
-DEF_CONTAINER_MARSHALLER(QListKTimeZoneLeapSeconds, QList<KTimeZone::LeapSeconds>)
-DEF_CONTAINER_MARSHALLER(QListKTimeZonePhase, QList<KTimeZone::Phase>)
-DEF_CONTAINER_MARSHALLER(QListKTimeZoneTransition, QList<KTimeZone::Transition>)
-DEF_CONTAINER_MARSHALLER(QListKUserGroup, QList<KUserGroup>)
-DEF_CONTAINER_MARSHALLER(QListKUser, QList<KUser>)
-DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)
-DEF_CONTAINER_MARSHALLER(QListQDateTime, QList<QDateTime>)
-DEF_CONTAINER_MARSHALLER(QListQSslCertificate, QList<QSslCertificate>)
-
-
 Marshall::TypeHandler KDECoreHandlers[] = {
-//     { "QList<KAboutLicense>", marshall_QListKAboutLicense },
-//    { "QList<KAboutPerson>", marshall_QListKAboutPerson },
-    { "QList<KAuth::Action>*", marshall_QListKAuthAction },
-    { "QList<KAuth::Action>&", marshall_QListKAuthAction },
-    { "QList<KAutoSaveFile*>", marshall_QListKAutoSaveFile },
-//    { "QList<KCatalogName>&", marshall_QListKCatalogName },
-    { "QList<KConfigSkeletonItem*>", marshall_QListKConfigSkeletonItem },
-    { "QList<KCoreConfigSkeleton::ItemEnum::Choice2>", marshall_QListKCoreConfigSkeletonItemEnumChoice2 },
-    { "QList<KCoreConfigSkeleton::ItemEnum::Choice2>&", marshall_QListKCoreConfigSkeletonItemEnumChoice2 },
-    { "QList<KCoreConfigSkeleton::ItemEnum::Choice>", marshall_QListKCoreConfigSkeletonItemEnumChoice },
-    { "QList<KCoreConfigSkeleton::ItemEnum::Choice>&", marshall_QListKCoreConfigSkeletonItemEnumChoice },
-    { "QList<KJob*>&", marshall_QListKJob },
-    { "QList<KLocale::DigitSet>", marshall_QListKLocaleDigitSet },
-    { "QList<KPluginInfo>", marshall_QListKPluginInfo },
-    { "QList<KProtocolInfo::ExtraField>", marshall_QListKProtocolInfoExtraField },
-    { "QList<KServiceAction>", marshall_QListKServiceAction },
-    { "QList<KSharedPtr<KMimeType>>", marshall_QListKSharedPtrKMimeType },
-    { "QList<KSharedPtr<KServiceGroup>>", marshall_QListKSharedPtrKServiceGroup },
-    { "QList<KSharedPtr<KService>>", marshall_QListKSharedPtrKService },
-    { "QList<KSharedPtr<KService>>&", marshall_QListKSharedPtrKService },
-    { "QList<KSharedPtr<KServiceType>>", marshall_QListKSharedPtrKServiceType },
-    { "QList<KSharedPtr<KSycocaEntry>>", marshall_QListKSharedPtrKSycocaEntry },
-    { "QList<KSslCipher>", marshall_QListKSslCipher },
-    { "QList<KSslCipher>&", marshall_QListKSslCipher },
-    { "QList<KSslError>", marshall_QListKSslError },
-    { "QList<KSslError>&", marshall_QListKSslError },
-    { "QList<KTimeZone::LeapSeconds>", marshall_QListKTimeZoneLeapSeconds },
-    { "QList<KTimeZone::LeapSeconds>&", marshall_QListKTimeZoneLeapSeconds },
-    { "QList<KTimeZone::Phase>", marshall_QListKTimeZonePhase },
-    { "QList<KTimeZone::Phase>&", marshall_QListKTimeZonePhase },
-    { "QList<KTimeZone::Transition>", marshall_QListKTimeZoneTransition },
-    { "QList<KTimeZone::Transition>&", marshall_QListKTimeZoneTransition },
-    { "QList<KUserGroup>", marshall_QListKUserGroup },
-    { "QList<KUser>", marshall_QListKUser },
-    { "QList<QByteArray>", marshall_QListQByteArray },
-    { "QList<QByteArray>&", marshall_QListQByteArray },
-    { "QList<QDateTime>", marshall_QListQDateTime },
-    { "QList<QSslCertificate>", marshall_QListQSslCertificate },
-    { "QList<QSslCertificate>&", marshall_QListQSslCertificate },
+//     { "QList<KAboutLicense>", marshall_Container<QList<KAboutLicense> > },
+//    { "QList<KAboutPerson>", marshall_Container<QList<KAboutPerson> > },
+    { "QList<KAuth::Action>*", marshall_Container<QList<KAuth::Action> > },
+    { "QList<KAuth::Action>&", marshall_Container<QList<KAuth::Action> > },
+    { "QList<KAutoSaveFile*>", marshall_Container<QList<KAutoSaveFile*> > },
+//    { "QList<KCatalogName>&", marshall_Container<QList<KCatalogName> > },
+    { "QList<KConfigSkeletonItem*>", marshall_Container<QList<KConfigSkeletonItem*> > },
+    { "QList<KCoreConfigSkeleton::ItemEnum::Choice2>", marshall_Container<QList<KCoreConfigSkeleton::ItemEnum::Choice2> > },
+    { "QList<KCoreConfigSkeleton::ItemEnum::Choice2>&", marshall_Container<QList<KCoreConfigSkeleton::ItemEnum::Choice2> > },
+    { "QList<KCoreConfigSkeleton::ItemEnum::Choice>", marshall_Container<QList<KCoreConfigSkeleton::ItemEnum::Choice> > },
+    { "QList<KCoreConfigSkeleton::ItemEnum::Choice>&", marshall_Container<QList<KCoreConfigSkeleton::ItemEnum::Choice> > },
+    { "QList<KJob*>&", marshall_Container<QList<KJob*> > },
+    { "QList<KLocale::DigitSet>", marshall_Container<QList<KLocale::DigitSet> > },
+    { "QList<KPluginInfo>", marshall_Container<QList<KPluginInfo> > },
+    { "QList<KProtocolInfo::ExtraField>", marshall_Container<QList<KProtocolInfo::ExtraField> > },
+    { "QList<KServiceAction>", marshall_Container<QList<KServiceAction> > },
+    { "QList<KSharedPtr<KMimeType>>", marshall_Container<QList<KSharedPtr<KMimeType> > > },
+    { "QList<KSharedPtr<KServiceGroup>>", marshall_Container<QList<KSharedPtr<KServiceGroup> > > },
+    { "QList<KSharedPtr<KService>>", marshall_Container<QList<KSharedPtr<KService> > > },
+    { "QList<KSharedPtr<KService>>&", marshall_Container<QList<KSharedPtr<KService> > > },
+    { "QList<KSharedPtr<KServiceType>>", marshall_Container<QList<KSharedPtr<KServiceType> > > },
+    { "QList<KSharedPtr<KSycocaEntry>>", marshall_Container<QList<KSharedPtr<KSycocaEntry> > > },
+    { "QList<KSslCipher>", marshall_Container<QList<KSslCipher> > },
+    { "QList<KSslCipher>&", marshall_Container<QList<KSslCipher> > },
+    { "QList<KSslError>", marshall_Container<QList<KSslError> > },
+    { "QList<KSslError>&", marshall_Container<QList<KSslError> > },
+    { "QList<KTimeZone::LeapSeconds>", marshall_Container<QList<KTimeZone::LeapSeconds> > },
+    { "QList<KTimeZone::LeapSeconds>&", marshall_Container<QList<KTimeZone::LeapSeconds> > },
+    { "QList<KTimeZone::Phase>", marshall_Container<QList<KTimeZone::Phase> > },
+    { "QList<KTimeZone::Phase>&", marshall_Container<QList<KTimeZone::Phase> > },
+    { "QList<KTimeZone::Transition>", marshall_Container<QList<KTimeZone::Transition> > },
+    { "QList<KTimeZone::Transition>&", marshall_Container<QList<KTimeZone::Transition> > },
+    { "QList<KUserGroup>", marshall_Container<QList<KUserGroup> > },
+    { "QList<KUser>", marshall_Container<QList<KUser> > },
+    { "QList<QByteArray>", marshall_Container<QList<QByteArray> > },
+    { "QList<QByteArray>&", marshall_Container<QList<QByteArray> > },
+    { "QList<QDateTime>", marshall_Container<QList<QDateTime> > },
+    { "QList<QSslCertificate>", marshall_Container<QList<QSslCertificate> > },
+    { "QList<QSslCertificate>&", marshall_Container<QList<QSslCertificate> > },
 
     { 0, 0 }
 };

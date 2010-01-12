@@ -60,29 +60,19 @@ Q_DECLARE_METATYPE(Nepomuk::Property*)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListNepomukResource, QList<Nepomuk::Resource>)
-DEF_CONTAINER_MARSHALLER(QListNepomukTag, QList<Nepomuk::Tag>)
-DEF_CONTAINER_MARSHALLER(QListNepomukTypesClass, QList<Nepomuk::Types::Class>)
-DEF_CONTAINER_MARSHALLER(QListNepomukTypesProperty, QList<Nepomuk::Types::Property>)
-DEF_CONTAINER_MARSHALLER(QListNepomukVariant, QList<Nepomuk::Variant>)
-DEF_CONTAINER_MARSHALLER(QListSopranoNode, QList<Soprano::Node>)
-DEF_CONTAINER_MARSHALLER(QListSopranoStatement, QList<Soprano::Statement>)
-DEF_CONTAINER_MARSHALLER(QListNepomukClass, QList<Nepomuk::Class*>)
-DEF_CONTAINER_MARSHALLER(QListNepomukProperty, QList<Nepomuk::Property*>)
-
 Marshall::TypeHandler NepomukHandlers[] = {
-    { "QList<Nepomuk::Resource>", marshall_QListNepomukResource },
-    { "QList<Nepomuk::Resource>&", marshall_QListNepomukResource },
-    { "QList<Nepomuk::Tag>", marshall_QListNepomukTag },
-    { "QList<Nepomuk::Tag>&", marshall_QListNepomukTag },
-    { "QList<Nepomuk::Types::Class>", marshall_QListNepomukTypesClass },
-    { "QList<Nepomuk::Types::Property>", marshall_QListNepomukTypesProperty },
-    { "QList<Nepomuk::Variant>", marshall_QListNepomukVariant },
-    { "QList<Nepomuk::Variant>&", marshall_QListNepomukVariant },
-    { "QList<Soprano::Node>", marshall_QListSopranoNode },
-    { "QList<Soprano::Statement>", marshall_QListSopranoStatement },
-    { "QList<const Nepomuk::Class*>", marshall_QListNepomukClass },
-    { "QList<const Nepomuk::Property*>", marshall_QListNepomukProperty },
+    { "QList<Nepomuk::Resource>", marshall_Container<QList<Nepomuk::Resource> > },
+    { "QList<Nepomuk::Resource>&", marshall_Container<QList<Nepomuk::Resource> > },
+    { "QList<Nepomuk::Tag>", marshall_Container<QList<Nepomuk::Tag> > },
+    { "QList<Nepomuk::Tag>&", marshall_Container<QList<Nepomuk::Tag> > },
+    { "QList<Nepomuk::Types::Class>", marshall_Container<QList<Nepomuk::Types::Class> > },
+    { "QList<Nepomuk::Types::Property>", marshall_Container<QList<Nepomuk::Types::Property> > },
+    { "QList<Nepomuk::Variant>", marshall_Container<QList<Nepomuk::Variant> > },
+    { "QList<Nepomuk::Variant>&", marshall_Container<QList<Nepomuk::Variant> > },
+    { "QList<Soprano::Node>", marshall_Container<QList<Soprano::Node> > },
+    { "QList<Soprano::Statement>", marshall_Container<QList<Soprano::Statement> > },
+    { "QList<const Nepomuk::Class*>", marshall_Container<QList<Nepomuk::Class*> > },
+    { "QList<const Nepomuk::Property*>", marshall_Container<QList<Nepomuk::Property*> > },
     { 0, 0 }
 };
 

@@ -34,18 +34,13 @@ Q_DECLARE_METATYPE(QList<QVideoFrame::PixelFormat>)
 
 namespace JSmoke {
 
-// DEF_CONTAINER_MARSHALLER(QListQAudioDeviceInfo, QList<QAudioDeviceInfo>)
-DEF_CONTAINER_MARSHALLER(QListQAudioFormatEndian, QList<QAudioFormat::Endian>)
-DEF_CONTAINER_MARSHALLER(QListQAudioFormatSampleType, QList<QAudioFormat::SampleType>)
-DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)
-DEF_CONTAINER_MARSHALLER(QListQVideoFramePixelFormat, QList<QVideoFrame::PixelFormat>)
 
 Marshall::TypeHandler QtMultimediaHandlers[] = {
-//    { "QList<QAudioDeviceInfo>", marshall_QListQAudioDeviceInfo },
-    { "QList<QAudioFormat::Endian>", marshall_QListQAudioFormatEndian },
-    { "QList<QAudioFormat::SampleType>", marshall_QListQAudioFormatSampleType },
-    { "QList<QByteArray>", marshall_QListQByteArray },
-    { "QList<QVideoFrame::PixelFormat>", marshall_QListQVideoFramePixelFormat },
+//    { "QList<QAudioDeviceInfo>", marshall_Container<QList<QAudioDeviceInfo> > },
+    { "QList<QAudioFormat::Endian>", marshall_Container<QList<QAudioFormat::Endian> > },
+    { "QList<QAudioFormat::SampleType>", marshall_Container<QList<QAudioFormat::SampleType> > },
+    { "QList<QByteArray>", marshall_Container<QList<QByteArray> > },
+    { "QList<QVideoFrame::PixelFormat>", marshall_Container<QList<QVideoFrame::PixelFormat> > },
     { 0, 0 }
 };
 

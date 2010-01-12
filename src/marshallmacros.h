@@ -49,12 +49,6 @@
     };                                                                  \
     QT_END_NAMESPACE
 
-#define DEF_CONTAINER_MARSHALLER(ContainerIdentifier, Container)  \
-        Marshall::HandlerFn marshall_##ContainerIdentifier = marshall_Container<Container>;
-        
-#define DEF_CONTAINER_MARSHALLER3(ContainerIdentifier, TYPE1, TYPE2)  \
-        Marshall::HandlerFn marshall_##ContainerIdentifier = marshall_Container<TYPE1,TYPE2>;
-
 namespace JSmoke {
     
 template <class Container>

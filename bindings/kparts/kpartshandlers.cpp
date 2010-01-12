@@ -38,17 +38,12 @@ Q_DECLARE_METATYPE(QList<KParts::ReadOnlyPart*>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListKPartsPart, QList<KParts::Part*>)
-DEF_CONTAINER_MARSHALLER(QListKPartsPlugin, QList<KParts::Plugin*>)
-DEF_CONTAINER_MARSHALLER(QListKPartsPluginPluginInfo, QList<KParts::Plugin::PluginInfo>)
-DEF_CONTAINER_MARSHALLER(QListKPartsReadOnlyPart, QList<KParts::ReadOnlyPart*>)
-
 Marshall::TypeHandler KPartsHandlers[] = {
-    { "QList<KParts::Part*>", marshall_QListKPartsPart },
-    { "QList<KParts::Plugin*>", marshall_QListKPartsPlugin },
-    { "QList<KParts::Plugin::PluginInfo>", marshall_QListKPartsPluginPluginInfo },
-    { "QList<KParts::Plugin::PluginInfo>&", marshall_QListKPartsPluginPluginInfo },
-    { "QList<KParts::ReadOnlyPart*>", marshall_QListKPartsReadOnlyPart },
+    { "QList<KParts::Part*>", marshall_Container<QList<KParts::Part*> > },
+    { "QList<KParts::Plugin*>", marshall_Container<QList<KParts::Plugin*> > },
+    { "QList<KParts::Plugin::PluginInfo>", marshall_Container<QList<KParts::Plugin::PluginInfo> > },
+    { "QList<KParts::Plugin::PluginInfo>&", marshall_Container<QList<KParts::Plugin::PluginInfo> > },
+    { "QList<KParts::ReadOnlyPart*>", marshall_Container<QList<KParts::ReadOnlyPart*> > },
     { 0, 0 }
 };
 

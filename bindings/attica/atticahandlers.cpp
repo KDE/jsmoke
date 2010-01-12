@@ -29,10 +29,8 @@ Q_DECLARE_METATYPE(QList<Attica::Provider>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListAtticaProvider, QList<Attica::Provider>)
-
 Marshall::TypeHandler AtticaHandlers[] = {
-    { "QList<Attica::Provider>", marshall_QListAtticaProvider },
+    { "QList<Attica::Provider>", marshall_Container<QList<Attica::Provider> > },
     { 0, 0 }
 };
 

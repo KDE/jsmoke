@@ -51,29 +51,20 @@ Q_DECLARE_METATYPE(QList<QSslError>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER3(QListQPairQHostAddressInt, QList<QPair<QHostAddress,int> >)
-DEF_CONTAINER_MARSHALLER(QListQHostAddress, QList<QHostAddress>)                                                                                                            
-DEF_CONTAINER_MARSHALLER(QListQNetworkAddressEntry, QList<QNetworkAddressEntry>)
-DEF_CONTAINER_MARSHALLER(QListQNetworkCookie, QList<QNetworkCookie>)
-DEF_CONTAINER_MARSHALLER(QListQNetworkInterface, QList<QNetworkInterface>)
-DEF_CONTAINER_MARSHALLER(QListQNetworkProxy, QList<QNetworkProxy>)
-DEF_CONTAINER_MARSHALLER(QListQSslCertificate, QList<QSslCertificate>)
-DEF_CONTAINER_MARSHALLER(QListQSslCipher, QList<QSslCipher>)
-DEF_CONTAINER_MARSHALLER(QListQSslError, QList<QSslError>)
 
 Marshall::TypeHandler QtNetworkHandlers[] = {
-    { "QList<QPair<QHostAddress,int>>", marshall_QListQPairQHostAddressInt },                                                                                              
-    { "QList<QHostAddress>", marshall_QListQHostAddress },                                                                                              
-    { "QList<QHostAddress>", marshall_QListQHostAddress },                                                                                              
-    { "QList<QHostAddress>&", marshall_QListQHostAddress },                                                                                                
-    { "QList<QNetworkAddressEntry>&", marshall_QListQNetworkAddressEntry },                                                                                        
-    { "QList<QNetworkCookie>", marshall_QListQNetworkCookie },                                                                                           
-    { "QList<QNetworkCookie>&", marshall_QListQNetworkCookie },                                                                                              
-    { "QList<QNetworkInterface>&", marshall_QListQNetworkInterface },                                                                                           
-    { "QList<QNetworkProxy>&", marshall_QListQNetworkProxy },                                                                                               
-    { "QList<QSslCertificate>&", marshall_QListQSslCertificate },
-    { "QList<QSslCipher>&", marshall_QListQSslCipher },
-    { "QList<QSslError>&", marshall_QListQSslError },
+    { "QList<QPair<QHostAddress,int>>", marshall_Container<QList<QPair<QHostAddress,int> > > },                                                                                              
+    { "QList<QHostAddress>", marshall_Container<QList<QHostAddress> > },                                                                                              
+    { "QList<QHostAddress>", marshall_Container<QList<QHostAddress> > },                                                                                              
+    { "QList<QHostAddress>&", marshall_Container<QList<QHostAddress> > },                                                                                                
+    { "QList<QNetworkAddressEntry>&", marshall_Container<QList<QNetworkAddressEntry> > },                                                                                        
+    { "QList<QNetworkCookie>", marshall_Container<QList<QNetworkCookie> > },                                                                                           
+    { "QList<QNetworkCookie>&", marshall_Container<QList<QNetworkCookie> > },                                                                                              
+    { "QList<QNetworkInterface>&", marshall_Container<QList<QNetworkInterface> > },                                                                                           
+    { "QList<QNetworkProxy>&", marshall_Container<QList<QNetworkProxy> > },                                                                                               
+    { "QList<QSslCertificate>&", marshall_Container<QList<QSslCertificate> > },
+    { "QList<QSslCipher>&", marshall_Container<QList<QSslCipher> > },
+    { "QList<QSslError>&", marshall_Container<QList<QSslError> > },
     
     { 0, 0 }
 };

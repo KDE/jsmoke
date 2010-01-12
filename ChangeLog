@@ -1,3 +1,11 @@
+2010-01-12  Richard Dale  <richard.j.dale@gmail.com>
+
+* Removed the DEF_CONTAINER_MARSHALLER() macro as it isn't needed because a
+marshaller can be defined in the tables of type handlers with a template 
+argument like this:
+
+    { "QList<QByteArray>", marshall_Container<QList<QByteArray> > },                                                                                                  
+
 2010-01-07  Richard Dale  <richard.j.dale@gmail.com>
 
 * Methods in the 'QGlobalSpace' global namespace classes were not being looked 

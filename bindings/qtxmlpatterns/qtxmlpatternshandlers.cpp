@@ -34,12 +34,10 @@ Q_DECLARE_METATYPE(QVector<QXmlNodeModelIndex>)
 
 namespace JSmoke {
    
-DEF_CONTAINER_MARSHALLER(QVectorQXmlName, QVector<QXmlName>)
-DEF_CONTAINER_MARSHALLER(QVectorQXmlNodeModelIndex, QVector<QXmlNodeModelIndex>)
 
 Marshall::TypeHandler QtXmlPatternsHandlers[] = {
-    { "QVector<QXmlName>", marshall_QVectorQXmlName },
-    { "QVector<QXmlNodeModelIndex>", marshall_QVectorQXmlNodeModelIndex },
+    { "QVector<QXmlName>", marshall_Container<QVector<QXmlName> > },
+    { "QVector<QXmlNodeModelIndex>", marshall_Container<QVector<QXmlNodeModelIndex> > },
     
     { 0, 0 }
 };

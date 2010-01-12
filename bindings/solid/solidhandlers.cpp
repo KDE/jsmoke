@@ -28,10 +28,9 @@ Q_DECLARE_METATYPE(Solid::Device)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListSolidDevice, QList<Solid::Device>)
 
 Marshall::TypeHandler SolidHandlers[] = {
-    { "QList<Solid::Device>", marshall_QListSolidDevice },
+    { "QList<Solid::Device>", marshall_Container<QList<Solid::Device> > },
     { 0, 0 }
 };
 

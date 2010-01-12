@@ -57,34 +57,21 @@ Q_DECLARE_METATYPE(QList<KXMLGUIClient*>)
 
 namespace JSmoke {
 
-// DEF_CONTAINER_MARSHALLER3(QListQPairKGuiItemKGuiItem, QList<QPair<KGuiItem,KGuiItem> >)
-DEF_CONTAINER_MARSHALLER(QListKAction, QList<KAction*>)
-DEF_CONTAINER_MARSHALLER(QListKActionCollection, QList<KActionCollection*>)
-DEF_CONTAINER_MARSHALLER(QListKConfigDialogManager, QList<KConfigDialogManager*>)
-DEF_CONTAINER_MARSHALLER(QListKIconTheme, QList<KIconTheme*>)
-DEF_CONTAINER_MARSHALLER(QListKMainWindow, QList<KMainWindow*>)
-DEF_CONTAINER_MARSHALLER(QListKPlotObject, QList<KPlotObject*>)
-DEF_CONTAINER_MARSHALLER(QListKPlotPoint, QList<KPlotPoint*>)
-DEF_CONTAINER_MARSHALLER(QListKSessionManager, QList<KSessionManager*>)
-DEF_CONTAINER_MARSHALLER(QListKStandardActionStandardAction, QList<KStandardAction::StandardAction>)
-DEF_CONTAINER_MARSHALLER(QListKToolBar, QList<KToolBar*>)
-DEF_CONTAINER_MARSHALLER(QListKXMLGUIClient, QList<KXMLGUIClient*>)
-
 Marshall::TypeHandler KDEUiHandlers[] = {
-//    { "QList<QPair<KGuiItem,KGuiItem>>", marshall_QListQPairKGuiItemKGuiItem },
-    { "QList<KAction*>&", marshall_QListKAction },
-    { "QList<KActionCollection*>", marshall_QListKActionCollection },
-    { "QList<KActionCollection*>&", marshall_QListKActionCollection },
-    { "QList<KConfigDialogManager*>", marshall_QListKConfigDialogManager },
-    { "QList<KIconTheme*>&", marshall_QListKIconTheme },
-    { "QList<KMainWindow*>", marshall_QListKMainWindow },
-    { "QList<KPlotObject*>", marshall_QListKPlotObject },
-    { "QList<KPlotObject*>&", marshall_QListKPlotObject },
-    { "QList<KPlotPoint*>", marshall_QListKPlotPoint },
-    { "QList<KSessionManager*>&", marshall_QListKSessionManager },
-    { "QList<KStandardAction::StandardAction>", marshall_QListKStandardActionStandardAction },
-    { "QList<KToolBar*>", marshall_QListKToolBar },
-    { "QList<KXMLGUIClient*>", marshall_QListKXMLGUIClient },
+//    { "QList<QPair<KGuiItem,KGuiItem>>", marshall_Container<QList<QPairKGuiItemKGuiItem> > },
+    { "QList<KAction*>&", marshall_Container<QList<KAction*> > },
+    { "QList<KActionCollection*>", marshall_Container<QList<KActionCollection*> > },
+    { "QList<KActionCollection*>&", marshall_Container<QList<KActionCollection*> > },
+    { "QList<KConfigDialogManager*>", marshall_Container<QList<KConfigDialogManager*> > },
+    { "QList<KIconTheme*>&", marshall_Container<QList<KIconTheme*> > },
+    { "QList<KMainWindow*>", marshall_Container<QList<KMainWindow*> > },
+    { "QList<KPlotObject*>", marshall_Container<QList<KPlotObject*> > },
+    { "QList<KPlotObject*>&", marshall_Container<QList<KPlotObject*> > },
+    { "QList<KPlotPoint*>", marshall_Container<QList<KPlotPoint*> > },
+    { "QList<KSessionManager*>&", marshall_Container<QList<KSessionManager*> > },
+    { "QList<KStandardAction::StandardAction>", marshall_Container<QList<KStandardAction::StandardAction> > },
+    { "QList<KToolBar*>", marshall_Container<QList<KToolBar*> > },
+    { "QList<KXMLGUIClient*>", marshall_Container<QList<KXMLGUIClient*> > },
     { 0, 0 }
 };
 

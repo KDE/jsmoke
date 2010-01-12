@@ -36,18 +36,13 @@ Q_DECLARE_METATYPE(QList<Nepomuk::Types::Property>)
 
 namespace JSmoke {
 
-// DEF_CONTAINER_MARSHALLER(QListNepomukQueryQueryRequestProperty, QList<Nepomuk::Query::Query::RequestProperty>)
-DEF_CONTAINER_MARSHALLER(QListNepomukQueryResult, QList<Nepomuk::Query::Result>)
-DEF_CONTAINER_MARSHALLER(QListNepomukQueryTerm, QList<Nepomuk::Query::Term>)
-DEF_CONTAINER_MARSHALLER(QListNepomukTypesProperty, QList<Nepomuk::Types::Property>)
-
 Marshall::TypeHandler NepomukQueryHandlers[] = {
-//    { "QList<Nepomuk::Query::Query::RequestProperty>", marshall_QListNepomukQueryQueryRequestProperty },
-//    { "QList<Nepomuk::Query::Query::RequestProperty>&", marshall_QListNepomukQueryQueryRequestProperty },
-    { "QList<Nepomuk::Query::Result>&", marshall_QListNepomukQueryResult },
-    { "QList<Nepomuk::Query::Term>", marshall_QListNepomukQueryTerm },
-    { "QList<Nepomuk::Query::Term>&", marshall_QListNepomukQueryTerm },
-    { "QList<Nepomuk::Types::Property>", marshall_QListNepomukTypesProperty },
+//    { "QList<Nepomuk::Query::Query::RequestProperty>", marshall_Container<QList<NepomukQueryQueryRequestProperty> > },
+//    { "QList<Nepomuk::Query::Query::RequestProperty>&", marshall_Container<QList<NepomukQueryQueryRequestProperty> > },
+    { "QList<Nepomuk::Query::Result>&", marshall_Container<QList<Nepomuk::Query::Result> > },
+    { "QList<Nepomuk::Query::Term>", marshall_Container<QList<Nepomuk::Query::Term> > },
+    { "QList<Nepomuk::Query::Term>&", marshall_Container<QList<Nepomuk::Query::Term> > },
+    { "QList<Nepomuk::Types::Property>", marshall_Container<QList<Nepomuk::Types::Property> > },
     { 0, 0 }
 };
 

@@ -56,7 +56,7 @@ void jsmoke_#{module_name.downcase}_ScriptPlugin::initialize(const QString &key,
 }
 
 Q_EXPORT_STATIC_PLUGIN(jsmoke_#{module_name.downcase}_ScriptPlugin)
-Q_EXPORT_PLUGIN2(qtscript_jsmoke_#{module_name.downcase}, jsmoke_#{module_name.downcase}_ScriptPlugin)
+Q_EXPORT_PLUGIN2(jsmoke_#{module_name.downcase}, jsmoke_#{module_name.downcase}_ScriptPlugin)
 EOS
 
 handlers_program = <<EOS
@@ -209,7 +209,6 @@ in_smoke_types = false
 smoke_lib_name = ""
 
 lines_out = []
-macro_calls = []
 declare_metatypes = []
 includes = []
 handlers_table = []
@@ -239,14 +238,12 @@ lines_out.sort.uniq.each do |line|
     line.sub!(/\n/, '')
     if line =~ /^(QList|QVector|QLinkedList)(<(.*)>).*$/
       list_type = $1
-      macro_name = 'DEF_CONTAINER_MARSHALLER'
       element_type = $3
       list_template = $2
       list_name = list_type + element_type.gsub(/::/, '').gsub(/\*/, '')
-      macro_calls << "#{macro_name}(#{list_name}, #{list_type}#{list_template})"
       declare_metatypes << "Q_DECLARE_METATYPE(#{element_type})"
       declare_metatypes << "Q_DECLARE_METATYPE(#{list_type}#{list_template})"
-      handlers_table << "    { \"#{line}\", marshall_#{list_name} },"
+      handlers_table << "    { \"#{line}\", marshall_Container<#{list_type}#{list_template} > },"
       if list_template =~ /\*>$/
           register_pointer_types << "    qScriptSmokeRegisterPointerSequenceMetaType<#{list_type}#{list_template} >(engine);"
       else
@@ -283,10 +280,6 @@ end
 handlers_file.puts ""
 handlers_file.puts "namespace JSmoke {"
 handlers_file.puts ""
-
-macro_calls.sort.uniq.each do |line|
-  handlers_file.puts line
-end
 
 handlers_file.puts "\n"
 

@@ -139,7 +139,6 @@ namespace JSmoke {
     };    
 
     extern JSMOKE_EXPORT Marshall::TypeHandler Handlers[];
-    extern JSMOKE_EXPORT void marshall_QListEnum(Marshall *m);
 
 }
 

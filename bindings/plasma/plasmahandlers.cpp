@@ -67,22 +67,14 @@ Q_DECLARE_METATYPE(QList<Plasma::PlotColor>)
 
 namespace JSmoke {
 
-DEF_CONTAINER_MARSHALLER(QListPlasmaAbstractRunner, QList<Plasma::AbstractRunner*>)
-DEF_CONTAINER_MARSHALLER(QListPlasmaApplet, QList<Plasma::Applet*>)
-DEF_CONTAINER_MARSHALLER(QListPlasmaContainment, QList<Plasma::Containment*>)
-DEF_CONTAINER_MARSHALLER(QListPlasmaExtenderGroup, QList<Plasma::ExtenderGroup*>)
-DEF_CONTAINER_MARSHALLER(QListPlasmaExtenderItem, QList<Plasma::ExtenderItem*>)
-DEF_CONTAINER_MARSHALLER(QListPlasmaLocation, QList<Plasma::Location>)
-DEF_CONTAINER_MARSHALLER(QListPlasmaPlotColor, QList<Plasma::PlotColor>)
-
 Marshall::TypeHandler PlasmaHandlers[] = {
-    { "QList<Plasma::AbstractRunner*>", marshall_QListPlasmaAbstractRunner },
-    { "QList<Plasma::Applet*>", marshall_QListPlasmaApplet },
-    { "QList<Plasma::Containment*>", marshall_QListPlasmaContainment },
-    { "QList<Plasma::ExtenderGroup*>", marshall_QListPlasmaExtenderGroup },
-    { "QList<Plasma::ExtenderItem*>", marshall_QListPlasmaExtenderItem },
-    { "QList<Plasma::Location>", marshall_QListPlasmaLocation },
-    { "QList<Plasma::PlotColor>&", marshall_QListPlasmaPlotColor },
+    { "QList<Plasma::AbstractRunner*>", marshall_Container<QList<Plasma::AbstractRunner*> > },
+    { "QList<Plasma::Applet*>", marshall_Container<QList<Plasma::Applet*> > },
+    { "QList<Plasma::Containment*>", marshall_Container<QList<Plasma::Containment*> > },
+    { "QList<Plasma::ExtenderGroup*>", marshall_Container<QList<Plasma::ExtenderGroup*> > },
+    { "QList<Plasma::ExtenderItem*>", marshall_Container<QList<Plasma::ExtenderItem*> > },
+    { "QList<Plasma::Location>", marshall_Container<QList<Plasma::Location> > },
+    { "QList<Plasma::PlotColor>&", marshall_Container<QList<Plasma::PlotColor> > },
     { 0, 0 }
 };
 

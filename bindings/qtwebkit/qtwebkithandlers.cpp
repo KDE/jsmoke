@@ -49,20 +49,17 @@ Q_DECLARE_METATYPE(QList<QWebFrame*>)
 
 namespace JSmoke {
    
-DEF_CONTAINER_MARSHALLER(QListQWebFrame, QList<QWebFrame*>)
-DEF_CONTAINER_MARSHALLER(QListQWebPluginFactoryPlugin, QList<QWebPluginFactory::Plugin>)
 
 #if QT_VERSION >= 0x40600
-DEF_CONTAINER_MARSHALLER(QListQWebElement, QList<QWebElement>)
 #endif
 
 Marshall::TypeHandler QtWebKitHandlers[] = {
-//    { "QList<QWebDatabase>", marshall_QListQWebDatabase },
-//    { "QList<QWebSecurityOrigin>", marshall_QListQWebSecurityOrigin },
-    { "QList<QWebFrame*>", marshall_QListQWebFrame },
-    { "QList<QWebPluginFactory::Plugin>", marshall_QListQWebPluginFactoryPlugin },
+//    { "QList<QWebDatabase>", marshall_Container<QList<QWebDatabase> > },
+//    { "QList<QWebSecurityOrigin>", marshall_Container<QList<QWebSecurityOrigin> > },
+    { "QList<QWebFrame*>", marshall_Container<QList<QWebFrame*> > },
+    { "QList<QWebPluginFactory::Plugin>", marshall_Container<QList<QWebPluginFactory::Plugin> > },
 #if QT_VERSION >= 0x40600
-    { "QList<QWebElement>", marshall_QListQWebElement },
+    { "QList<QWebElement>", marshall_Container<QList<QWebElement> > },
 #endif
 //    { "QList<QWebHistoryItem>", marshall_QWebHistoryItemList },
     

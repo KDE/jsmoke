@@ -260,131 +260,89 @@ static void marshall_QULongLong(Marshall *m) {
     }
 }
 
-DEF_CONTAINER_MARSHALLER3(QHashIntQByteArray, QHash<int,QByteArray>)
-DEF_CONTAINER_MARSHALLER3(QHashQStringQVariant, QHash<QString,QVariant>)
-DEF_CONTAINER_MARSHALLER3(QListQPairIntInt, QList<QPair<int,int> >)
-DEF_CONTAINER_MARSHALLER3(QListQPairQByteArrayQByteArray, QList<QPair<QByteArray,QByteArray> >)
-DEF_CONTAINER_MARSHALLER3(QListQPairQStringQChar, QList<QPair<QString,QChar> >)
-DEF_CONTAINER_MARSHALLER3(QListQPairQStringQString, QList<QPair<QString,QString> >)
-DEF_CONTAINER_MARSHALLER3(QListQPairQStringUShort, QList<QPair<QString,unsigned short> >)
-DEF_CONTAINER_MARSHALLER3(QMapIntQVariant, QMap<int,QVariant>)
-DEF_CONTAINER_MARSHALLER3(QMapQStringQVariant, QMap<QString,QVariant>)
-DEF_CONTAINER_MARSHALLER3(QVectorQPairDoubleQVariant, QVector<QPair<double,QVariant> >)
-DEF_CONTAINER_MARSHALLER(QListBool, QList<bool>)
-DEF_CONTAINER_MARSHALLER(QListDouble, QList<double>)
-DEF_CONTAINER_MARSHALLER(QListInt, QList<int>)
-DEF_CONTAINER_MARSHALLER(QListUInt, QList<unsigned int>)
-DEF_CONTAINER_MARSHALLER(QListQByteArray, QList<QByteArray>)                                                                                                             
-DEF_CONTAINER_MARSHALLER(QListQDate, QList<QDate>)                                                                                                             
-DEF_CONTAINER_MARSHALLER(QListQDateTime, QList<QDateTime>)                                                                                                             
-DEF_CONTAINER_MARSHALLER(QListQFileInfo, QList<QFileInfo>)                                                                                                               
-DEF_CONTAINER_MARSHALLER(QListQModelIndex, QList<QModelIndex>)
-DEF_CONTAINER_MARSHALLER(QListQObject, QList<QObject*>)
-DEF_CONTAINER_MARSHALLER(QListQReal, QList<qreal>)
-DEF_CONTAINER_MARSHALLER(QListQRectF, QList<QRectF>)
-DEF_CONTAINER_MARSHALLER(QListQRegExp, QList<QRegExp>)
-DEF_CONTAINER_MARSHALLER(QListQSize, QList<QSize>)
-DEF_CONTAINER_MARSHALLER(QListQStringList, QList<QStringList>)
-DEF_CONTAINER_MARSHALLER(QListQTime, QList<QTime>)                                                                                                             
-DEF_CONTAINER_MARSHALLER(QListQUrl, QList<QUrl>)
-DEF_CONTAINER_MARSHALLER(QListQVariant, QList<QVariant>)
-DEF_CONTAINER_MARSHALLER(QStringList, QStringList)
-DEF_CONTAINER_MARSHALLER(QVectorQLineF, QVector<QLineF>)
-DEF_CONTAINER_MARSHALLER(QVectorQLine, QVector<QLine>)
-DEF_CONTAINER_MARSHALLER(QVectorQPointF, QVector<QPointF>)
-DEF_CONTAINER_MARSHALLER(QVectorQPoint, QVector<QPoint>)
-DEF_CONTAINER_MARSHALLER(QVectorQReal, QVector<qreal>)
-DEF_CONTAINER_MARSHALLER(QVectorQRectF, QVector<QRectF>)
-DEF_CONTAINER_MARSHALLER(QVectorQRect, QVector<QRect>)
-DEF_CONTAINER_MARSHALLER(QVectorQVariant, QVector<QVariant>)
-DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamEntityDeclaration, QVector<QXmlStreamEntityDeclaration>)
-DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNamespaceDeclaration, QVector<QXmlStreamNamespaceDeclaration>)
-DEF_CONTAINER_MARSHALLER(QVectorQXmlStreamNotationDeclaration, QVector<QXmlStreamNotationDeclaration>)
-DEF_CONTAINER_MARSHALLER(QVectorUInt, QVector<unsigned int>)
-
 Marshall::TypeHandler QtCoreHandlers[] = {
     { "bool*", marshall_BoolPtr },
     { "char*", marshall_CString },
-    { "QHash<int,QByteArray>", marshall_QHashIntQByteArray },
-    { "QHash<int,QByteArray>&", marshall_QHashIntQByteArray },
-    { "QHash<QString,QVariant>", marshall_QHashQStringQVariant },
-    { "QHash<QString,QVariant>&", marshall_QHashQStringQVariant },
-    { "QList<bool>", marshall_QListBool },
-    { "QList<bool>&", marshall_QListBool },
-    { "QList<double>", marshall_QListDouble },
-    { "QList<double>&", marshall_QListDouble },
-    { "QList<int>", marshall_QListInt },
-    { "QList<int>*", marshall_QListInt },
-    { "QList<int>&", marshall_QListInt },
-    { "QList<unsigned int>", marshall_QListUInt },
-    { "QList<unsigned int>&", marshall_QListUInt },
-    { "QList<QByteArray>", marshall_QListQByteArray },                                                                                                  
-    { "QList<QByteArray>&", marshall_QListQByteArray },                                                                                                  
-    { "QList<QDate>", marshall_QListQDate },                                                                                                  
-    { "QList<QDate>&", marshall_QListQDate },                                                                                                  
-    { "QList<QDateTime>", marshall_QListQDateTime },                                                                                                  
-    { "QList<QDateTime>&", marshall_QListQDateTime },                                                                                                  
-    { "QList<QFileInfo>&", marshall_QListQFileInfo },                                                                                                   
-    { "QList<QLocale::Country>", marshall_QListEnum },
-    { "QList<QModelIndex>&", marshall_QListQModelIndex },                                                                                           
-    { "QList<QModelIndex>&", marshall_QListQModelIndex },                                                                                                 
-    { "QList<QObject*>", marshall_QListQObject },
-    { "QList<QObject*>&", marshall_QListQObject },
-    { "QList<QPair<int,int>>", marshall_QListQPairIntInt },
-    { "QList<QPair<QByteArray,QByteArray>>", marshall_QListQPairQByteArrayQByteArray },
-    { "QList<QPair<QByteArray,QByteArray>>&", marshall_QListQPairQByteArrayQByteArray },
-    { "QList<QPair<QString,unsigned short>>", marshall_QListQPairQStringUShort },
-    { "QList<QPair<QString,QChar>>", marshall_QListQPairQStringQChar },
-    { "QList<QPair<QString,QString>>", marshall_QListQPairQStringQString },
-    { "QList<QPair<QString,QString>>&", marshall_QListQPairQStringQString },
-    { "QList<qreal>", marshall_QListQReal },
-    { "QList<qreal>&", marshall_QListQReal },
-    { "QList<QRectF>&", marshall_QListQRectF },
-    { "QList<QRegExp>&", marshall_QListQRegExp },
-    { "QList<QSize>&", marshall_QListQSize },
-    { "QList<QStringList>", marshall_QListQStringList },
-    { "QList<QStringList>&", marshall_QListQStringList },
-    { "QList<QTime>", marshall_QListQTime },                                                                                                  
-    { "QList<QTime>&", marshall_QListQTime },                                                                                                  
-    { "QList<QUrl>&", marshall_QListQUrl },
-    { "QList<QVariant>", marshall_QListQVariant },
-    { "QList<QVariant>&", marshall_QListQVariant },
+    { "QHash<int,QByteArray>", marshall_Container<QHash<int,QByteArray> > },
+    { "QHash<int,QByteArray>&", marshall_Container<QHash<int,QByteArray> > },
+    { "QHash<QString,QVariant>", marshall_Container<QHash<QString,QVariant> > },
+    { "QHash<QString,QVariant>&", marshall_Container<QHash<QString,QVariant> > },
+    { "QList<bool>", marshall_Container<QList<bool> > },
+    { "QList<bool>&", marshall_Container<QList<bool> > },
+    { "QList<double>", marshall_Container<QList<double> > },
+    { "QList<double>&", marshall_Container<QList<double> > },
+    { "QList<int>", marshall_Container<QList<int> > },
+    { "QList<int>*", marshall_Container<QList<int> > },
+    { "QList<int>&", marshall_Container<QList<int> > },
+    { "QList<unsigned int>", marshall_Container<QList<unsigned int> > },
+    { "QList<unsigned int>&", marshall_Container<QList<unsigned int> > },
+    { "QList<QByteArray>", marshall_Container<QList<QByteArray> > },                                                                                                  
+    { "QList<QByteArray>&", marshall_Container<QList<QByteArray> > },                                                                                                  
+    { "QList<QDate>", marshall_Container<QList<QDate> > },                                                                                                  
+    { "QList<QDate>&", marshall_Container<QList<QDate> > },                                                                                                  
+    { "QList<QDateTime>", marshall_Container<QList<QDateTime> > },                                                                                                  
+    { "QList<QDateTime>&", marshall_Container<QList<QDateTime> > },                                                                                                  
+    { "QList<QFileInfo>&", marshall_Container<QList<QFileInfo> > },                                                                                                   
+    { "QList<QLocale::Country>", marshall_Container<QList<QLocale::Country> > },
+    { "QList<QModelIndex>&", marshall_Container<QList<QModelIndex> > },                                                                                           
+    { "QList<QModelIndex>&", marshall_Container<QList<QModelIndex> > },                                                                                                 
+    { "QList<QObject*>", marshall_Container<QList<QObject*> > },
+    { "QList<QObject*>&", marshall_Container<QList<QObject*> > },
+    { "QList<QPair<int,int>>", marshall_Container<QList<QPair<int,int> > > },
+    { "QList<QPair<QByteArray,QByteArray>>", marshall_Container<QList<QPair<QByteArray,QByteArray> > > },
+    { "QList<QPair<QByteArray,QByteArray>>&", marshall_Container<QList<QPair<QByteArray,QByteArray> > > },
+    { "QList<QPair<QString,unsigned short>>", marshall_Container<QList<QPair<QString,unsigned short> > > },
+    { "QList<QPair<QString,QChar>>", marshall_Container<QList<QPair<QString,QChar> > > },
+    { "QList<QPair<QString,QString>>", marshall_Container<QList<QPair<QString,QString> > > },
+    { "QList<QPair<QString,QString>>&", marshall_Container<QList<QPair<QString,QString> > > },
+    { "QList<qreal>", marshall_Container<QList<qreal> > },
+    { "QList<qreal>&", marshall_Container<QList<qreal> > },
+    { "QList<QRectF>&", marshall_Container<QList<QRectF> > },
+    { "QList<QRegExp>&", marshall_Container<QList<QRegExp> > },
+    { "QList<QSize>&", marshall_Container<QList<QSize> > },
+    { "QList<QStringList>", marshall_Container<QList<QStringList> > },
+    { "QList<QStringList>&", marshall_Container<QList<QStringList> > },
+    { "QList<QTime>", marshall_Container<QList<QTime> > },                                                                                                  
+    { "QList<QTime>&", marshall_Container<QList<QTime> > },                                                                                                  
+    { "QList<QUrl>&", marshall_Container<QList<QUrl> > },
+    { "QList<QVariant>", marshall_Container<QList<QVariant> > },
+    { "QList<QVariant>&", marshall_Container<QList<QVariant> > },
     { "qlonglong", marshall_QLongLong },
     { "qlonglong&", marshall_QLongLong },
-    { "QMap<int,QVariant>", marshall_QMapIntQVariant },
-    { "QMap<int,QVariant>&", marshall_QMapIntQVariant },
-    { "QMap<QString,QVariant>", marshall_QMapQStringQVariant },
-    { "QMap<QString,QVariant>&", marshall_QMapQStringQVariant },
-    { "QStringList", marshall_QStringList },
-    { "QStringList&", marshall_QStringList },
+    { "QMap<int,QVariant>", marshall_Container<QMap<int,QVariant> > },
+    { "QMap<int,QVariant>&", marshall_Container<QMap<int,QVariant> > },
+    { "QMap<QString,QVariant>", marshall_Container<QMap<QString,QVariant> > },
+    { "QMap<QString,QVariant>&", marshall_Container<QMap<QString,QVariant> > },
+    { "QStringList", marshall_Container<QStringList> },
+    { "QStringList&", marshall_Container<QStringList> },
     { "QString", marshall_QString },
     { "QString*", marshall_QString },
     { "QString&", marshall_QString },
     { "qulonglong", marshall_QULongLong },
     { "qulonglong&", marshall_QULongLong },
-    { "QVector<double>", marshall_QVectorQReal },
-    { "QVector<double>&", marshall_QVectorQReal },
-    { "QVector<QLineF>&", marshall_QVectorQLineF },
-    { "QVector<QLine>&", marshall_QVectorQLine },
-    { "QVector<QPair<double,QVariant>>", marshall_QVectorQPairDoubleQVariant },
-    { "QVector<QPair<double,QVariant>>&", marshall_QVectorQPairDoubleQVariant },
-    { "QVector<QPointF>&", marshall_QVectorQPointF },
-    { "QVector<QPoint>", marshall_QVectorQPoint },
-    { "QVector<QPoint>&", marshall_QVectorQPoint },
-    { "QVector<qreal>", marshall_QVectorQReal },
-    { "QVector<qreal>&", marshall_QVectorQReal },
-    { "QVector<QRectF>&", marshall_QVectorQRectF },
-    { "QVector<QRect>", marshall_QVectorQRect },
-    { "QVector<QRect>&", marshall_QVectorQRect },
-    { "QVector<QVariant>&", marshall_QVectorQVariant },
-    { "QVector<QXmlStreamEntityDeclaration>", marshall_QVectorQXmlStreamEntityDeclaration },
-    { "QVector<QXmlStreamEntityDeclaration>&", marshall_QVectorQXmlStreamEntityDeclaration },
-    { "QVector<QXmlStreamNamespaceDeclaration>", marshall_QVectorQXmlStreamNamespaceDeclaration },
-    { "QVector<QXmlStreamNamespaceDeclaration>&", marshall_QVectorQXmlStreamNamespaceDeclaration },
-    { "QVector<QXmlStreamNotationDeclaration>", marshall_QVectorQXmlStreamNotationDeclaration },
-    { "QVector<QXmlStreamNotationDeclaration>&", marshall_QVectorQXmlStreamNotationDeclaration },
-    { "QVector<unsigned int>", marshall_QVectorUInt },
-    { "QVector<unsigned int>&", marshall_QVectorUInt },
+    { "QVector<double>", marshall_Container<QVector<qreal> > },
+    { "QVector<double>&", marshall_Container<QVector<qreal> > },
+    { "QVector<QLineF>&", marshall_Container<QVector<QLineF> > },
+    { "QVector<QLine>&", marshall_Container<QVector<QLine> > },
+    { "QVector<QPair<double,QVariant>>", marshall_Container<QVector<QPair<double,QVariant> > > },
+    { "QVector<QPair<double,QVariant>>&", marshall_Container<QVector<QPair<double,QVariant> > > },
+    { "QVector<QPointF>&", marshall_Container<QVector<QPointF> > },
+    { "QVector<QPoint>", marshall_Container<QVector<QPoint> > },
+    { "QVector<QPoint>&", marshall_Container<QVector<QPoint> > },
+    { "QVector<qreal>", marshall_Container<QVector<qreal> > },
+    { "QVector<qreal>&", marshall_Container<QVector<qreal> > },
+    { "QVector<QRectF>&", marshall_Container<QVector<QRectF> > },
+    { "QVector<QRect>", marshall_Container<QVector<QRect> > },
+    { "QVector<QRect>&", marshall_Container<QVector<QRect> > },
+    { "QVector<QVariant>&", marshall_Container<QVector<QVariant> > },
+    { "QVector<QXmlStreamEntityDeclaration>", marshall_Container<QVector<QXmlStreamEntityDeclaration> > },
+    { "QVector<QXmlStreamEntityDeclaration>&", marshall_Container<QVector<QXmlStreamEntityDeclaration> > },
+    { "QVector<QXmlStreamNamespaceDeclaration>", marshall_Container<QVector<QXmlStreamNamespaceDeclaration> > },
+    { "QVector<QXmlStreamNamespaceDeclaration>&", marshall_Container<QVector<QXmlStreamNamespaceDeclaration> > },
+    { "QVector<QXmlStreamNotationDeclaration>", marshall_Container<QVector<QXmlStreamNotationDeclaration> > },
+    { "QVector<QXmlStreamNotationDeclaration>&", marshall_Container<QVector<QXmlStreamNotationDeclaration> > },
+    { "QVector<unsigned int>", marshall_Container<QVector<unsigned int> > },
+    { "QVector<unsigned int>&", marshall_Container<QVector<unsigned int> > },
     { "unsigned char*", marshall_CString },
 
     { 0, 0 }

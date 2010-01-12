@@ -26,17 +26,13 @@
 #include <QtScript/QScriptEngine>
 
 extern QScriptEngine * initializeEngine();
-extern int run(QScriptEngine * engine);
+extern int run(QScriptEngine * engine, const QString& fileName);
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    // QStringList paths = QStringList() << "/usr/lib/qt4/plugins";
-    // app.setLibraryPaths(paths);
-    
     QScriptEngine * engine = initializeEngine();
     engine->importExtension("jsmoke.qtcore");
-    engine->importExtension("jsmoke.qtgui");
-    
-    return run(engine);
+    engine->importExtension("jsmoke.qtgui");    
+    return run(engine, QString::fromLatin1(argv[1]));
 }
