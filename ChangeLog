@@ -1,3 +1,14 @@
+2010-01-13  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a 'jsmokekapp' binary for running KDE scripts. It loads the kdecore,
+kdeui and kio KDE modules. If it is given an argument of the form 
+program_name/qtscript-name, it uses KComponentData to find the location of the
+script. The KDE application directory is then added to the load path so that any
+other scripts in that directory will be found via include statements.
+* Removed the 'interactive' option from the jsmokeapp family as it isn't much
+use without using GNU readline. Also removed 'README.TXT' for the tools as it
+isn't a very good idea for holding applicaton usage text.
+
 2010-01-12  Richard Dale  <richard.j.dale@gmail.com>
 
 * Removed the DEF_CONTAINER_MARSHALLER() macro as it isn't needed because a

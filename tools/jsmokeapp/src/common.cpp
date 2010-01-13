@@ -34,19 +34,35 @@
 #include <QtCore/QSet>
 #include <QtDebug>
 
+static QStringList loadPaths;
+
 namespace {
+
+// avoid loading files more than once
+static QSet<QString> loadedFiles;
 
 bool loadFile(QString fileName, QScriptEngine *engine)
 {
-    // avoid loading files more than once
-    static QSet<QString> loadedFiles;
     QFileInfo fileInfo(fileName);
+    
+    if (fileInfo.isRelative()) {
+        foreach (QString loadPath, loadPaths) {
+            QFileInfo candidate(loadPath + "/" + fileName);
+            if (candidate.exists()) {
+                fileInfo = candidate;
+                break;
+            }
+        }
+    }
+    
     QString absoluteFileName = fileInfo.absoluteFilePath();
     QString absolutePath = fileInfo.absolutePath();
     QString canonicalFileName = fileInfo.canonicalFilePath();
+    
     if (loadedFiles.contains(canonicalFileName)) {
         return true;
     }
+    
     loadedFiles.insert(canonicalFileName);
     QString path = fileInfo.path();
 
@@ -80,6 +96,7 @@ bool loadFile(QString fileName, QScriptEngine *engine)
             qDebug() << QString("    %1\n%2\n\n").arg(r.toString()).arg(backtrace.join("\n"));
             return true;
         }
+        
         script.setProperty("absoluteFilePath", oldFilePathValue); // if we come from includeScript(), or whereever
         script.setProperty("absolutePath", oldPathValue); // if we come from includeScript(), or whereever
     } else {
@@ -110,6 +127,11 @@ QScriptValue importExtension(QScriptContext *context, QScriptEngine *engine)
 }
 
 } // namespace
+
+void addLoadPath(QString pathName)
+{
+    loadPaths << pathName;
+}
 
 QScriptEngine * initializeEngine()
 {
