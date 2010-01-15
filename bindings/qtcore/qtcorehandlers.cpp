@@ -200,6 +200,34 @@ static void marshall_CString(Marshall *m) {
     }
 }
 
+static void marshall_CStringArray(Marshall *m) {
+    switch(m->action()) {
+    case Marshall::FromQScriptValue:
+    {
+        if (m->var()->isNull()) {
+            m->item().s_voidp = 0;
+            return;
+        }
+        
+        quint32 length = m->var()->property(QLatin1String("length")).toUInt32();
+        char **argv = new char *[length + 1];
+        for (quint32 i = 0; i < length; i++) {
+            QByteArray temp(m->var()->property(i).toString().toLatin1());
+            argv[i] = new char[temp.length() + 1];
+            strcpy(argv[i], temp.constData());
+        }
+        
+        argv[length] = 0;
+        m->item().s_voidp = argv;
+        break;
+    }
+    
+    default:
+        m->unsupported();
+        break;
+    }
+}
+
 static void marshall_QLongLong(Marshall *m) {
     switch(m->action()) {
     case Marshall::FromQScriptValue:
@@ -263,6 +291,7 @@ static void marshall_QULongLong(Marshall *m) {
 Marshall::TypeHandler QtCoreHandlers[] = {
     { "bool*", marshall_BoolPtr },
     { "char*", marshall_CString },
+    { "char**", marshall_CStringArray },
     { "QHash<int,QByteArray>", marshall_Container<QHash<int,QByteArray> > },
     { "QHash<int,QByteArray>&", marshall_Container<QHash<int,QByteArray> > },
     { "QHash<QString,QVariant>", marshall_Container<QHash<QString,QVariant> > },

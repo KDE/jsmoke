@@ -1,3 +1,7 @@
+2010-01-15  Richard Dale  <richard.j.dale@gmail.com>
+
+* Add a QtScript array value to 'char**' marshaller
+
 2010-01-13  Richard Dale  <richard.j.dale@gmail.com>
 
 * Added a 'jsmokekapp' binary for running KDE scripts. It loads the kdecore,
