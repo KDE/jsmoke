@@ -213,7 +213,7 @@ QScriptValue
 wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QScriptEngine::ValueOwnership ownership)
 {
     Object::Instance * instance = 0;
-    bool isQObject = qtcore_Smoke->isDerivedFrom(classId, Global::QObjectClassId);
+    bool isQObject = Smoke::isDerivedFrom(classId, Global::QObjectClassId);
 
     if (isQObject) {
         instance = new SmokeQObject::Instance();

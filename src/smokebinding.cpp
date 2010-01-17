@@ -80,10 +80,9 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     
     if ((Debug::DoDebug & Debug::Virtual) != 0) {
         Smoke::ModuleIndex methodId(smoke, method);        
-        qWarning(   "module: %s virtual %p->%s::%s called", 
+        qWarning(   "module: %s %p->%s called", 
                     smoke->moduleName(),
                     ptr,
-                    smoke->classes[smoke->methods[method].classId].className,
                     methodToString(methodId).toLatin1().constData() );
     }
     
@@ -91,10 +90,9 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     if (instance == 0) {
         if ((Debug::DoDebug & Debug::Virtual) != 0) {
             Smoke::ModuleIndex methodId(smoke, method);        
-            qWarning(   "module: %s Cannot find instance for virtual method %p->%s::%s -> %p", 
+            qWarning(   "module: %s Cannot find instance for virtual method %p->%s -> %p", 
                         smoke->moduleName(),
                         ptr,
-                        smoke->classes[smoke->methods[method].classId].className,
                         methodToString(methodId).toLatin1().constData(),
                         obj );
         }

@@ -318,7 +318,7 @@ static void marshall_basetype(Marshall *m)
             }
             
             if (value.isDate()) {
-                Smoke::ModuleIndex classId = qtcore_Smoke->findClass(m->smoke()->classes[m->type().classId()].className);
+                Smoke::ModuleIndex classId = Smoke::findClass(m->smoke()->classes[m->type().classId()].className);
                 if (classId == JSmoke::Global::QDateClassId) {
                     m->item().s_class = new QDate(value.toDateTime().date());
                 } else if (classId == JSmoke::Global::QDateTimeClassId) {
@@ -372,7 +372,7 @@ static void marshall_basetype(Marshall *m)
             
             QByteArray className(m->smoke()->classes[m->type().classId()].className);
             QScriptValue obj = Global::wrapInstance(    m->engine(), 
-                                                        qtcore_Smoke->findClass(className), 
+                                                        Smoke::findClass(className), 
                                                         ptr,
                                                         QScriptEngine::QtOwnership );
             

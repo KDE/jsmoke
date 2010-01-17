@@ -1,6 +1,20 @@
+2010-01-17  Richard Dale  <richard.j.dale@gmail.com>
+
+* Added a 'jsmokeapi' command line tool for introspecting the JSmoke api
+Example usage:
+
+     $ jsmokeapi -r qtgui -m click -p QPushButton
+     slot QAbstractButton.click()
+     signal QAbstractButton.clicked()
+     signal QAbstractButton.clicked(bool)
+
+This looks for all methods matching the pattern 'click' in the QPushButton
+class and its parents. The '-r qtgui' options opens the libsmokeqtgui library.
+* Improved to methodToString() method
+
 2010-01-15  Richard Dale  <richard.j.dale@gmail.com>
 
-* Add a QtScript array value to 'char**' marshaller
+* Added a QtScript array value to 'char**' marshaller
 
 2010-01-13  Richard Dale  <richard.j.dale@gmail.com>
 

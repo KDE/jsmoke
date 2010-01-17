@@ -82,7 +82,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 MetaObject::MetaObject(QScriptEngine* engine, const QByteArray& className, Object* object)
     : QScriptClass(engine),
     m_className(className),
-    m_classId(qtcore_Smoke->findClass(className.constData())),
+    m_classId(Smoke::findClass(className.constData())),
     m_object(object)
 { 
     m_proto = engine->newObject();
@@ -129,7 +129,7 @@ MetaObject::queryProperty(const QScriptValue& /*object*/, const QScriptString& n
                         || propertyName == "Enum" ) ) 
     {
         return 0;
-    } else if (qtcore_Smoke->findClass(m_className + "::" + propertyName) != qtcore_Smoke->NullModuleIndex) {
+    } else if (Smoke::findClass(m_className + "::" + propertyName) != Smoke::NullModuleIndex) {
         return 0;
     } else {
         return QScriptClass::HandlesReadAccess; 
@@ -205,7 +205,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         QScriptValueList args = argument.value<QScriptValueList>();  
         MetaObject * scriptClass = static_cast<MetaObject*>(args[0].scriptClass());
         Object::Instance * instance = Object::Instance::get(args[1]);
-        bool result = qtcore_Smoke->isDerivedFrom(instance->classId, scriptClass->m_classId);
+        bool result = Smoke::isDerivedFrom(instance->classId, scriptClass->m_classId);
         return QVariant(result);
     }
     

@@ -112,7 +112,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
 {
     QScriptValue a = eng->newArray();
     const char * typeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type>());
-    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
+    Smoke::ModuleIndex classId = Smoke::findClass(typeName);
     typename Container::const_iterator begin = cont.begin();
     typename Container::const_iterator end = cont.end();
     typename Container::const_iterator it;
@@ -135,7 +135,7 @@ void qScriptSmokeValueToSequence(const QScriptValue &value, Container &cont)
 {
     quint32 len = value.property(QLatin1String("length")).toUInt32();
     const char * typeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type>());
-    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
+    Smoke::ModuleIndex classId = Smoke::findClass(typeName);
     for (quint32 i = 0; i < len; ++i) {
                 
 #if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET
@@ -166,7 +166,7 @@ QScriptValue qScriptSmokeValueFromPointerSequence(QScriptEngine *eng, const Cont
     QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
     // Remove the star from the type name
     typeName.chop(1);
-    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
+    Smoke::ModuleIndex classId = Smoke::findClass(typeName);
     typename Container::const_iterator begin = cont.begin();
     typename Container::const_iterator end = cont.end();
     typename Container::const_iterator it;
@@ -185,7 +185,7 @@ void qScriptSmokeValueToPointerSequence(const QScriptValue &value, Container &co
     QByteArray typeName(QMetaType::typeName(qMetaTypeId<typename Container::value_type>()));
     // Remove the star from the type name
     typeName.chop(1);
-    Smoke::ModuleIndex classId = qtcore_Smoke->findClass(typeName);
+    Smoke::ModuleIndex classId = Smoke::findClass(typeName);
     for (quint32 i = 0; i < len; ++i) {
                 
 #if defined Q_CC_MSVC && !defined Q_CC_MSVC_NET
@@ -216,21 +216,21 @@ QScriptValue qScriptSmokeValueFromPairSequence(QScriptEngine *eng, const Contain
     QScriptValue a = eng->newArray();
     const char * firstTypeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type::first_type>());
     const char * secondTypeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type::second_type>());
-    Smoke::ModuleIndex firstClassId = qtcore_Smoke->findClass(firstTypeName);
-    Smoke::ModuleIndex secondClassId = qtcore_Smoke->findClass(secondTypeName);
+    Smoke::ModuleIndex firstClassId = Smoke::findClass(firstTypeName);
+    Smoke::ModuleIndex secondClassId = Smoke::findClass(secondTypeName);
     typename Container::const_iterator begin = cont.begin();
     typename Container::const_iterator end = cont.end();
     typename Container::const_iterator it;
     quint32 i;
     for (it = begin, i = 0; it != end; ++it, ++i) {
         QScriptValue pair = eng->newArray();
-        if (firstClassId == qtcore_Smoke->NullModuleIndex) {
+        if (firstClassId == Smoke::NullModuleIndex) {
             pair.setProperty(0, eng->toScriptValue((*it).first));
         } else {
             pair.setProperty(0, qScriptSmokeValueFromSequence_helper(eng, firstClassId, (void *) &((*it).first)));
         }
         
-        if (secondClassId == qtcore_Smoke->NullModuleIndex) {
+        if (secondClassId == Smoke::NullModuleIndex) {
             pair.setProperty(0, eng->toScriptValue((*it).second));
         } else {
             pair.setProperty(1, qScriptSmokeValueFromSequence_helper(eng, secondClassId, (void *) &((*it).second)));
@@ -248,13 +248,13 @@ void qScriptSmokeValueToPairSequence(const QScriptValue &value, Container &conta
     quint32 len = value.property(QLatin1String("length")).toUInt32();
     const char * firstTypeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type::first_type>());
     const char * secondTypeName = QMetaType::typeName(qMetaTypeId<typename Container::value_type::second_type>());
-    Smoke::ModuleIndex firstClassId = qtcore_Smoke->findClass(firstTypeName);
-    Smoke::ModuleIndex secondClassId = qtcore_Smoke->findClass(secondTypeName);
+    Smoke::ModuleIndex firstClassId = Smoke::findClass(firstTypeName);
+    Smoke::ModuleIndex secondClassId = Smoke::findClass(secondTypeName);
     for (quint32 i = 0; i < len; ++i) {
         QScriptValue pair = value.property(i);
         
-        if (firstClassId == qtcore_Smoke->NullModuleIndex) {
-            if (secondClassId == qtcore_Smoke->NullModuleIndex) {
+        if (firstClassId == Smoke::NullModuleIndex) {
+            if (secondClassId == Smoke::NullModuleIndex) {
                 container.push_back(QPair<typename Container::value_type::first_type, typename Container::value_type::second_type>(
                     qscriptvalue_cast<typename Container::value_type::first_type>(pair.property(0)),
                     qscriptvalue_cast<typename Container::value_type::second_type>(pair.property(1)) ) );
@@ -264,7 +264,7 @@ void qScriptSmokeValueToPairSequence(const QScriptValue &value, Container &conta
                     *(static_cast<typename Container::value_type::second_type *>(qScriptSmokeValueToSequence_helper(pair.property(1), secondClassId))) ) );
             }
         } else {
-            if (secondClassId == qtcore_Smoke->NullModuleIndex) {
+            if (secondClassId == Smoke::NullModuleIndex) {
                 container.push_back(QPair<typename Container::value_type::first_type, typename Container::value_type::second_type>(
                     *(static_cast<typename Container::value_type::first_type *>(qScriptSmokeValueToSequence_helper(pair.property(0), firstClassId))),
                     qscriptvalue_cast<typename Container::value_type::second_type>(pair.property(1)) ) );
@@ -296,21 +296,21 @@ QScriptValue qScriptSmokeValueFromHash(QScriptEngine *eng, const Container &cont
     QScriptValue value = eng->newObject();
     const char * keyTypeName = QMetaType::typeName(qMetaTypeId<typename Container::key_type>());
     const char * mappedTypeName = QMetaType::typeName(qMetaTypeId<typename Container::mapped_type>());
-    Smoke::ModuleIndex keyClassId = qtcore_Smoke->findClass(keyTypeName);
-    Smoke::ModuleIndex mappedClassId = qtcore_Smoke->findClass(mappedTypeName);
+    Smoke::ModuleIndex keyClassId = Smoke::findClass(keyTypeName);
+    Smoke::ModuleIndex mappedClassId = Smoke::findClass(mappedTypeName);
     typename Container::const_iterator begin = container.begin();
     typename Container::const_iterator end = container.end();
     typename Container::const_iterator it;
     for (it = begin; it != end; ++it) {
         QScriptValue key;
         
-        if (keyClassId == qtcore_Smoke->NullModuleIndex) {
+        if (keyClassId == Smoke::NullModuleIndex) {
             key = eng->toScriptValue(it.key());
         } else {
             key = qScriptSmokeValueFromSequence_helper(eng, keyClassId, (void *) &(it.key()));
         }
         
-        if (mappedClassId == qtcore_Smoke->NullModuleIndex) {
+        if (mappedClassId == Smoke::NullModuleIndex) {
             value.setProperty(key.toString(), eng->toScriptValue(it.value()));
         } else {
             value.setProperty(key.toString(), qScriptSmokeValueFromSequence_helper(eng, mappedClassId, (void *) &(it.value())));
@@ -324,13 +324,13 @@ template <class Container>
 void qScriptSmokeValueToHash(const QScriptValue &value, Container &container)
 {
     const char * mappedTypeName = QMetaType::typeName(qMetaTypeId<typename Container::mapped_type>());
-    Smoke::ModuleIndex mappedClassId = qtcore_Smoke->findClass(mappedTypeName);    
+    Smoke::ModuleIndex mappedClassId = Smoke::findClass(mappedTypeName);    
     QScriptValueIterator it(value);
     
     while (it.hasNext()) {
         it.next();
         
-        if (mappedClassId == qtcore_Smoke->NullModuleIndex) {
+        if (mappedClassId == Smoke::NullModuleIndex) {
             container[qscriptvalue_cast<typename Container::key_type>(it.name())] = 
                 qscriptvalue_cast<typename Container::mapped_type>(it.value());
         } else {

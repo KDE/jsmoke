@@ -43,6 +43,15 @@ methodToString(Smoke::ModuleIndex methodId)
     QString result;
     Smoke * smoke = methodId.smoke;
     Smoke::Method& methodRef = smoke->methods[methodId.index];
+    
+    if ((methodRef.flags & Smoke::mf_signal) != 0) {
+        result.append("signal ");
+    }
+    
+    if ((methodRef.flags & Smoke::mf_slot) != 0) {
+        result.append("slot ");
+    }
+    
     const char * typeName = smoke->types[methodRef.ret].name;
     
     if ((methodRef.flags & Smoke::mf_enum) != 0) {
@@ -52,12 +61,20 @@ methodToString(Smoke::ModuleIndex methodId)
         return result;
     }
     
+    if ((methodRef.flags & Smoke::mf_virtual) != 0) {
+        result.append("virtual ");
+    }
+    
     if ((methodRef.flags & Smoke::mf_static) != 0) {
         result.append("static ");
     }
     
-    result.append((typeName != 0 ? typeName : "void"));
-    result.append(  QString(" %1::%2(")
+    if ((methodRef.flags & Smoke::mf_ctor) == 0) {
+        result.append((typeName != 0 ? typeName : "void"));
+        result.append(" ");
+    }
+    
+    result.append(  QString("%1::%2(")
                         .arg(smoke->classes[methodRef.classId].className)
                         .arg(smoke->methodNames[methodRef.name]) );
                         
@@ -71,8 +88,13 @@ methodToString(Smoke::ModuleIndex methodId)
     }
     
     result.append(")");
+    
     if ((methodRef.flags & Smoke::mf_const) != 0) {
         result.append(" const");
+    }
+    
+    if ((methodRef.flags & Smoke::mf_purevirtual) != 0) {
+        result.append(" = 0");
     }
     
     return result;
@@ -153,7 +175,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 methodId = smoke->findMethod(   smoke->idClass("QGlobalSpace"), 
                                                 smoke->idMethodName(mungedMethod) );
                 
-                if (methodId != smoke->NullModuleIndex) {
+                if (methodId != Smoke::NullModuleIndex) {
                     methodIds.append(methodId);
                 }
             }
@@ -301,10 +323,10 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                 } else if (Object::Instance::isSmokeObject(actual)) {
                     if ((argFlags & Smoke::t_class) != 0) {
                         Object::Instance * instance = Object::Instance::get(actual);
-                        Smoke::ModuleIndex classId = qtcore_Smoke->findClass(argType);
+                        Smoke::ModuleIndex classId = Smoke::findClass(argType);
 
                         if (instance->classId == classId) {
-                        } else if (qtcore_Smoke->isDerivedFrom(instance->classId, classId)) {
+                        } else if (Smoke::isDerivedFrom(instance->classId, classId)) {
                             matchDistance += 1;
                         } else {
                             matchDistance += 10;
@@ -587,7 +609,7 @@ QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant)
     default:
         void * value_ptr = QMetaType::construct(QMetaType::type(variant.typeName()), ptr);
         result = Global::wrapInstance(  engine, 
-                                        qtcore_Smoke->findClass(variant.typeName()), 
+                                        Smoke::findClass(variant.typeName()), 
                                         value_ptr,
                                         QScriptEngine::ScriptOwnership );
         break;
