@@ -278,12 +278,12 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         QScriptClass * klass = 0;        
         
         for (int i = 0; i < typeResolvers.size(); ++i) {
-            if (smoke->isDerivedFrom(classId, typeResolvers.at(i).first)) {
+            if (Smoke::isDerivedFrom(classId, typeResolvers.at(i).first)) {
                 typeResolverMap[classId] = typeResolvers.at(i).second;
             }
         }
         
-        if (smoke->isDerivedFrom(classId, Global::QObjectClassId)) {
+        if (Smoke::isDerivedFrom(classId, Global::QObjectClassId)) {
             klass = new JSmoke::MetaObject(engine, className, Global::SmokeQObject);
         } else {
             klass = new JSmoke::MetaObject(engine, className, Global::Object);
