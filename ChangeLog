@@ -4,6 +4,8 @@
 'bool&', 'int&' and so on. For non-const references, the primitive should be
 passed as a single element JavaScript array, so that the value in the first
 element can be updated after the method call.
+* Make the 'jsmokeapi' tool show references and pointers to primitve types as
+single element arrays.
 
 2010-01-20  Richard Dale  <richard.j.dale@gmail.com>
 

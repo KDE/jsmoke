@@ -67,10 +67,8 @@ argToJavaScript(QString arg)
     arg.replace(QLatin1String("QStringList"), QLatin1String("[String, ..]"));
     arg.replace(QLatin1String("void*"), QLatin1String("undefined"));
     arg.replace(QLatin1String("::"), QLatin1String("."));
-    arg.replace(QLatin1String("char*"), QLatin1String("String"));
     arg.replace(QLatin1String("char**"), QLatin1String("[String, ..]"));
-    arg.replace(QLatin1String("&"), QLatin1String(""));
-    arg.replace(QLatin1String("*"), QLatin1String(""));
+    arg.replace(QLatin1String("char*"), QLatin1String("String"));
     arg.replace(QLatin1String("const "), QLatin1String(""));
     arg.replace(QLatin1String("void "), QLatin1String(""));
     arg.replace(QLatin1String("static "), QLatin1String(""));
@@ -85,6 +83,10 @@ argToJavaScript(QString arg)
     arg.replace(QLatin1String("real"), QLatin1String("Number"));
     arg.replace(QLatin1String("bool"), QLatin1String("Boolean"));
     arg.replace(QLatin1String("QString"), QLatin1String("String"));
+    arg.replace(QRegExp("^int[&*]$"), QLatin1String("[Number]"));
+    arg.replace(QRegExp("^(Number|Boolean)[&*]$"), QLatin1String("[\\1]"));
+    arg.replace(QLatin1String("&"), QLatin1String(""));
+    arg.replace(QLatin1String("*"), QLatin1String(""));
     arg.replace(QRegExp("(QList|QVector)<QPair<([^>])>,<([^>]*)>>"), QLatin1String("[[\\2,\\3], ..]"));
     arg.replace(QRegExp("(QList|QVector)<([^>]*)>"), QLatin1String("[\\2, ..]"));
     arg.replace(QRegExp("(QHash|QMap)<([^,]*),([^>]*)>"), QLatin1String("{\\2:\\3, ..}"));
