@@ -146,29 +146,6 @@ static void marshall_QString(Marshall *m) {
     }
 }
 
-static void marshall_BoolPtr(Marshall *m) {
-    switch(m->action()) {            
-    case Marshall::FromQScriptValue:
-    {
-        m->item().s_voidp = new bool;
-        *static_cast<bool*>(m->item().s_voidp) = (*(m->var())).toBool();
-        m->next();
-        delete static_cast<bool*>(m->item().s_voidp);
-        break;
-    }
- 
-    case Marshall::ToQScriptValue:
-    {
-        *(m->var()) = QScriptValue(m->engine(), *static_cast<bool*>(m->item().s_voidp));
-        break;
-    }
-    
-    default:
-        m->unsupported();
-        break;
-    }
-}
-
 static void marshall_CString(Marshall *m) {
     switch(m->action()) {
     case Marshall::FromQScriptValue:
@@ -288,10 +265,71 @@ static void marshall_QULongLong(Marshall *m) {
     }
 }
 
+/*
+    Primitive JavaScript types are immutable, and so to marshall references to C primitives
+    they need to be passed as single element JavaScript Arrays to make them mutable.
+ */
+template <class T>
+void marshall_PrimitiveRef(Marshall *m) {
+    switch(m->action()) {
+    case Marshall::FromQScriptValue:
+    { 
+        QScriptValue array = *(m->var());
+        T value;
+        
+        if (array.isArray()) {
+            value = qscriptvalue_cast<T>(array.property(0));
+        } else {
+            value = qscriptvalue_cast<T>(array);
+        }
+        
+        m->item().s_voidp = &value;        
+        m->next();
+        
+        if (!m->type().isConst() && array.isArray()) {
+            array.setProperty(0,  m->engine()->toScriptValue(*(static_cast<T*>(m->item().s_voidp))));
+        }
+        break;
+    }
+ 
+    case Marshall::ToQScriptValue:
+    {
+        QScriptValue value;
+        
+        if (m->type().isConst()) {
+            value = m->engine()->toScriptValue(*(static_cast<T*>(m->item().s_voidp)));
+        } else {
+            value = m->engine()->newArray(1);
+            value.setProperty(0, m->engine()->toScriptValue(*(static_cast<T*>(m->item().s_voidp))));
+        }
+        
+        *(m->var()) = value;
+        m->next();
+        
+        if (!m->type().isConst()) {
+            *(static_cast<T*>(m->item().s_voidp)) = qscriptvalue_cast<T>(value.property(0));
+        }
+        break;
+    }
+    
+    default:
+        m->unsupported();
+        break;
+    }
+}
+
 Marshall::TypeHandler QtCoreHandlers[] = {
-    { "bool*", marshall_BoolPtr },
+    { "bool*", marshall_PrimitiveRef<bool> },
+    { "bool&", marshall_PrimitiveRef<bool> },
     { "char*", marshall_CString },
     { "char**", marshall_CStringArray },
+    { "char&", marshall_PrimitiveRef<char> },
+    { "double*", marshall_PrimitiveRef<double> },
+    { "double&", marshall_PrimitiveRef<double> },
+    { "int*", marshall_PrimitiveRef<int> },
+    { "int&", marshall_PrimitiveRef<int> },
+    { "long*", marshall_PrimitiveRef<long> },
+    { "long&", marshall_PrimitiveRef<long> },
     { "QHash<int,QByteArray>", marshall_Container<QHash<int,QByteArray> > },
     { "QHash<int,QByteArray>&", marshall_Container<QHash<int,QByteArray> > },
     { "QHash<QString,QVariant>", marshall_Container<QHash<QString,QVariant> > },
@@ -303,8 +341,6 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<int>", marshall_Container<QList<int> > },
     { "QList<int>*", marshall_Container<QList<int> > },
     { "QList<int>&", marshall_Container<QList<int> > },
-    { "QList<unsigned int>", marshall_Container<QList<unsigned int> > },
-    { "QList<unsigned int>&", marshall_Container<QList<unsigned int> > },
     { "QList<QByteArray>", marshall_Container<QList<QByteArray> > },                                                                                                  
     { "QList<QByteArray>&", marshall_Container<QList<QByteArray> > },                                                                                                  
     { "QList<QDate>", marshall_Container<QList<QDate> > },                                                                                                  
@@ -320,10 +356,10 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<QPair<int,int>>", marshall_Container<QList<QPair<int,int> > > },
     { "QList<QPair<QByteArray,QByteArray>>", marshall_Container<QList<QPair<QByteArray,QByteArray> > > },
     { "QList<QPair<QByteArray,QByteArray>>&", marshall_Container<QList<QPair<QByteArray,QByteArray> > > },
-    { "QList<QPair<QString,unsigned short>>", marshall_Container<QList<QPair<QString,unsigned short> > > },
     { "QList<QPair<QString,QChar>>", marshall_Container<QList<QPair<QString,QChar> > > },
     { "QList<QPair<QString,QString>>", marshall_Container<QList<QPair<QString,QString> > > },
     { "QList<QPair<QString,QString>>&", marshall_Container<QList<QPair<QString,QString> > > },
+    { "QList<QPair<QString,unsigned short>>", marshall_Container<QList<QPair<QString,unsigned short> > > },
     { "QList<qreal>", marshall_Container<QList<qreal> > },
     { "QList<qreal>&", marshall_Container<QList<qreal> > },
     { "QList<QRectF>&", marshall_Container<QList<QRectF> > },
@@ -336,6 +372,8 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QList<QUrl>&", marshall_Container<QList<QUrl> > },
     { "QList<QVariant>", marshall_Container<QList<QVariant> > },
     { "QList<QVariant>&", marshall_Container<QList<QVariant> > },
+    { "QList<unsigned int>", marshall_Container<QList<unsigned int> > },
+    { "QList<unsigned int>&", marshall_Container<QList<unsigned int> > },
     { "qlonglong", marshall_QLongLong },
     { "qlonglong&", marshall_QLongLong },
     { "QMap<int,QVariant>", marshall_Container<QMap<int,QVariant> > },
@@ -372,7 +410,16 @@ Marshall::TypeHandler QtCoreHandlers[] = {
     { "QVector<QXmlStreamNotationDeclaration>&", marshall_Container<QVector<QXmlStreamNotationDeclaration> > },
     { "QVector<unsigned int>", marshall_Container<QVector<unsigned int> > },
     { "QVector<unsigned int>&", marshall_Container<QVector<unsigned int> > },
+    { "short*", marshall_PrimitiveRef<short> },
+    { "short&", marshall_PrimitiveRef<short> },
+    { "signed int&", marshall_PrimitiveRef<int> },
+    { "signed long&", marshall_PrimitiveRef<long> },
+    { "signed short&", marshall_PrimitiveRef<short> },
     { "unsigned char*", marshall_CString },
+    { "unsigned char&", marshall_PrimitiveRef<unsigned char> },
+    { "unsigned int&", marshall_PrimitiveRef<unsigned int> },
+    { "unsigned long&", marshall_PrimitiveRef<unsigned long> },
+
 
     { 0, 0 }
 };
