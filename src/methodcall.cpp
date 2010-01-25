@@ -31,8 +31,71 @@
 
 namespace JSmoke {
     
-MethodCall::ReturnValue::ReturnValue(Smoke *smoke, Smoke::Index method, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue) :
-    m_smoke(smoke), m_method(method), m_stack(stack), m_engine(engine), m_returnValue(returnValue)
+MethodCall::ArgumentTypeConversion::ArgumentTypeConversion(Smoke::ModuleIndex methodId, Smoke::StackItem& item, QScriptValue& value) :
+    m_methodId(methodId), m_item(item), m_value(value) 
+{
+    m_stack = new Smoke::StackItem[method().numArgs + 1];
+    m_type.set(m_methodId.smoke, (m_methodId.smoke->argumentList + method().args)[0]);
+    Marshall::HandlerFn handlerFn = getMarshallFn(type());
+    (*handlerFn)(this);
+    
+    // Note that the method called can be in one of two forms:
+    //      1) A constructor 'Foobar::Foobar(value)',
+    //      2) A 'value::operator Foobar()' method. 
+    // In case 1) the argument is in m_stack[1], and the result in m_stack[0]
+    // In case 2) the instance to call the method on, is m_stack[1].s_voidp,
+    // and the result is in m_stack[0].
+    Smoke::ClassFn fn = m_methodId.smoke->classes[method().classId].classFn;
+    (*fn)(method().method, m_stack[1].s_voidp, m_stack);
+    m_item = m_stack[0];
+}
+
+MethodCall::ArgumentTypeConversion::~ArgumentTypeConversion()
+{
+    QByteArray methodName(m_methodId.smoke->methodNames[method().name]);
+    QByteArray className;
+    Smoke::ModuleIndex classId;
+    
+    if (methodName.startsWith("operator ")) {
+        className = methodName.mid(qstrlen("operator "));
+        classId = Smoke::findClass(className);
+    } else {
+        className = m_methodId.smoke->classes[method().classId].className;
+        classId = Smoke::ModuleIndex(m_methodId.smoke, method().classId);
+    }
+    
+    QByteArray destructorName(className);
+    destructorName.prepend("~");
+    Smoke::ModuleIndex nameId = classId.smoke->findMethodName(className, destructorName);
+    Smoke::ModuleIndex methodId = classId.smoke->findMethod(classId, nameId);
+    
+    if(methodId.index > 0) {
+        Smoke::Method &methodRef = classId.smoke->methods[classId.smoke->methodMaps[methodId.index].method];
+        Smoke::ClassFn fn = classId.smoke->classes[methodRef.classId].classFn;
+        m_stack[1] = m_stack[0];
+        (*fn)(methodRef.method, m_stack[1].s_voidp, m_stack);
+    }
+    
+    delete[] m_stack; 
+}
+
+void
+MethodCall::ArgumentTypeConversion::unsupported()
+{
+    m_value.engine()->currentContext()->throwError( QScriptContext::TypeError, 
+                                                    QString("Cannot handle '%1' as value type conversion %2::%3")
+                                                            .arg(type().name())
+                                                            .arg(m_methodId.smoke->className(method().classId))
+                                                            .arg(m_methodId.smoke->methodNames[method().name]) );
+}
+
+void
+MethodCall::ArgumentTypeConversion::next() 
+{
+}
+
+MethodCall::ReturnValue::ReturnValue(Smoke::ModuleIndex methodId, Smoke::Stack stack, QScriptEngine * engine, QScriptValue * returnValue) :
+    m_methodId(methodId), m_stack(stack), m_engine(engine), m_returnValue(returnValue)
 {
     Marshall::HandlerFn fn = getMarshallFn(type());
     (*fn)(this);
@@ -41,17 +104,17 @@ MethodCall::ReturnValue::ReturnValue(Smoke *smoke, Smoke::Index method, Smoke::S
 void
 MethodCall::ReturnValue::unsupported()
 {
-    if (strcmp(m_smoke->className(method().classId), "QGlobalSpace") == 0) {
+    if (strcmp(m_methodId.smoke->className(method().classId), "QGlobalSpace") == 0) {
         m_engine->currentContext()->throwError( QScriptContext::TypeError, 
                                                 QString("Cannot handle '%1' as return type of %2")
                                                         .arg(type().name())
-                                                        .arg(m_smoke->methodNames[method().name]) );
+                                                        .arg(m_methodId.smoke->methodNames[method().name]) );
     } else {
         m_engine->currentContext()->throwError( QScriptContext::TypeError, 
                                                 QString("Cannot handle '%1' as return type of %2::%3")
                                                         .arg(type().name())
-                                                        .arg(m_smoke->className(method().classId))
-                                                        .arg(m_smoke->methodNames[method().name]) );
+                                                        .arg(m_methodId.smoke->className(method().classId))
+                                                        .arg(m_methodId.smoke->methodNames[method().name]) );
     }
 }
 
@@ -60,11 +123,13 @@ MethodCall::ReturnValue::next()
 {
 }
 
-MethodCall::MethodCall(Smoke *smoke, Smoke::Index method, QScriptContext * context, QScriptEngine * engine) :
-    m_current(-1), m_smoke(smoke), m_method(method), m_context(context), m_engine(engine), 
-    m_called(false), m_error(false),
-    m_methodRef(smoke->methods[method])
+MethodCall::MethodCall(const QVector<Smoke::ModuleIndex>& methodIds, QScriptContext * context, QScriptEngine * engine) :
+    m_methodIds(methodIds), m_methodRef(methodIds[0].smoke->methods[methodIds[0].index]), 
+    m_current(-1), m_context(context), m_engine(engine), 
+    m_called(false), m_error(false)
 {
+    m_methodId = m_methodIds[0]; 
+    m_smoke = m_methodId.smoke;
     m_target = m_context->thisObject();
     m_instance = JSmoke::Object::Instance::get(m_target); 
     m_args = m_smoke->argumentList + m_methodRef.args;
@@ -148,7 +213,7 @@ void MethodCall::callMethod()
         JSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
     } else {
         m_returnValue = m_engine->undefinedValue();
-        ReturnValue result(m_smoke, m_method, m_stack, m_engine, &m_returnValue);
+        ReturnValue result(m_methodId, m_stack, m_engine, &m_returnValue);
     }
     
     if ((Debug::DoDebug & Debug::Calls) != 0) {
@@ -174,8 +239,14 @@ void MethodCall::next()
     m_current++;
     
     while (!m_called && !m_error && m_current < m_methodRef.numArgs) {
-        Marshall::HandlerFn fn = getMarshallFn(type());
-        (*fn)(this);
+        if (hasTypeConversion()) {
+            ArgumentTypeConversion conversion(typeConversion(), item(), *var());
+            next();
+        } else {
+            Marshall::HandlerFn fn = getMarshallFn(type());
+            (*fn)(this);
+        }
+        
         m_current++;
     }
     

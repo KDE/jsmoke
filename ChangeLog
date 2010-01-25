@@ -1,3 +1,28 @@
+2010-01-25  Richard Dale  <richard.j.dale@gmail.com>
+
+* The overloaded method resolution is now greatly improved:
+* Added an 'inheritanceDistance()' method which returns the distance between
+two classes in the inheritance heirarchy. For instance, QObject to QObject is
+0, QWidget to QObject is 1, and QPushButton to QObject is 3.
+* The overloaded method resolution now handles C++ implicit type conversions
+when matching method arguments. For instance, if a Boolean is passed as an 
+argument to a method expecting a QVariant, a temporary QVariant is constructed
+in the MethodCall class for the argument, and passed to the method being
+called. 
+* The approach is to first match the methods found from the munged method
+signatures against the actual JavaScript arguments as before. If that fails,
+then the overloaded method resolution goes into 'implicitTypeConversionMode'
+where it will see if any of the target argument types which are classes can be
+constructed from the JavaScript argument, with with a constructor or with a
+'operator Foobar()' type conversion. A QVector of method ids is now passed to
+the MethodCall class constructor, where the zeroth entry is the main method to
+be called and the optional following entries are either 'NullModuleIndex' to 
+mean that no type conversion is needed for that argument, or they are they are
+the method id of a suitable constructor or operator method to handle the type
+conversion for a particular argument.
+* The Qt.Debug.MethodMatches trace option shows any type conversion methods
+which have been matched.
+
 2010-01-21  Richard Dale  <richard.j.dale@gmail.com>
 
 * Add marshallers for references and pointers primitive types, such as 'bool*',

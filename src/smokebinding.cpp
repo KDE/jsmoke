@@ -110,7 +110,7 @@ bool Binding::callMethod(Smoke::Index method, void* ptr, Smoke::Stack args, bool
     }
     
     QScriptValue function = obj->property(QString(methodName)); 
-    VirtualMethodCall methodCall(smoke, method, args, *obj, function);
+    VirtualMethodCall methodCall(Smoke::ModuleIndex(smoke, method), args, *obj, function);
     methodCall.next();
     return true;
 }

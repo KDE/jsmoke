@@ -165,7 +165,7 @@ Object::property(const QScriptValue& object, const QScriptString& name, uint id)
                  name.toString().toLatin1().constData(), 
                  id);
     }
-    
+
     if (name.toString() == QLatin1String("toString")) {
         Object::Instance * instance = Object::Instance::get(object);
         Smoke::ModuleIndex methodId = instance->classId.smoke->findMethod(  instance->classId.smoke->classes[instance->classId.index].className, 

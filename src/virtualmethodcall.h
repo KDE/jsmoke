@@ -31,40 +31,39 @@ namespace JSmoke {
         
         class ReturnValue : Marshall {
         public:
-            ReturnValue(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue returnValue);
+            ReturnValue(Smoke::ModuleIndex methodId, Smoke::Stack stack, QScriptValue returnValue);
 
-            inline const Smoke::Method &method() { return m_smoke->methods[m_method]; }
+            inline const Smoke::Method &method() { return m_methodId.smoke->methods[m_methodId.index]; }
             inline SmokeType type() { return m_type; }
             inline Marshall::Action action() { return Marshall::FromQScriptValue; }
             inline Smoke::StackItem &item() { return m_stack[0]; }
             inline QScriptEngine * engine() { return 0; }
             inline QScriptValue * var() { return &m_returnValue; }
-            inline Smoke *smoke() { return m_smoke; }
+            inline Smoke *smoke() { return m_methodId.smoke; }
             inline bool cleanup() { return false; }
 
             void unsupported();
             void next();
             
         private:
-            Smoke *m_smoke;
-            Smoke::Index m_method;
+            Smoke::ModuleIndex m_methodId;
             Smoke::Stack m_stack;
             SmokeType m_type;
             QScriptValue m_returnValue;
         };
         
     public:
-        VirtualMethodCall(Smoke *smoke, Smoke::Index meth, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod);
+        VirtualMethodCall(Smoke::ModuleIndex methodId, Smoke::Stack stack, QScriptValue obj, QScriptValue overridenMethod);
 
         ~VirtualMethodCall();
 
-        inline SmokeType type() { return SmokeType(m_smoke, m_args[m_current]); }
+        inline SmokeType type() { return SmokeType(m_methodId.smoke, m_args[m_current]); }
         inline Marshall::Action action() { return Marshall::ToQScriptValue; }
         inline Smoke::StackItem &item() { return m_stack[m_current + 1]; }
         inline QScriptEngine * engine() { return m_engine; }
         inline QScriptValue * var() { return &(m_valueList[m_current]); }
         inline const Smoke::Method &method() { return m_methodRef; }
-        inline Smoke *smoke() { return m_smoke; }
+        inline Smoke *smoke() { return m_methodId.smoke; }
         inline bool cleanup() { return false; }   // is this right?
 
         void unsupported();
@@ -72,8 +71,7 @@ namespace JSmoke {
         void next();
         
     private:
-        Smoke * m_smoke;
-        Smoke::Index m_method;
+        Smoke::ModuleIndex m_methodId;
         Smoke::Stack m_stack;
         QScriptEngine * m_engine;
         QScriptValue m_obj;

@@ -28,15 +28,21 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QPair>
 
+#include <QtScript/QScriptContext>
+#include <QtScript/QScriptEngine>
+
 #include "jsmoke_export.h"
 #include "object.h"
 
-class QScriptContext;
-
 namespace JSmoke {
+    typedef QPair<QVector<Smoke::ModuleIndex>, int> MethodMatch;
+    typedef QVector<MethodMatch> MethodMatches;
+    
     JSMOKE_EXPORT QString methodToString(Smoke::ModuleIndex methodId);
-    JSMOKE_EXPORT QVector<QByteArray> mungedMethods( const QByteArray& nameFn, QScriptContext* context );
-    JSMOKE_EXPORT QVector<QPair<Smoke::ModuleIndex, int> > resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context);
+    JSMOKE_EXPORT MethodMatches resolveMethod(  Smoke::ModuleIndex classId, 
+                                                const QByteArray& methodName, 
+                                                QScriptContext* context, 
+                                                bool implicitTypeConversionMode = false );
     JSMOKE_EXPORT QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
     JSMOKE_EXPORT QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
     JSMOKE_EXPORT QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
