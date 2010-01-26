@@ -26,7 +26,8 @@
 ****************************************************************************/
 
 #include <QtScript>
-
+#include <QScriptEngineDebugger>
+ 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QStringList>
@@ -121,6 +122,17 @@ QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
     return engine->toScriptValue(true);
 }
 
+QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+{
+    Q_UNUSED(engine);
+    QDebug debug = qDebug();
+    for(int i = 0; i < context->argumentCount(); i++)
+    {
+        debug << context->argument(i).toString();
+    }
+    return QScriptValue();
+}
+
 QScriptValue importExtension(QScriptContext *context, QScriptEngine *engine)
 {
     return engine->importExtension(context->argument(0).toString());
@@ -136,8 +148,13 @@ void addLoadPath(QString pathName)
 QScriptEngine * initializeEngine()
 {
     QScriptEngine *engine = new QScriptEngine();
+    QScriptEngineDebugger *debugger = new QScriptEngineDebugger();
+    debugger->attachTo( engine );
 
     QScriptValue global = engine->globalObject();
+    //for some reason the default print fn isn't working in Qt 4.6
+    global.setProperty("print", engine->newFunction(print));
+    
     // add the qt object
     global.setProperty("qs", engine->newObject());
     // add a 'script' object

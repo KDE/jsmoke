@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     engine->importExtension("jsmoke.qtgui");
     engine->importExtension("jsmoke.kdecore");
     engine->importExtension("jsmoke.kdegui");
-    engine->importExtension("jsmoke.kio");
     
-    return run(engine, QFile::encodeName(script.filePath()));
+    run(engine, QFile::encodeName(script.filePath()));
+    return app.exec();
 }

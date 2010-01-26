@@ -35,5 +35,6 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QScriptEngine * engine = initializeEngine();
     engine->importExtension("jsmoke.qtcore");    
-    return run(engine, QString::fromLatin1(argv[1]));
+    run(engine, QString::fromLatin1(argv[1]));
+    return app.exec();
 }
