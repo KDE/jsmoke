@@ -1,3 +1,17 @@
+2010-01-26  Richard Dale  <richard.j.dale@gmail.com>
+
+* #ifdef out the Q_PROPERTY getting/setting when building with Qt 4.6.0. It 
+doesn't work because returning QScriptValue::PropertyGetter or 
+QScriptValue::PropertySetter from QScriptClass::propertyFlags() has no effect.
+With Qt 4.5.2 it meant that the following call to QScriptClass::property() 
+would be expected to return functions to get or set a property. 
+* With Qt 4.6.0, the code only expects to call QScriptClass::property() or 
+QScriptClass::setProperty() to change a property. This can't be made to work
+JavaScript classes which are subclasses, because the QScriptValue passed to 
+these two methods is the prototype instance, and not the actual value whose
+properties need to be changed. It will only work if the JavaScript value is 
+an instance of a class in the Smoke libraries does it work.
+
 2010-01-25  Richard Dale  <richard.j.dale@gmail.com>
 
 * The overloaded method resolution is now greatly improved:
@@ -13,7 +27,7 @@ called.
 signatures against the actual JavaScript arguments as before. If that fails,
 then the overloaded method resolution goes into 'implicitTypeConversionMode'
 where it will see if any of the target argument types which are classes can be
-constructed from the JavaScript argument, with with a constructor or with a
+constructed from the JavaScript argument, either with a constructor or with a
 'operator Foobar()' type conversion. A QVector of method ids is now passed to
 the MethodCall class constructor, where the zeroth entry is the main method to
 be called and the optional following entries are either 'NullModuleIndex' to 

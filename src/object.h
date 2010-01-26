@@ -79,7 +79,6 @@ namespace JSmoke {
         QScriptValue::PropertyFlags propertyFlags ( const QScriptValue & object, const QScriptString & name, uint id );
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint* id);
         QScriptValue property(const QScriptValue& object, const QScriptString& name, uint id);
-        void setProperty(QScriptValue& object, const QScriptString& name, uint id, const QScriptValue& value);
         QString name() const;
     };
 
