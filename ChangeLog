@@ -1,3 +1,14 @@
+2010-01-27  Richard Dale  <richard.j.dale@gmail.com>
+
+* Constructors for nesting classes such as KParts::MainWindow were not working
+* If a nested class didn't have an outer class in the Smoke library, it wasn't
+being initialize correctly. For instance, there is no 'KParts' smoke class.
+* The code to handle argument type conversions based on 'operator Foobar()'
+style methods now works. However, there is a crash when the destructor for the
+temporary item is called in MethodCall::ArgumentTypeConversion
+* Make JSmoke::MetaObject ignore standard methods such as valueOf(), and not
+try and look them up in the Smoke libs.
+
 2010-01-26  Richard Dale  <richard.j.dale@gmail.com>
 
 * #ifdef out the Q_PROPERTY getting/setting when building with Qt 4.6.0. It 
@@ -10,7 +21,8 @@ QScriptClass::setProperty() to change a property. This can't be made to work
 JavaScript classes which are subclasses, because the QScriptValue passed to 
 these two methods is the prototype instance, and not the actual value whose
 properties need to be changed. It will only work if the JavaScript value is 
-an instance of a class in the Smoke libraries does it work.
+an instance of a class in the Smoke libraries such as 'QWidget', and not 
+something like 'MyWidget', a subclass of QWidget.
 
 2010-01-25  Richard Dale  <richard.j.dale@gmail.com>
 

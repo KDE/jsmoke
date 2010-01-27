@@ -451,17 +451,34 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                         Smoke::ModuleIndex argClassId = Smoke::findClass(className);
                         MethodMatches cmatches = resolveTypeConversion(argClassId, className, actual);
                         
-                        if (    (cmatches.count() == 0 || cmatches[0].second > 10)
-                                && Object::Instance::isSmokeObject(actual) ) 
-                        {
-                            Object::Instance * instance = Object::Instance::get(actual);
-                            cmatches = resolveTypeConversion(instance->classId, QByteArray("operator ") + className, actual);
-                        }
-                        
-                        if (cmatches.count() > 0 && cmatches[0].second < 10) {
+                        if (cmatches.count() > 0 && cmatches[0].second <= 10) {
                             matchDistance += cmatches[0].second;
                             methods.append(cmatches[0].first[0]);
                             continue;
+                        }
+                        
+                        if (Object::Instance::isSmokeObject(actual)) {
+                            Object::Instance * instance = Object::Instance::get(actual);
+                            QByteArray argClassName(instance->classId.smoke->classes[instance->classId.index].className);
+                            Smoke::ModuleIndex nameId = instance->classId.smoke->findMethod(argClassName, QByteArray("operator ") + className);
+    
+                            if (nameId != Smoke::NullModuleIndex) {
+                                Smoke::ModuleIndex methodId = Smoke::ModuleIndex(   instance->classId.smoke,
+                                                                                    nameId.smoke->methodMaps[nameId.index].method );
+                                if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
+                                    qWarning(   "    Argument type conversion matches for %s.%s():", 
+                                                argClassName.constData(), 
+                                                (QByteArray("operator ") + className).constData() );
+                                    qWarning(   "        %s module: %s index: %d matchDistance: %d", 
+                                                methodToString(methodId).toLatin1().constData(),
+                                                methodId.smoke->moduleName(), 
+                                                methodId.index, 
+                                                0 );
+                                }
+                                
+                                methods.append(methodId);
+                                continue;
+                            }
                         }
                     }
                     

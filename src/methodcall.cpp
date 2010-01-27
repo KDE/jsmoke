@@ -35,7 +35,14 @@ MethodCall::ArgumentTypeConversion::ArgumentTypeConversion(Smoke::ModuleIndex me
     m_methodId(methodId), m_item(item), m_value(value) 
 {
     m_stack = new Smoke::StackItem[method().numArgs + 1];
-    m_type.set(m_methodId.smoke, (m_methodId.smoke->argumentList + method().args)[0]);
+    QByteArray methodName(m_methodId.smoke->methodNames[method().name]);
+    
+    if (methodName.startsWith("operator ")) {
+        m_type.set(m_methodId.smoke, method().ret);
+    } else {
+        m_type.set(m_methodId.smoke, (m_methodId.smoke->argumentList + method().args)[0]);
+    }
+    
     Marshall::HandlerFn handlerFn = getMarshallFn(type());
     (*handlerFn)(this);
     
@@ -69,7 +76,7 @@ MethodCall::ArgumentTypeConversion::~ArgumentTypeConversion()
     Smoke::ModuleIndex nameId = classId.smoke->findMethodName(className, destructorName);
     Smoke::ModuleIndex methodId = classId.smoke->findMethod(classId, nameId);
     
-    if(methodId.index > 0) {
+    if (methodId != Smoke::NullModuleIndex) {
         Smoke::Method &methodRef = classId.smoke->methods[classId.smoke->methodMaps[methodId.index].method];
         Smoke::ClassFn fn = classId.smoke->classes[methodRef.classId].classFn;
         m_stack[1] = m_stack[0];

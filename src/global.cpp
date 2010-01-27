@@ -269,13 +269,13 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
     }
     
     for (int i = 1; i <= smoke->numClasses; i++) {
-        if (smoke->classes[i].external) {
-            continue;
-        }
-        
-        QByteArray className(smoke->classes[i].className);        
         Smoke::ModuleIndex classId(smoke, i);
         QScriptClass * klass = 0;        
+        QByteArray className(smoke->classes[i].className);        
+
+        if (smoke->classes[i].external || className == "QGlobalSpace") {
+            continue;
+        }
         
         for (int i = 0; i < typeResolvers.size(); ++i) {
             if (Smoke::isDerivedFrom(classId, typeResolvers.at(i).first)) {
@@ -293,8 +293,24 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
             QStringList components = QString(className).split("::");
             QScriptValue outerClass = engine->globalObject().property(components[0]);
             
+            if (!outerClass.isValid()) {
+                outerClass = engine->newObject(new JSmoke::MetaObject(  engine, 
+                                                                        components[0].toLatin1(), 
+                                                                        Global::Object ) );
+                engine->globalObject().setProperty(components[0], outerClass);
+            }
+            
             for (int component = 1; component < components.length() - 1; ++component) {
-                outerClass = outerClass.property(components[component]);
+                QScriptValue temp = outerClass.property(components[component]);
+                
+                if (!temp.isValid()) {
+                    temp = engine->newObject(new JSmoke::MetaObject(    engine, 
+                                                                        components[component].toLatin1(), 
+                                                                        Global::Object ) );
+                    outerClass.setProperty(components[component], temp);
+                }
+                
+                outerClass = temp;
             }
             
             outerClass.setProperty(components.last(), engine->newObject(klass));
@@ -303,7 +319,6 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         }
     }
 }
-
 
     } // namespace Global
 } // namespace JSmoke
