@@ -38,7 +38,7 @@
 namespace JSmoke {
 
 QString
-methodToString(Smoke::ModuleIndex methodId)
+methodToString(const Smoke::ModuleIndex& methodId)
 {
     QString result;
     Smoke * smoke = methodId.smoke;
@@ -98,6 +98,30 @@ methodToString(Smoke::ModuleIndex methodId)
     }
     
     return result;
+}
+
+QScriptValue 
+instanceToString(QScriptContext* context, QScriptEngine* engine)
+{
+    Object::Instance * instance = Object::Instance::get(context->thisObject());
+    Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
+    QString str = QString("[object %1:0x%2]")
+        .arg(QString(klass.className).replace("::", "."))
+        .arg(reinterpret_cast<ulong>(instance->value), 8, 16, QLatin1Char('0'));
+    return QScriptValue(engine, str);
+}
+
+QByteArray 
+constructorName(const Smoke::ModuleIndex& classId)
+{
+    QByteArray name(classId.smoke->classes[classId.index].className);
+    int pos = name.lastIndexOf("::");
+    
+    if (pos != -1) {
+        name = name.mid(pos + strlen("::"));
+    }
+    
+    return name;
 }
 
 /* http://lists.kde.org/?l=kde-bindings&m=105167029023219&w=2
@@ -449,7 +473,7 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                     if ((argFlags & Smoke::tf_elem) == Smoke::t_class && distance >= 100) {
                         QByteArray className = typeName(method.smoke->types[method.smoke->argumentList[methodRef.args+i]]);
                         Smoke::ModuleIndex argClassId = Smoke::findClass(className);
-                        MethodMatches cmatches = resolveTypeConversion(argClassId, className, actual);
+                        MethodMatches cmatches = resolveTypeConversion(argClassId, constructorName(argClassId), actual);
                         
                         if (cmatches.count() > 0 && cmatches[0].second <= 10) {
                             matchDistance += cmatches[0].second;
@@ -570,17 +594,6 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     JSmoke::MethodCall methodCall(matches[0].first, context, engine);
     methodCall.next();
     return *(methodCall.var());
-}
-
-QScriptValue 
-instanceToString(QScriptContext* context, QScriptEngine* engine)
-{
-    Object::Instance * instance = Object::Instance::get(context->thisObject());
-    Smoke::Class & klass = instance->classId.smoke->classes[instance->classId.index];
-    QString str = QString("[object %1:0x%2]")
-        .arg(QString(klass.className).replace("::", "."))
-        .arg(reinterpret_cast<ulong>(instance->value), 8, 16, QLatin1Char('0'));
-    return QScriptValue(engine, str);
 }
 
 void *

@@ -55,20 +55,12 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     
     QScriptContext * constructorContext = engine->pushContext();
     constructorContext->setThisObject(context->argument(0));
-
     QScriptValue args = context->argumentsObject();
     args.property("shift").call(args);
     constructorContext->activationObject().setProperty("arguments", args);
     
-    QByteArray constructorName(classId.smoke->classes[classId.index].className);
-    int pos = constructorName.lastIndexOf("::");
-    if (pos != -1) {
-        constructorName = constructorName.mid(pos + strlen("::"));
-    }
+    MethodMatches matches = JSmoke::resolveMethod(classId, constructorName(classId), constructorContext);
     
-    MethodMatches matches = JSmoke::resolveMethod(  classId, 
-                                                    constructorName,
-                                                    constructorContext );
     if (matches.count() == 0 || matches[0].second >= 100) {
         QString message = QString("constructor %1() not defined").arg(classId.smoke->classes[classId.index].className);
         return context->throwError(QScriptContext::TypeError, message);
@@ -158,10 +150,7 @@ MetaObject::property(const QScriptValue& object, const QScriptString & name, uin
     QByteArray propertyName(name.toString().toLatin1());
     
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("MetaObject::property(%s.%s, %d)", 
-                 m_className.constData(),
-                 propertyName.constData(), 
-                 id);
+        qWarning("MetaObject::property(%s.%s, %d)", m_className.constData(), propertyName.constData(), id);
     }
 
     if (propertyName == "prototype") {
@@ -194,13 +183,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
 {
     if (extension == Callable) {
         QScriptContext *context = qvariant_cast<QScriptContext*>(argument);
-        QByteArray constructorName(m_className);
-        int pos = constructorName.lastIndexOf("::");
-        if (pos != -1) {
-            constructorName = constructorName.mid(pos + strlen("::"));
-        }
-        
-        MethodMatches matches = JSmoke::resolveMethod(m_classId, constructorName, context);
+        MethodMatches matches = JSmoke::resolveMethod(m_classId, constructorName(m_classId), context);
 
         if (matches.count() == 0 || matches[0].second >= 100) {
             QString message = QString("constructor %1() not defined").arg(m_className.constData());

@@ -35,17 +35,20 @@
 #include "object.h"
 
 namespace JSmoke {
+    JSMOKE_EXPORT QString methodToString(const Smoke::ModuleIndex& methodId);
+    JSMOKE_EXPORT QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
+    JSMOKE_EXPORT QByteArray constructorName(const Smoke::ModuleIndex& classId);
+    
     typedef QPair<QVector<Smoke::ModuleIndex>, int> MethodMatch;
     typedef QVector<MethodMatch> MethodMatches;
-    
-    JSMOKE_EXPORT QString methodToString(Smoke::ModuleIndex methodId);
+
     JSMOKE_EXPORT MethodMatches resolveMethod(  Smoke::ModuleIndex classId, 
                                                 const QByteArray& methodName, 
                                                 QScriptContext* context, 
                                                 bool implicitTypeConversionMode = false );
+                                                
     JSMOKE_EXPORT QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
     JSMOKE_EXPORT QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);
-    JSMOKE_EXPORT QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
     JSMOKE_EXPORT void * constructCopy(Object::Instance *instance);
     JSMOKE_EXPORT QVariant valueToVariant(const QScriptValue& value);
     JSMOKE_EXPORT QScriptValue valueFromVariant(QScriptEngine *engine, const QVariant& variant);
