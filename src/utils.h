@@ -39,13 +39,20 @@ namespace JSmoke {
     JSMOKE_EXPORT QScriptValue instanceToString(QScriptContext* context, QScriptEngine* engine);
     JSMOKE_EXPORT QByteArray constructorName(const Smoke::ModuleIndex& classId);
     
+    enum MethodMatchesState {
+        InitialState,
+        ImplicitTypeConversionsState,
+        ArgumentTypeConversionState
+    };
+    
     typedef QPair<QVector<Smoke::ModuleIndex>, int> MethodMatch;
     typedef QVector<MethodMatch> MethodMatches;
 
     JSMOKE_EXPORT MethodMatches resolveMethod(  Smoke::ModuleIndex classId, 
                                                 const QByteArray& methodName, 
                                                 QScriptContext* context, 
-                                                bool implicitTypeConversionMode = false );
+                                                const QScriptValueList& args, 
+                                                MethodMatchesState matchState = InitialState );
                                                 
     JSMOKE_EXPORT QScriptValue callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine);
     JSMOKE_EXPORT QScriptValue callSmokeMethod(QScriptContext* context, QScriptEngine* engine);

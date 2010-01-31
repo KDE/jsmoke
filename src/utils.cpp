@@ -124,6 +124,13 @@ constructorName(const Smoke::ModuleIndex& classId)
     return name;
 }
 
+static QByteArray
+typeName(const Smoke::Type& typeRef)
+{
+    QByteArray name(typeRef.name);
+    return name.replace("const ", "").replace("&", "").replace("*", "");
+}
+
 /* http://lists.kde.org/?l=kde-bindings&m=105167029023219&w=2
 * The handler will first determine the Qt class hierarchy of the object (using 
 * Smoke's idClass() and looking in the class hierarchy array) then build the 
@@ -133,89 +140,88 @@ constructorName(const Smoke::ModuleIndex& classId)
 * - append  # for each Qt object passed as argument
 * - append ? for things like an array, or a hash, or an undefined value     
 */
-static void 
-addMungedArgument(QVector<QByteArray>& mungedMethods, const QScriptValue& value, bool implicitTypeConversionMode = false)
+static QVector<QByteArray> 
+mungedMethods(const QByteArray& methodName, const QScriptValueList& args, MethodMatchesState matchState)
 {
-    if (    value.isNumber() 
-            || value.isBool() 
-            || value.isString() 
-            || value.instanceOf(JSmoke::Global::QtEnum) )
-    {
-        if (implicitTypeConversionMode) {
+    QVector<QByteArray> result;
+    result.append(methodName);
+    
+    foreach (QScriptValue value, args) {
+        if (    value.isNumber() 
+                || value.isBool() 
+                || value.isString() 
+                || value.instanceOf(JSmoke::Global::QtEnum) )
+        {
+            if (matchState == ImplicitTypeConversionsState) {
+                QVector<QByteArray> temp;
+                foreach (QByteArray mungedMethod, result) {
+                    temp.append(mungedMethod + '$');
+                    temp.append(mungedMethod + '#');
+                }
+                result = temp;
+            } else {
+                for (int i = 0; i < result.count(); i++) {
+                    result[i] += '$';
+                }
+            }
+        } else if (value.isArray()) {
+            if (matchState == ImplicitTypeConversionsState) {
+                QVector<QByteArray> temp;
+                foreach (QByteArray mungedMethod, result) {
+                    temp.append(mungedMethod + '?');
+                    temp.append(mungedMethod + '#');
+                }
+                result = temp;
+            } else {
+                for (int i = 0; i < result.count(); i++) {
+                    result[i] += '?';
+                }
+            }
+        } else if (value.isNull() || value.isUndefined()) {
             QVector<QByteArray> temp;
-            foreach (QByteArray mungedMethod, mungedMethods) {
+            foreach (QByteArray mungedMethod, result) {
                 temp.append(mungedMethod + '$');
-                temp.append(mungedMethod + '#');
-            }
-            mungedMethods = temp;
-        } else {
-            for (int i = 0; i < mungedMethods.count(); i++) {
-                mungedMethods[i] += '$';
-            }
-        }
-    } else if (value.isArray()) {
-        if (implicitTypeConversionMode) {
-            QVector<QByteArray> temp;
-            foreach (QByteArray mungedMethod, mungedMethods) {
                 temp.append(mungedMethod + '?');
                 temp.append(mungedMethod + '#');
             }
-            mungedMethods = temp;
-        } else {
-            for (int i = 0; i < mungedMethods.count(); i++) {
-                mungedMethods[i] += '?';
+            result = temp;
+        } else if ( Object::Instance::isSmokeObject(value) 
+                    || value.isDate()
+                    || value.isRegExp() )
+        {
+            for (int i = 0; i < result.count(); i++) {
+                result[i] += '#';
             }
+        } else {
+            qDebug() << "Unknown value type:" << value.toString();
         }
-    } else if (value.isNull() || value.isUndefined()) {
-        QVector<QByteArray> temp;
-        foreach (QByteArray mungedMethod, mungedMethods) {
-            temp.append(mungedMethod + '$');
-            temp.append(mungedMethod + '?');
-            temp.append(mungedMethod + '#');
-        }
-        mungedMethods = temp;
-    } else if ( Object::Instance::isSmokeObject(value) 
-                || value.isDate()
-                || value.isRegExp() )
-    {
-        for (int i = 0; i < mungedMethods.count(); i++) {
-            mungedMethods[i] += '#';
-        }
-    } else {
-        qDebug() << "Unknown value type:" << value.toString();
     }
-
-    return;
+    
+    return result;
 }
 
 static int
-inheritanceDistance(const Smoke::ModuleIndex& classId, const Smoke::ModuleIndex& baseId, int distance)
+inheritanceDistance(Smoke* smoke, Smoke::Index classId, Smoke::Index baseId, int distance)
 {
-    Smoke* smoke = classId.smoke;
+    if (baseId == 0) {
+        return 100;
+    }
     
     if (classId == baseId) {
         return distance;
     }
     
-    for (   Smoke::Index * parent = smoke->inheritanceList + smoke->classes[classId.index].parents; 
+    for (   Smoke::Index* parent = smoke->inheritanceList + smoke->classes[classId].parents; 
             *parent != 0; 
             parent++ ) 
     {
-        Smoke::ModuleIndex parentId = Smoke::findClass(smoke->classes[*parent].className);
-        int result = inheritanceDistance(parentId, baseId, distance + 1);
-        if (result != -1) {
+        int result = inheritanceDistance(smoke, *parent, baseId, distance + 1);
+        if (result != 100) {
             return result;
         }
     }
     
-    return -1;
-}
-
-static QByteArray
-typeName(const Smoke::Type& typeRef)
-{
-    QByteArray name(typeRef.name);
-    return name.replace("const ", "").replace("&", "").replace("*", "");
+    return 100;
 }
 
 // The code to match method arguments here, is based on callQtMethod() 
@@ -312,20 +318,8 @@ matchArgument(const QScriptValue& actual, const Smoke::Type& typeRef)
     } else if (Object::Instance::isSmokeObject(actual)) {
         if ((typeRef.flags & Smoke::t_class) != 0) {
             Object::Instance * instance = Object::Instance::get(actual);
-            Smoke::ModuleIndex classId = Smoke::findClass(argType);
-
-            if (instance->classId == classId) {
-            } else if (Smoke::isDerivedFrom(instance->classId, classId)) {
-                matchDistance += inheritanceDistance(instance->classId, classId, 0);
-                /*
-                qWarning("class '%s' < '%s' inheritanceDistance: %d", 
-                         instance->classId.smoke->classes[instance->classId.index].className,
-                         classId.smoke->classes[classId.index].className,
-                         inheritanceDistance(instance->classId, classId, 0) );
-                */
-            } else {
-                matchDistance += 100;
-            }
+            Smoke::ModuleIndex classId = instance->classId.smoke->idClass(argType, true);
+            matchDistance += inheritanceDistance(instance->classId.smoke, instance->classId.index, classId.index, 0);
         } else {
             matchDistance += 100;
         }
@@ -400,53 +394,14 @@ findCandidates(Smoke::ModuleIndex classId, const QVector<QByteArray>& mungedMeth
     return candidates;
 }
 
-static MethodMatches 
-resolveTypeConversion(Smoke::ModuleIndex classId, const QByteArray& methodName, const QScriptValue& value)
-{
-    QVector<QByteArray> mungedMethods;
-    mungedMethods.append(methodName);
-    addMungedArgument(mungedMethods, value);
-    QVector<Smoke::ModuleIndex> candidates = findCandidates(classId, mungedMethods);    
-    MethodMatches matches;
-
-    foreach (Smoke::ModuleIndex method, candidates) {
-        Smoke::Method & methodRef = method.smoke->methods[method.index];    
-        int matchDistance = matchArgument(value, method.smoke->types[method.smoke->argumentList[methodRef.args]]);
-            
-        if (matches.count() > 0 && matchDistance <= matches[0].second) {
-            matches.prepend(MethodMatch(QVector<Smoke::ModuleIndex>() << method, matchDistance));
-        } else {
-            matches.append(MethodMatch(QVector<Smoke::ModuleIndex>() << method, matchDistance));
-        }
-    }
-    
-    if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
-        Smoke::Class& klass = classId.smoke->classes[classId.index];
-        qWarning(   "    Argument type conversion matches for %s.%s():", 
-                    klass.className, 
-                    methodName.constData() );
-        for (int i = 0; i < matches.count(); i++) {
-            qWarning("        %s module: %s index: %d matchDistance: %d", 
-                methodToString(matches[i].first[0]).toLatin1().constData(),
-                matches[i].first[0].smoke->moduleName(), 
-                matches[i].first[0].index, 
-                matches[i].second);
-        }
-    }
-    
-    return matches;    
-}
-
 MethodMatches 
-resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptContext* context, bool implicitTypeConversionMode)
+resolveMethod(  Smoke::ModuleIndex classId, 
+                const QByteArray& methodName, 
+                QScriptContext* context, 
+                const QScriptValueList& args, 
+                MethodMatchesState matchState )
 {
-    QVector<QByteArray> mungedMethods;
-    mungedMethods.append(methodName);
-    
-    for (int i = 0; i < context->argumentCount(); i++ ) {
-        addMungedArgument(mungedMethods, context->argument(i), implicitTypeConversionMode);
-    }
-
+    QVector<QByteArray> mungedMethods = JSmoke::mungedMethods(methodName, args, matchState);
     QVector<Smoke::ModuleIndex> candidates = findCandidates(classId, mungedMethods);
     MethodMatches matches;
         
@@ -465,15 +420,19 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
             }
             
             for (int i = 0; i < methodRef.numArgs; i++) {
-                QScriptValue actual = context->argument(i);
+                QScriptValue actual = args[i];
                 ushort argFlags = method.smoke->types[method.smoke->argumentList[methodRef.args+i]].flags;
                 int distance = matchArgument(actual, method.smoke->types[method.smoke->argumentList[methodRef.args+i]]);
                 
-                if (implicitTypeConversionMode) {
+                if (matchState == ImplicitTypeConversionsState) {
                     if ((argFlags & Smoke::tf_elem) == Smoke::t_class && distance >= 100) {
                         QByteArray className = typeName(method.smoke->types[method.smoke->argumentList[methodRef.args+i]]);
                         Smoke::ModuleIndex argClassId = Smoke::findClass(className);
-                        MethodMatches cmatches = resolveTypeConversion(argClassId, constructorName(argClassId), actual);
+                        MethodMatches cmatches = resolveMethod( argClassId, 
+                                                                constructorName(argClassId), 
+                                                                context, 
+                                                                QScriptValueList() << actual,
+                                                                ArgumentTypeConversionState );
                         
                         if (cmatches.count() > 0 && cmatches[0].second <= 10) {
                             matchDistance += cmatches[0].second;
@@ -483,24 +442,15 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
                         
                         if (Object::Instance::isSmokeObject(actual)) {
                             Object::Instance * instance = Object::Instance::get(actual);
-                            QByteArray argClassName(instance->classId.smoke->classes[instance->classId.index].className);
-                            Smoke::ModuleIndex nameId = instance->classId.smoke->findMethod(argClassName, QByteArray("operator ") + className);
-    
-                            if (nameId != Smoke::NullModuleIndex) {
-                                Smoke::ModuleIndex methodId = Smoke::ModuleIndex(   instance->classId.smoke,
-                                                                                    nameId.smoke->methodMaps[nameId.index].method );
-                                if ((Debug::DoDebug & Debug::MethodMatches) != 0) {
-                                    qWarning(   "    Argument type conversion matches for %s.%s():", 
-                                                argClassName.constData(), 
-                                                (QByteArray("operator ") + className).constData() );
-                                    qWarning(   "        %s module: %s index: %d matchDistance: %d", 
-                                                methodToString(methodId).toLatin1().constData(),
-                                                methodId.smoke->moduleName(), 
-                                                methodId.index, 
-                                                0 );
-                                }
-                                
-                                methods.append(methodId);
+                            cmatches = resolveMethod(   instance->classId, 
+                                                        QByteArray("operator ") + className, 
+                                                        context, 
+                                                        QScriptValueList(),
+                                                        ArgumentTypeConversionState );
+                            
+                            if (cmatches.count() > 0 && cmatches[0].second <= 10) {
+                                matchDistance += cmatches[0].second;
+                                methods.append(cmatches[0].first[0]);
                                 continue;
                             }
                         }
@@ -520,24 +470,31 @@ resolveMethod(Smoke::ModuleIndex classId, const QByteArray& methodName, QScriptC
         }
     }
 
-    if (    !implicitTypeConversionMode
+    if (    matchState == InitialState
             && (matches.count() == 0 || matches[0].second >= 100) )
     {
         // Failed to find a matching method, so try again assuming implicit type 
         // conversions can be done for the arguments
-        matches = resolveMethod(classId, methodName, context, true);
+        matches = resolveMethod(classId, methodName, context, args, ImplicitTypeConversionsState);
     }
     
-    if (!implicitTypeConversionMode && (Debug::DoDebug & Debug::MethodMatches) != 0) {
+    if (matchState != ImplicitTypeConversionsState && (Debug::DoDebug & Debug::MethodMatches) != 0) {
+        QStringList argsString;
+        foreach (QScriptValue arg, args) {
+            argsString << arg.toString();
+        }
         Smoke::Class& klass = classId.smoke->classes[classId.index];
         QScriptContextInfo contextInfo(context->parentContext());
-        qWarning(   "Method matches@%s:%d for %s.%s():", 
+        qWarning(   "%s@%s:%d for %s.%s(%s):",
+                    matchState == InitialState ? "Method matches" : "    Argument type conversion matches",
                     contextInfo.fileName().toLatin1().constData(),
                     contextInfo.lineNumber(),
                     klass.className, 
-                    methodName.constData());
+                    methodName.constData(),
+                    argsString.join(", ").toLatin1().constData() );
         for (int i = 0; i < matches.count(); i++) {
-            qWarning("    %s module: %s index: %d matchDistance: %d", 
+            qWarning("%s%s module: %s index: %d matchDistance: %d", 
+                matchState == InitialState ? "    " : "        ",
                 methodToString(matches[i].first[0]).toLatin1().constData(),
                 matches[i].first[0].smoke->moduleName(), 
                 matches[i].first[0].index, 
@@ -554,7 +511,13 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
     QString nameFn = context->callee().data().toString();
     QScriptClass * cls = context->thisObject().scriptClass();
     Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
-    MethodMatches matches = JSmoke::resolveMethod(classId, nameFn.toLatin1(), context);
+    
+    QScriptValueList args;
+    for (int count = 0; count < context->argumentCount(); count++) {
+        args << context->argument(count);
+    }
+    
+    MethodMatches matches = JSmoke::resolveMethod(classId, nameFn.toLatin1(), context, args);
     
     if (matches.count() == 0 || matches[0].second >= 100) {
         QString message = QString("%1 is not defined").arg(nameFn);
@@ -567,7 +530,7 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
     
-    JSmoke::MethodCall methodCall(matches[0].first, context, engine);
+    JSmoke::MethodCall methodCall(matches[0].first, context, engine, args);
     methodCall.next();
     return *(methodCall.var());
 }
@@ -578,7 +541,12 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     QString nameFn = context->callee().data().toString();
     Object::Instance * instance = Object::Instance::get(context->thisObject());
     
-    MethodMatches matches = JSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context);
+    QScriptValueList args;
+    for (int count = 0; count < context->argumentCount(); count++) {
+        args << context->argument(count);
+    }
+    
+    MethodMatches matches = JSmoke::resolveMethod(instance->classId, nameFn.toLatin1(), context, args);
     
     if (matches.count() == 0 || matches[0].second >= 100) {
         QString message = QString("%1 is not defined").arg(nameFn);
@@ -590,8 +558,8 @@ callSmokeMethod(QScriptContext* context, QScriptEngine* engine)
     } else {
         // Good, found a single best match in matches[0]
     }
-    
-    JSmoke::MethodCall methodCall(matches[0].first, context, engine);
+
+    JSmoke::MethodCall methodCall(matches[0].first, context, engine, args);
     methodCall.next();
     return *(methodCall.var());
 }
@@ -600,18 +568,11 @@ void *
 constructCopy(Object::Instance* instance)
 {
     Smoke * smoke = instance->classId.smoke;
-    const char *className = smoke->className(instance->classId.index);
-    
-    QByteArray ccSignature(className);
-    int pos = ccSignature.lastIndexOf("::");    
-    if (pos != -1) {
-        ccSignature = ccSignature.mid(pos + strlen("::"));
-    }    
-    ccSignature.append("#");
-    
+    const char *className = smoke->className(instance->classId.index);    
+    QByteArray ccSignature = constructorName(instance->classId);
+    ccSignature.append("#");    
     QByteArray ccArg("const ");
     ccArg.append(className).append("&");
-
     Smoke::ModuleIndex ccId = smoke->findMethodName(className, ccSignature);
     Smoke::ModuleIndex ccMethod = smoke->findMethod(instance->classId, ccId);
 

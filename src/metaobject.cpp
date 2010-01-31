@@ -55,11 +55,14 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     
     QScriptContext * constructorContext = engine->pushContext();
     constructorContext->setThisObject(context->argument(0));
-    QScriptValue args = context->argumentsObject();
-    args.property("shift").call(args);
-    constructorContext->activationObject().setProperty("arguments", args);
     
-    MethodMatches matches = JSmoke::resolveMethod(classId, constructorName(classId), constructorContext);
+    // Drop the 'this' first argument to call()
+    QScriptValueList args;
+    for (int count = 1; count < context->argumentCount(); count++) {
+        args << context->argument(count);
+    }
+        
+    MethodMatches matches = JSmoke::resolveMethod(classId, constructorName(classId), constructorContext, args);
     
     if (matches.count() == 0 || matches[0].second >= 100) {
         QString message = QString("constructor %1() not defined").arg(classId.smoke->classes[classId.index].className);
@@ -71,7 +74,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
         // Good, found a single best match in matches[0]
     }
 
-    JSmoke::MethodCall methodCall(matches[0].first, constructorContext, constructorContext->engine());
+    JSmoke::MethodCall methodCall(matches[0].first, constructorContext, constructorContext->engine(), args);
     methodCall.next();
     engine->popContext();
     return engine->undefinedValue();
@@ -166,7 +169,8 @@ MetaObject::property(const QScriptValue& object, const QScriptString & name, uin
         if (methodId.index != 0) {
             Smoke::Index ix = methodId.smoke->methodMaps[methodId.index].method;
             if (ix > 0 && (m_classId.smoke->methods[ix].flags & Smoke::mf_enum) != 0) {
-                JSmoke::MethodCall methodCall(QVector<Smoke::ModuleIndex>() << Smoke::ModuleIndex(m_classId.smoke, ix), object.engine()->currentContext(), object.engine());
+                QScriptValueList args;
+                JSmoke::MethodCall methodCall(QVector<Smoke::ModuleIndex>() << Smoke::ModuleIndex(m_classId.smoke, ix), object.engine()->currentContext(), object.engine(), args);
                 methodCall.next();
                 return *(methodCall.var());
             }
@@ -183,7 +187,13 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
 {
     if (extension == Callable) {
         QScriptContext *context = qvariant_cast<QScriptContext*>(argument);
-        MethodMatches matches = JSmoke::resolveMethod(m_classId, constructorName(m_classId), context);
+
+        QScriptValueList args;
+        for (int count = 0; count < context->argumentCount(); count++) {
+            args << context->argument(count);
+        }
+
+        MethodMatches matches = JSmoke::resolveMethod(m_classId, constructorName(m_classId), context, args);
 
         if (matches.count() == 0 || matches[0].second >= 100) {
             QString message = QString("constructor %1() not defined").arg(m_className.constData());
@@ -199,8 +209,8 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         
         context->thisObject().setScriptClass(object());
         context->thisObject().setProperty("prototype", m_proto);
-
-        JSmoke::MethodCall methodCall(matches[0].first, context, context->engine());
+        
+        JSmoke::MethodCall methodCall(matches[0].first, context, context->engine(), args);
         methodCall.next();
         
         // Set the 'this object' in case an exception has been thrown in the method call

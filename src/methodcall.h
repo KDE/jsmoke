@@ -83,7 +83,10 @@ namespace JSmoke {
         };
         
     public:
-        MethodCall(const QVector<Smoke::ModuleIndex>& methodids, QScriptContext * context, QScriptEngine * engine);
+        MethodCall( const QVector<Smoke::ModuleIndex>& methodids, 
+                    QScriptContext* context, 
+                    QScriptEngine* engine, 
+                    QScriptValueList& args );
         ~MethodCall();
 
         inline SmokeType type() { return SmokeType(m_smoke, m_args[m_current]); }
@@ -126,7 +129,7 @@ namespace JSmoke {
         QScriptValue m_target;
         JSmoke::Object::Instance * m_instance;
         QScriptValue m_returnValue;
-        QScriptValueList m_valueList;
+        QScriptValueList& m_valueList;
         bool m_called;
         bool m_error;
     };

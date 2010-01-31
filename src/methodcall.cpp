@@ -130,10 +130,13 @@ MethodCall::ReturnValue::next()
 {
 }
 
-MethodCall::MethodCall(const QVector<Smoke::ModuleIndex>& methodIds, QScriptContext * context, QScriptEngine * engine) :
+MethodCall::MethodCall( const QVector<Smoke::ModuleIndex>& methodIds, 
+                        QScriptContext * context, 
+                        QScriptEngine * engine, 
+                        QScriptValueList& args ) :
     m_methodIds(methodIds), m_methodRef(methodIds[0].smoke->methods[methodIds[0].index]), 
     m_current(-1), m_context(context), m_engine(engine), 
-    m_called(false), m_error(false)
+    m_valueList(args), m_called(false), m_error(false)
 {
     m_methodId = m_methodIds[0]; 
     m_smoke = m_methodId.smoke;
@@ -141,12 +144,6 @@ MethodCall::MethodCall(const QVector<Smoke::ModuleIndex>& methodIds, QScriptCont
     m_instance = JSmoke::Object::Instance::get(m_target); 
     m_args = m_smoke->argumentList + m_methodRef.args;
     m_stack = new Smoke::StackItem[m_methodRef.numArgs + 1];
-
-    // More thought needed - this is maybe a bit less efficient
-    // than it oould be..
-    for (int count = 0; count < m_methodRef.numArgs; count++) {
-        m_valueList << m_context->argument(count);
-    }
 }
 
 MethodCall::~MethodCall() 

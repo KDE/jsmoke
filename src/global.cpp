@@ -209,6 +209,20 @@ startFinalizerThread()
     return;
 }
 
+QScriptClass* 
+scriptClassFromId(QScriptEngine * engine, const Smoke::ModuleIndex& classId)
+{
+    QString className(classId.smoke->classes[classId.index].className); 
+    QStringList components = className.split("::");
+    QScriptValue classValue = engine->globalObject().property(components[0]);
+        
+    for (int component = 1; component < components.length(); ++component) {
+        classValue = classValue.property(components[component]);
+    }
+    
+    return classValue.scriptClass();
+}
+
 QScriptValue 
 wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QScriptEngine::ValueOwnership ownership)
 {
@@ -230,6 +244,9 @@ wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QSc
     
     QScriptValue obj = engine->newObject(isQObject ? Global::SmokeQObject : Global::Object); 
     Object::Instance::set(obj, instance);
+    
+    QScriptClass* scriptClass = scriptClassFromId(engine, classId);
+    obj.setProperty("prototype", scriptClass->prototype());
     
     if (ownership != QScriptEngine::QtOwnership) {
         mapPointer(new QScriptValue(obj), instance, instance->classId.index, 0);

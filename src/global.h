@@ -68,6 +68,8 @@ namespace JSmoke {
                                         Object::Instance * instance, 
                                         Smoke::Index classId, 
                                         void * lastptr );
+                                        
+        JSMOKE_EXPORT QScriptClass* scriptClassFromId(QScriptEngine * engine, const Smoke::ModuleIndex& classId);
                                                                                                 
         JSMOKE_EXPORT QScriptValue wrapInstance(    QScriptEngine * engine, 
                                                     Smoke::ModuleIndex classId, 

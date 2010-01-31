@@ -1,8 +1,19 @@
+2010-01-31  Richard Dale  <richard.j.dale@gmail.com>
+
+* Tidied the method overload resolution code. The arguments to the function
+call being resolved by resolveMethod() as passed as a QScriptValueList, instead
+of being retrieved from the QScriptContext. The same arguments are also passed 
+to the MethodCall constructor.
+* When a call() method was invoked on a superclass constructor method, the
+arguments after the 'this' parameter were not being correctly passed to the
+constructor method.
+* The inheritanceDistance() method is now more efficent
+
 2010-01-27  Richard Dale  <richard.j.dale@gmail.com>
 
 * Constructors for nesting classes such as KParts::MainWindow were not working
 * If a nested class didn't have an outer class in the Smoke library, it wasn't
-being initialize correctly. For instance, there is no 'KParts' smoke class.
+being initialized correctly. For instance, there is no 'KParts' smoke class.
 * The code to handle argument type conversions based on 'operator Foobar()'
 style methods now works. However, there is a crash when the destructor for the
 temporary item is called in MethodCall::ArgumentTypeConversion

@@ -130,8 +130,8 @@ Object::queryProperty(const QScriptValue& object, const QScriptString& name, QSc
     if ((Debug::DoDebug & Debug::Properties) != 0) {
         Object::Instance * instance = Object::Instance::get(object);
         qWarning("Object::queryProperty(%p->%s.%s, 0x%2.2x, %d)", 
-                 instance->value,
-                 instance->classId.smoke->classes[instance->classId.index].className,
+                 instance == 0 ? 0 : instance->value,
+                 instance == 0 ? "<null>" : instance->classId.smoke->classes[instance->classId.index].className,
                  propertyName.constData(), 
                  (uint) flags, 
                  *id);
