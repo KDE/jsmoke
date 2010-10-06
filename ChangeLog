@@ -1,3 +1,7 @@
+2010-10-06  Richard Dale  <richard.j.dale@gmail.com>
+
+* Change the name of the KDevelop project to jsmoke.kdev4
+
 2010-01-31  Richard Dale  <richard.j.dale@gmail.com>
 
 * Tidied the method overload resolution code. The arguments to the function
