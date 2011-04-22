@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules )
 
 find_package(Qt4 REQUIRED)
-find_package(SmokeQt REQUIRED)
+find_package(Smoke COMPONENTS QtCore QtGui QtXml QtOpenGl QtSql QtNetwork QtDbus QtSvg Phonon QSci QtDeclarative QtScript QtWebkit QtUiTools QtTest Qwt)
 
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
