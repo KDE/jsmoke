@@ -34,7 +34,7 @@
 #include "marshallmacros.h"
 
 #if QT_VERSION >= 0x40600
-Q_DECLARE_METATYPE(QWebElement)
+// Q_DECLARE_METATYPE(QWebElement)
 Q_DECLARE_METATYPE(QList<QWebElement>)
 #endif
 
