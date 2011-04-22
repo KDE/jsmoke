@@ -1,3 +1,7 @@
+2011-04-22  Richard Dale  <richard.j.dale@gmail.com>
+
+* Don't build the QtMultiMedia binding by default
+
 2010-10-06  Richard Dale  <richard.j.dale@gmail.com>
 
 * Change the name of the KDevelop project to jsmoke.kdev4
