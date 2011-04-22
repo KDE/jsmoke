@@ -1,6 +1,7 @@
 2011-04-22  Richard Dale  <richard.j.dale@gmail.com>
 
 * Don't build the QtMultiMedia binding by default
+* Use the standard Smoke cmake file for finding the Smoke stuff
 
 2010-10-06  Richard Dale  <richard.j.dale@gmail.com>
 

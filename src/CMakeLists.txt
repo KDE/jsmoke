@@ -14,7 +14,12 @@ set(    jsmokeruntime_LIB_SRCS
 
 add_library(jsmokeruntime SHARED ${jsmokeruntime_LIB_SRCS})
 
-target_link_libraries(jsmokeruntime ${QT_QTCORE_LIBRARY} ${QT_QTSCRIPT_LIBRARY} ${SMOKE_QTCORE_LIBRARY})
+target_link_libraries(  jsmokeruntime 
+                            ${QT_QTCORE_LIBRARY} 
+                            ${QT_QTSCRIPT_LIBRARY} 
+                            ${SMOKE_BASE_LIBRARY}
+                            ${SMOKE_QTCORE_LIBRARY})
+
 set_target_properties(jsmokeruntime PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 install(    TARGETS jsmokeruntime 
