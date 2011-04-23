@@ -128,7 +128,7 @@ void Binding::deleted(Smoke::Index classId, void* ptr)
         return;
     }
     
-    Global::unmapPointer(instance, instance->classId.index, 0);
+    Global::unmapPointer(instance, instance->classId);
     instance->value = 0;
     delete obj;
     

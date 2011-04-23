@@ -383,7 +383,7 @@ static void marshall_basetype(Marshall *m)
                 if (ptr != 0) {
                     instance->value = ptr;
                     instance->ownership = QScriptEngine::ScriptOwnership;
-                    Global::mapPointer(new QScriptValue(obj), instance, instance->classId.index, 0);
+                    Global::mapPointer(new QScriptValue(obj), instance, instance->classId);
                 }
             }
 

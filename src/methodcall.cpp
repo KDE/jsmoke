@@ -214,7 +214,7 @@ void MethodCall::callMethod()
         m_instance->ownership = QScriptEngine::ScriptOwnership;
         
         Object::Instance::set(m_returnValue, m_instance);
-        JSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId.index, 0);
+        JSmoke::Global::mapPointer(new QScriptValue(m_context->thisObject()), m_instance, m_instance->classId);
     } else {
         m_returnValue = m_engine->undefinedValue();
         ReturnValue result(m_methodId, m_stack, m_engine, &m_returnValue);

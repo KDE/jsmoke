@@ -82,11 +82,11 @@ getScriptValue(void *ptr)
 }
 
 void 
-unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr) 
+unmapPointer(Object::Instance * instance, const Smoke::ModuleIndex& classId, void *lastptr)
 {
     QMutexLocker locker(&mutex);
     Smoke * smoke = instance->classId.smoke;
-    void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
+    void * ptr = smoke->cast(instance->value, instance->classId, classId);
     
     if (ptr != lastptr) {
         lastptr = ptr;
@@ -103,11 +103,17 @@ unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr)
         }
     }
 
-    for (   Smoke::Index * parent = smoke->inheritanceList + smoke->classes[classId].parents; 
+    for (   Smoke::Index * parent = smoke->inheritanceList + smoke->classes[classId.index].parents; 
             *parent != 0; 
             parent++ ) 
     {
-        unmapPointer(instance, *parent, lastptr);
+        if (smoke->classes[*parent].external) {
+            Smoke::ModuleIndex mi = Smoke::findClass(smoke->classes[*parent].className);
+            if (mi != Smoke::NullModuleIndex)
+                unmapPointer(instance, mi, lastptr);
+        } else {
+            unmapPointer(instance, Smoke::ModuleIndex(smoke, *parent), lastptr);
+        }
     }
 }
 
@@ -115,11 +121,11 @@ unmapPointer(Object::Instance * instance, Smoke::Index classId, void *lastptr)
 // Recurse to store it also as casted to its parent classes.
 
 void 
-mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId, void *lastptr) 
+mapPointer(QScriptValue * obj, Object::Instance * instance, const Smoke::ModuleIndex& classId, void *lastptr)
 {
     QMutexLocker locker(&mutex);
     Smoke * smoke = instance->classId.smoke;
-    void * ptr = smoke->cast(instance->value, instance->classId.index, classId);
+    void * ptr = smoke->cast(instance->value, instance->classId, classId);
      
     if (ptr != lastptr) {
         lastptr = ptr; 
@@ -133,11 +139,17 @@ mapPointer(QScriptValue * obj, Object::Instance * instance, Smoke::Index classId
         qscriptValues()->insert(ptr, obj);
     }
     
-    for (   Smoke::Index * parent = smoke->inheritanceList + smoke->classes[classId].parents; 
+    for (   Smoke::Index * parent = smoke->inheritanceList + smoke->classes[classId.index].parents; 
             *parent != 0; 
             parent++ ) 
     {
-        mapPointer(obj, instance, *parent, lastptr);
+        if (smoke->classes[*parent].external) {
+            Smoke::ModuleIndex mi = Smoke::findClass(smoke->classes[*parent].className);
+            if (mi != Smoke::NullModuleIndex)
+                mapPointer(obj, instance, mi, lastptr);
+        } else {
+            mapPointer(obj, instance, Smoke::ModuleIndex(smoke, *parent), lastptr);
+        }
     }
     
     return;
@@ -179,7 +191,7 @@ public:
                                     instance->classId.smoke->className(instance->classId.index) );
                     }
                     
-                    unmapPointer(instance, instance->classId.index, 0);
+                    unmapPointer(instance, instance->classId);
                     instance->finalize();
                 }
                 
@@ -224,7 +236,7 @@ scriptClassFromId(QScriptEngine * engine, const Smoke::ModuleIndex& classId)
 }
 
 QScriptValue 
-wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QScriptEngine::ValueOwnership ownership)
+wrapInstance(QScriptEngine * engine, const Smoke::ModuleIndex& classId, void * ptr, QScriptEngine::ValueOwnership ownership)
 {
     Object::Instance * instance = 0;
     bool isQObject = Smoke::isDerivedFrom(classId, Global::QObjectClassId);
@@ -249,7 +261,7 @@ wrapInstance(QScriptEngine * engine, Smoke::ModuleIndex classId, void * ptr, QSc
     obj.setProperty("prototype", scriptClass->prototype());
     
     if (ownership != QScriptEngine::QtOwnership) {
-        mapPointer(new QScriptValue(obj), instance, instance->classId.index, 0);
+        mapPointer(new QScriptValue(obj), instance, instance->classId);
     }
     
     return obj;

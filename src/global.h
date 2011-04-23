@@ -61,18 +61,18 @@ namespace JSmoke {
         JSMOKE_EXPORT QScriptValue * getScriptValue(void * ptr);
         
         JSMOKE_EXPORT void unmapPointer(    Object::Instance * instance, 
-                                            Smoke::Index classId, 
-                                            void * lastptr );
+                                            const Smoke::ModuleIndex& classId, 
+                                            void * lastptr = 0 );
                                                 
         JSMOKE_EXPORT void mapPointer(  QScriptValue * obj, 
                                         Object::Instance * instance, 
-                                        Smoke::Index classId, 
-                                        void * lastptr );
+                                        const Smoke::ModuleIndex& classId,
+                                        void * lastptr = 0 );
                                         
         JSMOKE_EXPORT QScriptClass* scriptClassFromId(QScriptEngine * engine, const Smoke::ModuleIndex& classId);
                                                                                                 
         JSMOKE_EXPORT QScriptValue wrapInstance(    QScriptEngine * engine, 
-                                                    Smoke::ModuleIndex classId, 
+                                                    const Smoke::ModuleIndex& classId, 
                                                     void * ptr,
                                                     QScriptEngine::ValueOwnership ownership = QScriptEngine::QtOwnership );
 

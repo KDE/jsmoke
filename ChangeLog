@@ -1,3 +1,9 @@
+2011-04-23  Richard Dale  <richard.j.dale@gmail.com>
+
+* Tidy the Global::mapPointer() and unmapPointer() methods so that they
+use Smoke::ModuleIndex's and make them correctly look up any external
+smoke classes that are parents of the target instance.
+
 2011-04-22  Richard Dale  <richard.j.dale@gmail.com>
 
 * Don't build the QtMultiMedia binding by default
