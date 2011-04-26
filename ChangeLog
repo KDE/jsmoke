@@ -1,8 +1,8 @@
-2011-04-23  Richard Dale  <richard.j.dale@gmail.com>
+2011-04-26  Richard Dale  <richard.j.dale@gmail.com>
 
-* Tidy the Global::mapPointer() and unmapPointer() methods so that they
-use Smoke::ModuleIndex's and make them correctly look up any external
-smoke classes that are parents of the target instance.
+* Update the Q_DECLARE_METATYPE2 macro to keep it in line with the
+Q_DECLARE_METATYPE macro in Qt 4.7
+* Fix an error in the QPair sequence to QScript marshaller
 
 2011-04-22  Richard Dale  <richard.j.dale@gmail.com>
 

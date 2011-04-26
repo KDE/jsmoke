@@ -43,7 +43,8 @@
             {                                                           \
                 static QBasicAtomicInt metatype_id = Q_BASIC_ATOMIC_INITIALIZER(0); \
                 if (!metatype_id)                                       \
-                    metatype_id = qRegisterMetaType< TYPE1,TYPE2 >( #TYPE1 "," #TYPE2 );  \
+                    metatype_id = qRegisterMetaType< TYPE1,TYPE2 >( #TYPE1 "," #TYPE2, \
+                               reinterpret_cast< TYPE1,TYPE2  *>(quintptr(-1))); \
                 return metatype_id;                                     \
             }                                                           \
     };                                                                  \
@@ -231,7 +232,7 @@ QScriptValue qScriptSmokeValueFromPairSequence(QScriptEngine *eng, const Contain
         }
         
         if (secondClassId == Smoke::NullModuleIndex) {
-            pair.setProperty(0, eng->toScriptValue((*it).second));
+            pair.setProperty(1, eng->toScriptValue((*it).second));
         } else {
             pair.setProperty(1, qScriptSmokeValueFromSequence_helper(eng, secondClassId, (void *) &((*it).second)));
         }
