@@ -45,7 +45,7 @@
 
 #include <global.h>
 #include <marshall.h>
-#include <marshallmacros.h>
+#include <qscriptmetatype.h>
 #include <object.h>
 
 Q_DECLARE_METATYPE2(QHash<int,QByteArray>)

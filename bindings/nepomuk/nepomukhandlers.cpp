@@ -19,7 +19,7 @@
 
 #include "marshall.h"
 #include "global.h"
-#include "marshallmacros.h"
+#include "qscriptmetatype.h"
 
 #include <nepomuk/kmetadatatagcloud.h>
 #include <nepomuk/kmetadatatagwidget.h>

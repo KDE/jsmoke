@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef JSMOKE_MARSHALL_MACROS_H
-#define JSMOKE_MARSHALL_MACROS_H
+#ifndef JSMOKE_QSCRIPTMETATYPE_H
+#define JSMOKE_QSCRIPTMETATYPE_H
 
 #include <QtScript/QScriptValueIterator>
 
@@ -353,4 +353,4 @@ int qScriptSmokeRegisterHashMetaType(
     return qScriptRegisterMetaType<T>(engine, qScriptSmokeValueFromHash,
                                       qScriptSmokeValueToHash, prototype);
 }
-#endif
+#endif // JSMOKE_QSCRIPTMETATYPE_H

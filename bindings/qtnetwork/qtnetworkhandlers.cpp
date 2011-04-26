@@ -30,7 +30,7 @@
 
 #include "marshall.h"
 #include "global.h"
-#include "marshallmacros.h"
+#include "qscriptmetatype.h"
 
 Q_DECLARE_METATYPE2(QList<QPair<QHostAddress,int> >)
 Q_DECLARE_METATYPE(QHostAddress)

@@ -31,7 +31,7 @@
 
 #include "marshall.h"
 #include "global.h"
-#include "marshallmacros.h"
+#include "qscriptmetatype.h"
 
 #if QT_VERSION >= 0x40600
 // Q_DECLARE_METATYPE(QWebElement)

@@ -6,6 +6,8 @@ Q_DECLARE_METATYPE macro in Qt 4.7
 * Fix errors in the matchArgument() method with 'char**' types, and 
 references to primitive types.
 * Move the debug stuff from global.h/cpp to debug.h/cpp
+* Rename marshallmacros.h to qscriptmetatype.h to reflect what it
+actually does
 
 2011-04-22  Richard Dale  <richard.j.dale@gmail.com>
 

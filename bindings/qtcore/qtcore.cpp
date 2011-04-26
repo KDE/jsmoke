@@ -26,7 +26,7 @@
 
 #include <global.h>
 #include <marshall.h>
-#include <marshallmacros.h>
+#include <qscriptmetatype.h>
 #include <utils.h>
 #include <object.h>
 

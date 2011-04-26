@@ -21,7 +21,7 @@
 
 #include "marshall.h"
 #include "global.h"
-#include "marshallmacros.h"
+#include "qscriptmetatype.h"
 
 
 namespace JSmoke {

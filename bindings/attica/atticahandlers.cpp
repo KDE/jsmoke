@@ -19,7 +19,7 @@
 
 #include "marshall.h"
 #include "global.h"
-#include "marshallmacros.h"
+#include "qscriptmetatype.h"
 
 #include <attica/provider.h>
 #include <attica/providermanager.h>
