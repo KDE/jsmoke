@@ -3,7 +3,8 @@ add_definitions(-DBUILD_JSMOKE)
 include_directories(${QT_INCLUDES} ${SMOKE_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 set(    jsmokeruntime_LIB_SRCS 
-            global.cpp 
+            debug.cpp
+            global.cpp
             metaobject.cpp
             object.cpp
             smokebinding.cpp  

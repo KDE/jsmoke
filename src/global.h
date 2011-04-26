@@ -28,21 +28,9 @@
 #include "jsmoke_export.h"
 #include "metaobject.h"
 #include "smokebinding.h"
+#include "debug.h"
 
 namespace JSmoke {
-    namespace Debug {        
-        JSMOKE_EXPORT extern uint DoDebug;
-
-        enum QtDebugChannel {
-            None = 0x00,
-            MethodMatches = 0x01,
-            Properties = 0x02,
-            Calls = 0x04,
-            GC = 0x08,
-            Virtual = 0x10,
-            Verbose = 0x20
-        };
-    }
 
     namespace Global {
         JSMOKE_EXPORT extern QHash<Smoke*, Module> modules;

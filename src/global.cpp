@@ -34,13 +34,8 @@ static uint qHash(const Smoke::ModuleIndex& mi) {
 }
 
 namespace JSmoke {
-    namespace Debug {
-        uint DoDebug = 0;
-    }
-    
     namespace Global {
 
-        
 static JSmoke::Object * Object = 0;
 static JSmoke::SmokeQObject * SmokeQObject = 0;
 
