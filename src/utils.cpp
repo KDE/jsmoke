@@ -263,8 +263,13 @@ matchArgument(const QScriptValue& actual, const Smoke::Type& typeRef)
             matchDistance += 6;
             break;
         default:
-            matchDistance += 100;
+        {
+            if (QString::fromLatin1(fullArgType).contains(QRegExp("^(signed|unsigned)?(bool|char|short|int|long|double)[&*]$")))
+                matchDistance += 7;
+            else
+                matchDistance += 100;
             break;
+        }
         }
     } else if (actual.instanceOf(JSmoke::Global::QtEnum)) {
         switch (typeRef.flags & Smoke::tf_elem) {
@@ -328,7 +333,8 @@ matchArgument(const QScriptValue& actual, const Smoke::Type& typeRef)
         if (    argType.contains("QVector") 
                 || argType.contains("QList")
                 || argType.contains("QStringList")
-                || QString::fromLatin1(argType).contains(QRegExp("^(signed|unsigned)?(bool|char|short|int|long|double)[&*]$")) ) 
+                || fullArgType.contains("char**")
+                || QString::fromLatin1(fullArgType).contains(QRegExp("^(signed|unsigned)?(bool|char|short|int|long|double)[&*]$")) )
         {
         } else {
             matchDistance += 100;

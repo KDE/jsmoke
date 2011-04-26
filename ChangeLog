@@ -3,6 +3,8 @@
 * Update the Q_DECLARE_METATYPE2 macro to keep it in line with the
 Q_DECLARE_METATYPE macro in Qt 4.7
 * Fix an error in the QPair sequence to QScript marshaller
+* Fix errors in the matchArgument() method with 'char**' types, and 
+references to primitive types.
 
 2011-04-22  Richard Dale  <richard.j.dale@gmail.com>
 
