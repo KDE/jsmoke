@@ -1,3 +1,7 @@
+2011-04-27  Richard Dale  <richard.j.dale@gmail.com>
+
+* Fix looping bug in Global::mapPointer() and unmapPointer() methods
+
 2011-04-26  Richard Dale  <richard.j.dale@gmail.com>
 
 * Update the Q_DECLARE_METATYPE2 macro to keep it in line with the

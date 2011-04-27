@@ -80,8 +80,8 @@ void
 unmapPointer(Object::Instance * instance, const Smoke::ModuleIndex& classId, void *lastptr)
 {
     QMutexLocker locker(&mutex);
-    Smoke * smoke = instance->classId.smoke;
-    void * ptr = smoke->cast(instance->value, instance->classId, classId);
+    Smoke * smoke = classId.smoke;
+    void * ptr = instance->classId.smoke->cast(instance->value, instance->classId, classId);
     
     if (ptr != lastptr) {
         lastptr = ptr;
@@ -119,8 +119,8 @@ void
 mapPointer(QScriptValue * obj, Object::Instance * instance, const Smoke::ModuleIndex& classId, void *lastptr)
 {
     QMutexLocker locker(&mutex);
-    Smoke * smoke = instance->classId.smoke;
-    void * ptr = smoke->cast(instance->value, instance->classId, classId);
+    Smoke * smoke = classId.smoke;
+    void * ptr = instance->classId.smoke->cast(instance->value, instance->classId, classId);
      
     if (ptr != lastptr) {
         lastptr = ptr; 
