@@ -35,7 +35,8 @@
 static void
 qeventTypeResolver(JSmoke::Object::Instance * instance)
 {
-    Smoke * smoke = instance->classId.smoke;    
+    Smoke::ModuleIndex classId = instance->classId;
+    Smoke * smoke = classId.smoke;
     QEvent * qevent = static_cast<QEvent*>( smoke->cast(    instance->value, 
                                                             instance->classId,
                                                             JSmoke::Global::QEventClassId ) );
@@ -258,13 +259,16 @@ qeventTypeResolver(JSmoke::Object::Instance * instance)
     default:
         break;
     }
+
+    instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
     return;
 }
 
 static void
 qobjectTypeResolver(JSmoke::Object::Instance * instance)
 {
-    Smoke * smoke = instance->classId.smoke;    
+    Smoke::ModuleIndex classId = instance->classId;
+    Smoke * smoke = classId.smoke;
     QObject * qobject = static_cast<QObject*>( smoke->cast( instance->value, 
                                                             instance->classId,
                                                             JSmoke::Global::QObjectClassId ) );
@@ -280,6 +284,7 @@ qobjectTypeResolver(JSmoke::Object::Instance * instance)
         meta = meta->superClass();
     }
     
+    instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
     return;
 }
 

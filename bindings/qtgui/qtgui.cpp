@@ -30,7 +30,8 @@
 static void
 qgraphicsitemTypeResolver(JSmoke::Object::Instance * instance)
 {
-    Smoke * smoke = instance->classId.smoke;    
+    Smoke::ModuleIndex classId = instance->classId;
+    Smoke * smoke = classId.smoke;
     QGraphicsItem * item = static_cast<QGraphicsItem*>( smoke->cast(    instance->value, 
                                                                         instance->classId,
                                                                         JSmoke::Global::QGraphicsItemClassId ) );
@@ -66,6 +67,7 @@ qgraphicsitemTypeResolver(JSmoke::Object::Instance * instance)
         break;
     }
     
+    instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
     return;
 }
 

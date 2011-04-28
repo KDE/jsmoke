@@ -276,9 +276,7 @@ resolveType(Object::Instance * instance)
 {
     if (typeResolverMap.contains(instance->classId)) {
         Object::TypeResolver resolver = typeResolverMap[instance->classId];
-        Smoke::ModuleIndex classId = instance->classId;
         (*resolver)(instance);
-        instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
     }
 }
 
