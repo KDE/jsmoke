@@ -128,7 +128,7 @@ QScriptValue qScriptSmokeValueFromSequence(QScriptEngine *eng, const Container &
 inline void * qScriptSmokeValueToSequence_helper(const QScriptValue& item, Smoke::ModuleIndex classId)
 {
     JSmoke::Object::Instance * instance = JSmoke::Object::Instance::get(item);
-    return instance->classId.smoke->cast(instance->value, instance->classId, classId);
+    return instance->cast(classId);
 }
 
 template <class Container>

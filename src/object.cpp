@@ -214,9 +214,7 @@ getQProperty(QScriptContext* context, QScriptEngine* engine)
                  propertyName.constData() );
     }
 
-    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId, 
-                                                                                Global::QObjectClassId ) );
+    QObject * qobject = reinterpret_cast<QObject*>(instance->cast(Global::QObjectClassId));
     return valueFromVariant(engine, qobject->property(propertyName));
 }
 
@@ -235,9 +233,7 @@ setQProperty(QScriptContext* context, QScriptEngine* /*engine*/)
                  value.toString().toLatin1().constData() );
     }
 
-    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId, 
-                                                                                Global::QObjectClassId ) );
+    QObject * qobject = reinterpret_cast<QObject*>(instance->cast(Global::QObjectClassId));
     qobject->setProperty(propertyName, valueToVariant(value));
     return value;
 }
@@ -270,9 +266,7 @@ SmokeQObject::propertyFlags(const QScriptValue& object, const QScriptString& nam
     }
     
 #if QT_VERSION < 0x40600
-    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId, 
-                                                                                Global::QObjectClassId ) );
+    QObject * qobject = reinterpret_cast<QObject*>(instance->cast(Global::QObjectClassId));
                                                                                
     const QMetaObject * meta = qobject->metaObject();
     while (meta != 0) {
@@ -368,9 +362,7 @@ SmokeQObject::property(const QScriptValue& object, const QScriptString& name, ui
     }
 #endif
 
-    QObject * qobject = static_cast<QObject*>(instance->classId.smoke->cast(    instance->value, 
-                                                                                instance->classId, 
-                                                                                Global::QObjectClassId ) );
+    QObject * qobject = reinterpret_cast<QObject*>(instance->cast(Global::QObjectClassId));
     bool fullSignalSignature = propertyName.contains("(");
     const QMetaObject * meta = qobject->metaObject();
 

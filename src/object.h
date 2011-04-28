@@ -43,6 +43,16 @@ namespace JSmoke {
             virtual void finalize();
             void dispose();
             virtual ~Instance();
+            
+            inline const char * className()
+            {
+                return classId.smoke->classes[classId.index].className;
+            }
+
+            inline void * cast(const Smoke::ModuleIndex targetId)
+            {
+                return classId.smoke->cast(value, classId, targetId);
+            }
 
             static bool isSmokeObject(const QScriptValue& object);
             static Instance *get(const QScriptValue& object);

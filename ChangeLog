@@ -2,6 +2,7 @@
 
 * The type resolver methods now cast to the new instance->value as well
 as updating the classId of the instance
+* Added a Object::Instance::cast() method
 
 2011-04-27  Richard Dale  <richard.j.dale@gmail.com>
 

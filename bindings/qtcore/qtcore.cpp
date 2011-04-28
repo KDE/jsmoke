@@ -37,9 +37,7 @@ qeventTypeResolver(JSmoke::Object::Instance * instance)
 {
     Smoke::ModuleIndex classId = instance->classId;
     Smoke * smoke = classId.smoke;
-    QEvent * qevent = static_cast<QEvent*>( smoke->cast(    instance->value, 
-                                                            instance->classId,
-                                                            JSmoke::Global::QEventClassId ) );
+    QEvent * qevent = reinterpret_cast<QEvent*>(instance->cast(JSmoke::Global::QEventClassId));
     switch (qevent->type()) {
     case QEvent::Timer:
         instance->classId = smoke->findClass("QTimerEvent");
@@ -260,7 +258,7 @@ qeventTypeResolver(JSmoke::Object::Instance * instance)
         break;
     }
 
-    instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
+    instance->value = instance->cast(instance->classId);
     return;
 }
 
@@ -269,9 +267,7 @@ qobjectTypeResolver(JSmoke::Object::Instance * instance)
 {
     Smoke::ModuleIndex classId = instance->classId;
     Smoke * smoke = classId.smoke;
-    QObject * qobject = static_cast<QObject*>( smoke->cast( instance->value, 
-                                                            instance->classId,
-                                                            JSmoke::Global::QObjectClassId ) );
+    QObject * qobject = reinterpret_cast<QObject*>(instance->cast(JSmoke::Global::QObjectClassId));
     const QMetaObject * meta = qobject->metaObject();
 
     while (meta != 0) {
@@ -284,7 +280,7 @@ qobjectTypeResolver(JSmoke::Object::Instance * instance)
         meta = meta->superClass();
     }
     
-    instance->value = instance->classId.smoke->cast(instance->value, classId, instance->classId);
+    instance->value = instance->cast(instance->classId);
     return;
 }
 
