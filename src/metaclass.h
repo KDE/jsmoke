@@ -19,8 +19,8 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JSMOKE_META_OBJECT_H
-#define JSMOKE_META_OBJECT_H
+#ifndef JSMOKE_METACLASS_H
+#define JSMOKE_METACLASS_H
 
 #include <QScriptClass>
 #include <QScriptEngine>
@@ -60,4 +60,4 @@ namespace JSmoke {
 Q_DECLARE_METATYPE( QScriptContext* )
 Q_DECLARE_METATYPE( QScriptValueList )
 
-#endif
+#endif // JSMOKE_METACLASS_H
