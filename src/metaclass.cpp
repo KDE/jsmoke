@@ -30,7 +30,7 @@
 
 #include <smoke/qtcore_smoke.h>
 
-#include "metaobject.h"
+#include "metaclass.h"
 #include "object.h"
 #include "smokebinding.h"
 #include "methodcall.h"
@@ -50,7 +50,7 @@ namespace JSmoke {
 static QScriptValue 
 callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
 {
-    MetaObject * metaObject = static_cast<MetaObject*>(context->thisObject().scriptClass());
+    MetaClass * metaObject = static_cast<MetaClass*>(context->thisObject().scriptClass());
     Smoke::ModuleIndex classId = metaObject->classId();
     
     QScriptContext * constructorContext = engine->pushContext();
@@ -80,7 +80,7 @@ callFunctionInvocation(QScriptContext* context, QScriptEngine* engine)
     return engine->undefinedValue();
 }
 
-MetaObject::MetaObject(QScriptEngine* engine, const QByteArray& className, Object* object)
+MetaClass::MetaClass(QScriptEngine* engine, const QByteArray& className, Object* object)
     : QScriptClass(engine),
     m_className(className),
     m_classId(Smoke::findClass(className.constData())),
@@ -89,39 +89,39 @@ MetaObject::MetaObject(QScriptEngine* engine, const QByteArray& className, Objec
     m_proto = engine->newObject();
 }
 
-MetaObject::~MetaObject()
+MetaClass::~MetaClass()
 {  
 }
 
 QScriptValue
-MetaObject::prototype() const
+MetaClass::prototype() const
 {
     return m_proto;
 }
 
 QScriptValue::PropertyFlags 
-MetaObject::propertyFlags(const QScriptValue& /*object*/, const QScriptString& /*name*/, uint /*id*/)
+MetaClass::propertyFlags(const QScriptValue& /*object*/, const QScriptString& /*name*/, uint /*id*/)
 {
-    // qDebug() << "MetaObject::propertyFlags(" << m_className << name << "," << id << ")";
+    // qDebug() << "MetaClass::propertyFlags(" << m_className << name << "," << id << ")";
     return  QScriptValue::Undeletable 
             | QScriptValue::SkipInEnumeration;
 //            | QScriptValue::ReadOnly;
 }
 
 QScriptClass::QueryFlags
-MetaObject::queryProperty(const QScriptValue& /*object*/, const QScriptString& name, QueryFlags flags, uint* id)
+MetaClass::queryProperty(const QScriptValue& /*object*/, const QScriptString& name, QueryFlags flags, uint* id)
 {
     QByteArray propertyName(name.toString().toLatin1());
     
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("MetaObject::queryProperty(%s.%s, 0x%2.2x, %d)", 
+        qWarning("MetaClass::queryProperty(%s.%s, 0x%2.2x, %d)",
                  m_className.constData(),
                  propertyName.constData(), 
                  (uint) flags, 
                  *id);
     }
 
-    // qDebug() << "MetaObject::queryProperty(" << name << "," << flags << "," << *id << ")";
+    // qDebug() << "MetaClass::queryProperty(" << name << "," << flags << "," << *id << ")";
     
     if (propertyName == "prototype") {
         return flags & (QScriptClass::HandlesReadAccess | QScriptClass::HandlesWriteAccess);
@@ -148,12 +148,12 @@ MetaObject::queryProperty(const QScriptValue& /*object*/, const QScriptString& n
 }
 
 QScriptValue
-MetaObject::property(const QScriptValue& object, const QScriptString & name, uint id)
+MetaClass::property(const QScriptValue& object, const QScriptString & name, uint id)
 {
     QByteArray propertyName(name.toString().toLatin1());
     
     if ((Debug::DoDebug & Debug::Properties) != 0) {
-        qWarning("MetaObject::property(%s.%s, %d)", m_className.constData(), propertyName.constData(), id);
+        qWarning("MetaClass::property(%s.%s, %d)", m_className.constData(), propertyName.constData(), id);
     }
 
     if (propertyName == "prototype") {
@@ -183,7 +183,7 @@ MetaObject::property(const QScriptValue& object, const QScriptString & name, uin
 }
 
 QVariant
-MetaObject::extension(QScriptClass::Extension extension, const QVariant& argument)
+MetaClass::extension(QScriptClass::Extension extension, const QVariant& argument)
 {
     if (extension == Callable) {
         QScriptContext *context = qvariant_cast<QScriptContext*>(argument);
@@ -218,7 +218,7 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
         return QVariant();
     } else if (extension == HasInstance) {
         QScriptValueList args = argument.value<QScriptValueList>();  
-        MetaObject * scriptClass = static_cast<MetaObject*>(args[0].scriptClass());
+        MetaClass * scriptClass = static_cast<MetaClass*>(args[0].scriptClass());
         Object::Instance * instance = Object::Instance::get(args[1]);
         bool result = Smoke::isDerivedFrom(instance->classId, scriptClass->m_classId);
         return QVariant(result);
@@ -228,13 +228,13 @@ MetaObject::extension(QScriptClass::Extension extension, const QVariant& argumen
 }
 
 bool
-MetaObject::supportsExtension(QScriptClass::Extension extension) const
+MetaClass::supportsExtension(QScriptClass::Extension extension) const
 {
     return extension == Callable || extension == HasInstance;
 }
 
 QString
-MetaObject::name() const
+MetaClass::name() const
 {
     return m_className;
 }

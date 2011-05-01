@@ -28,7 +28,7 @@
 
 #include "jsmoke_export.h"
 #include "marshall.h"
-#include "metaobject.h"
+#include "object.h"
 
 namespace JSmoke {
 

@@ -21,29 +21,6 @@
 #include "global.h"
 #include "qscriptmetatype.h"
 
-/*
-#include <Qt/q3cstring.h>
-#include <Qt/qabstractitemmodel.h>
-#include <Qt/qbytearray.h>
-#include <Qt/qbytearraymatcher.h>
-#include <Qt/qpropertyanimation.h>
-#include <Qt/qurl.h>
-#include <Qt/qurlinfo.h>
-#include <Qt/qvariant.h>
-#include <Qt/qvariantanimation.h>
-#include <Qt3Support/q3cstring.h>
-#include <QtCore/qabstractitemmodel.h>
-#include <QtCore/qbytearray.h>
-#include <QtCore/qbytearraymatcher.h>
-#include <QtCore/qpropertyanimation.h>
-#include <QtCore/qurl.h>
-#include <QtCore/qvariant.h>
-#include <QtCore/qvariantanimation.h>
-#include <QtNetwork/qurlinfo.h>
-#include <kcoreconfigskeleton.h>
-#include <kurl.h>
-*/
-
 #include <phonon/effect.h>
 #include <phonon/effectparameter.h>
 #include <phonon/effectwidget.h>

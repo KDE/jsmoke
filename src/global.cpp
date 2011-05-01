@@ -27,6 +27,7 @@
 #include <QtCore/QCoreApplication>
 
 #include "global.h"
+#include "metaclass.h"
 #include "smoke/qtcore_smoke.h"
 
 static uint qHash(const Smoke::ModuleIndex& mi) {
@@ -306,9 +307,9 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
         }
         
         if (Smoke::isDerivedFrom(classId, Global::QObjectClassId)) {
-            klass = new JSmoke::MetaObject(engine, className, Global::SmokeQObject);
+            klass = new JSmoke::MetaClass(engine, className, Global::SmokeQObject);
         } else {
-            klass = new JSmoke::MetaObject(engine, className, Global::Object);
+            klass = new JSmoke::MetaClass(engine, className, Global::Object);
         }
         
         if (className.contains("::")) {
@@ -316,7 +317,7 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
             QScriptValue outerClass = engine->globalObject().property(components[0]);
             
             if (!outerClass.isValid()) {
-                outerClass = engine->newObject(new JSmoke::MetaObject(  engine, 
+                outerClass = engine->newObject(new JSmoke::MetaClass(  engine,
                                                                         components[0].toLatin1(), 
                                                                         Global::Object ) );
                 engine->globalObject().setProperty(components[0], outerClass);
@@ -326,7 +327,7 @@ initializeClasses(QScriptEngine * engine, Smoke * smoke)
                 QScriptValue temp = outerClass.property(components[component]);
                 
                 if (!temp.isValid()) {
-                    temp = engine->newObject(new JSmoke::MetaObject(    engine, 
+                    temp = engine->newObject(new JSmoke::MetaClass(    engine,
                                                                         components[component].toLatin1(), 
                                                                         Global::Object ) );
                     outerClass.setProperty(components[component], temp);

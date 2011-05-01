@@ -21,7 +21,6 @@
 #include "object.h"
 
 #include "utils.h"
-#include "metaobject.h"
 #include "methodcall.h"
 #include "global.h"
 

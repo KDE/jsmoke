@@ -1,3 +1,8 @@
+2011-05-01  Richard Dale  <richard.j.dale@gmail.com>
+
+* Rename JSmoke::MetaObject as MetaClass to avoid confusion with the
+    QMetaObject classes
+
 2011-04-28  Richard Dale  <richard.j.dale@gmail.com>
 
 * The type resolver methods now cast to the new instance->value as well

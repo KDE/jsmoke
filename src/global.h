@@ -26,7 +26,7 @@
 #include <smoke.h>
 
 #include "jsmoke_export.h"
-#include "metaobject.h"
+#include "object.h"
 #include "smokebinding.h"
 #include "debug.h"
 

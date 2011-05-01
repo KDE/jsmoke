@@ -33,11 +33,11 @@
 namespace JSmoke {
    
     //!The QScriptValue of QWidget, QListView etc. So it's used for construction and to access class methods.
-    class MetaObject : public QScriptClass
+    class MetaClass : public QScriptClass
     {
     public:
-        MetaObject( QScriptEngine*, const QByteArray& className, Object* object );
-        ~MetaObject();
+        MetaClass( QScriptEngine*, const QByteArray& className, Object* object );
+        ~MetaClass();
         QScriptValue prototype() const;
         QScriptValue::PropertyFlags propertyFlags (const QScriptValue & object, const QScriptString& name, uint id);
         QueryFlags queryProperty(const QScriptValue& object, const QScriptString& name, QueryFlags flags, uint * id);

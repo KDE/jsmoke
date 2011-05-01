@@ -5,7 +5,7 @@ include_directories(${QT_INCLUDES} ${SMOKE_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_D
 set(    jsmokeruntime_LIB_SRCS 
             debug.cpp
             global.cpp
-            metaobject.cpp
+            metaclass.cpp
             object.cpp
             smokebinding.cpp  
             utils.cpp

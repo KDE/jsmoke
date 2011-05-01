@@ -34,6 +34,7 @@
 #include "marshall.h"
 #include "methodcall.h"
 #include "global.h"
+#include "metaclass.h"
 
 namespace JSmoke {
 
@@ -516,7 +517,7 @@ callSmokeStaticMethod(QScriptContext* context, QScriptEngine* engine)
 {
     QString nameFn = context->callee().data().toString();
     QScriptClass * cls = context->thisObject().scriptClass();
-    Smoke::ModuleIndex classId = static_cast<MetaObject*>(cls)->classId();
+    Smoke::ModuleIndex classId = static_cast<MetaClass*>(cls)->classId();
     
     QScriptValueList args;
     for (int count = 0; count < context->argumentCount(); count++) {
